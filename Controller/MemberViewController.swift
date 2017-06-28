@@ -69,6 +69,7 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
         }
         
         self.titleView = UIView(frame: CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: 64))
+        titleView?.backgroundColor = .red
         self.navigationItem.titleView = self.titleView!
         
         
@@ -110,6 +111,7 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
 
             let coverView = UIView(frame: CGRect(x: frame.origin.x * -1, y: frame.origin.y * -1 - 20, width: SCREEN_WIDTH, height: 64))
             coverView.clipsToBounds = true
+            coverView.backgroundColor = .blue
             self.titleView!.addSubview(coverView)
             
             self.titleLabel = UILabel(frame: CGRect(x: 0, y: 64, width: SCREEN_WIDTH, height: 64))
@@ -117,6 +119,7 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
             self.titleLabel!.font = v2Font(16)
             self.titleLabel!.textAlignment = .center
             self.titleLabel!.textColor = V2EXColor.colors.v2_TopicListTitleColor
+            self.titleLabel!.backgroundColor = .yellow
             coverView.addSubview(self.titleLabel!)
         }
         
@@ -124,6 +127,7 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
     
     func refreshData(){
         //根据 topicId 获取 帖子信息 、回复。
+//        MemberModel.getMemberInfo("1000copy", completionHandler: { (response) -> Void in
         MemberModel.getMemberInfo(self.username!, completionHandler: { (response) -> Void in
             if response.success {
                 if let aModel = response.value{

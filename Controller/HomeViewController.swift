@@ -111,7 +111,7 @@ class HomeViewController: UIViewController {
         
         //根据 tab name 获取帖子列表
         TopicListModel.getTopicList(tab){
-            (response:V2ValueResponse<[TopicListModel]>) -> Void in
+            (response) -> Void in
             
             if response.success {
                 
