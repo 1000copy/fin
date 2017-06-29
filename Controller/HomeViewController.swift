@@ -14,30 +14,13 @@ import AlamofireObjectMapper
 
 import Ji
 import MJRefresh
-
 let kHomeTab = "me.fin.homeTab"
-
 class HomeViewController: UIViewController {
-    var topicList:Array<TopicListModel>?
     var tab:String? = nil
     var currentPage = 0
-    
-    fileprivate var _tableView :UITableView!
-    fileprivate var tableView: UITableView {
+    fileprivate var tableView: Table {
         get{
-            if(_tableView != nil){
-                return _tableView!;
-            }
-            _tableView = UITableView();
-
-            _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
-            
-            regClass(_tableView, cell: HomeTopicListTableViewCell.self);
-            
-            _tableView.delegate = self;
-            _tableView.dataSource = self;
-            return _tableView!;
-            
+            return Table.shared
         }
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -61,26 +44,22 @@ class HomeViewController: UIViewController {
         self.tableView.snp.makeConstraints{ (make) -> Void in
             make.top.right.bottom.left.equalTo(self.view);
         }
-        self.tableView.mj_header = V2RefreshHeader(refreshingBlock: {[weak self] () -> Void in
-            self?.refresh()
-        })
-        self.refreshPage()
-        
-        let footer = V2RefreshFooter(refreshingBlock: {[weak self] () -> Void in
-            self?.getNextPage()
-        })
-        footer?.centerOffset = -4
-        self.tableView.mj_footer = footer
-        
+        tableView.scrollUp = refresh
+        tableView.scrollDown = getNextPage
+        refreshPage()
         self.thmemChangedHandler = {[weak self] (style) -> Void in
             self?.tableView.backgroundColor = V2EXColor.colors.v2_backgroundColor
         }
+    }
+    func refreshPage(){
+        V2EXSettings.sharedInstance[kHomeTab] = tab
+        self.tableView.beginScrollUp()
     }
     func setupNavigationItem(){
         let leftButton = NotificationMenuButton()
         leftButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
-        leftButton.addTarget(self, action: #selector(HomeViewController.leftClick), for: .touchUpInside)
+        leftButton.addTarget(self, action: #selector(leftClick), for: .touchUpInside)
         
         
         let rightButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
@@ -88,36 +67,22 @@ class HomeViewController: UIViewController {
         rightButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -15)
         rightButton.setImage(UIImage.imageUsedTemplateMode("ic_more_horiz_36pt")!.withRenderingMode(.alwaysTemplate), for: UIControlState())
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
-        rightButton.addTarget(self, action: #selector(HomeViewController.rightClick), for: .touchUpInside)
+        rightButton.addTarget(self, action: #selector(rightClick), for: .touchUpInside)
 
     }
     func leftClick(){
-        V2Client.sharedInstance.drawerController?.toggleLeftDrawerSide(animated: true, completion: nil)
+        Msg.send("openLeftDrawer")
     }
     func rightClick(){
-        V2Client.sharedInstance.drawerController?.toggleRightDrawerSide(animated: true, completion: nil)
+        Msg.send("openRightDrawer")
     }
-    
-    func refreshPage(){
-        self.tableView.mj_header.beginRefreshing();
-        V2EXSettings.sharedInstance[kHomeTab] = tab
-    }
-    func refresh(){
-        
-        //如果有上拉加载更多 正在执行，则取消它
-        if self.tableView.mj_footer.isRefreshing() {
-            self.tableView.mj_footer.endRefreshing()
-        }
-        
+    func refresh(_ cb : @escaping  Callback){
         //根据 tab name 获取帖子列表
         TopicListModel.getTopicList(tab){
             (response) -> Void in
-            
             if response.success {
-                
-                self.topicList = response.value
+                self.tableView.topicList = response.value
                 self.tableView.reloadData()
-                
                 //判断标签是否能加载下一页, 不能就提示下
                 let refreshFooter = self.tableView.mj_footer as! V2RefreshFooter
                 if self.tab == nil || self.tab == "all" {
@@ -128,17 +93,16 @@ class HomeViewController: UIViewController {
                     refreshFooter.noMoreDataStateString = "没更多帖子了,只有【\(NSLocalizedString("all"))】标签能翻页"
                     refreshFooter.endRefreshingWithNoMoreData()
                 }
-                
                 //重置page
                 self.currentPage = 0
                 
             }
-            self.tableView.mj_header.endRefreshing()
+            cb()
         }
     }
     
-    func getNextPage(){
-        if let count = self.topicList?.count , count <= 0{
+    func getNextPage(_ cb : @escaping Callback){
+        if let count = self.tableView.topicList?.count , count <= 0{
             self.tableView.mj_footer.endRefreshing()
             return;
         }
@@ -149,7 +113,7 @@ class HomeViewController: UIViewController {
             
             if response.success {
                 if let count = response.value?.count, count > 0 {
-                    self.topicList? += response.value!
+                    self.tableView.topicList? += response.value!
                     self.tableView.reloadData()
                 }
             }
@@ -157,7 +121,7 @@ class HomeViewController: UIViewController {
                 //加载失败，重置page
                 self.currentPage -= 1
             }
-            self.tableView.mj_footer.endRefreshing()
+            cb()
         }
     }
     
@@ -177,76 +141,151 @@ class HomeViewController: UIViewController {
 
 
 //MARK: - TableViewDataSource
-extension HomeViewController:UITableViewDataSource,UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+class  Table : TableBase {
+    var topicList:Array<TopicListModel>?
+    override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame:frame,style:style)
+        separatorStyle = UITableViewCellSeparatorStyle.none;
+        regClass(self, cell: HomeTopicListTableViewCell.self);
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder:aDecoder)
+    }
+    override func sectionCount() -> Int {
+        return 1
+    }
+    override func rowCount(_ section: Int) -> Int {
         if let list = self.topicList {
             return list.count;
         }
         return 0;
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         let item = self.topicList![indexPath.row]
         let titleHeight = item.topicTitleLayout?.textBoundingRect.size.height ?? 0
-        //          上间隔   头像高度  头像下间隔       标题高度    标题下间隔 cell间隔
-        let height = 12    +  35     +  12      + titleHeight   + 12      + 8
-
+        let height = fixHeight ()  + titleHeight
         return height
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = getCell(tableView, cell: HomeTopicListTableViewCell.self, indexPath: indexPath);
+    override  func cellAt(_ indexPath: IndexPath) -> UITableViewCell{
+        let cell = getCell(self, cell: HomeTopicListTableViewCell.self, indexPath: indexPath);
         cell.bind(self.topicList![indexPath.row]);
         return cell;
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func didSelectRowAt(_ indexPath: IndexPath) {
         let item = self.topicList![indexPath.row]
-        
         if let id = item.topicId {
             let a = {[weak self] (topicId : String)->Void in
-                self?.perform(#selector(ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
+                self?.perform(#selector(self?.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
             }
-//            NotificationCenter.default.post(name: Notification.Name("dive2"), object: [id,a])
             Msg.send("open topic detail",[id,a])
-            tableView .deselectRow(at: indexPath, animated: true);
-//            let topicDetailController = TopicDetailViewController();
-//            topicDetailController.topicId = id ;
-//            topicDetailController.ignoreTopicHandler = {[weak self] (topicId) in
-//                self?.perform(#selector(HomeViewController.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
-//            }
-//            _ = [id,{[weak self] (topicId) in
-//                self?.perform(#selector(HomeViewController.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
-//                }] as [Any]
-//            self.navigationController?.pushViewController(topicDetailController, animated: true)
-//            tableView .deselectRow(at: indexPath, animated: true);
+            deselectRow(at: indexPath, animated: true);
         }
     }
-    
+    func fixHeight()-> CGFloat{
+        let height = 12    +  35     +  12    +  12      + 8
+        return CGFloat(height)
+        //          上间隔   头像高度  头像下间隔     标题下间隔 cell间隔
+    }
+    // 当用户点击忽略按钮（在TopicDetailController内），执行它
     func ignoreTopicHandler(_ topicId:String) {
         let index = self.topicList?.index(where: {$0.topicId == topicId })
         if index == nil {
             return
         }
-        
         //看当前忽略的cell 是否在可视列表里
-        let indexPaths = self.tableView.indexPathsForVisibleRows
+        let indexPaths = indexPathsForVisibleRows
         let visibleIndex =  indexPaths?.index(where: {($0 as IndexPath).row == index})
         
         self.topicList?.remove(at: index!)
         //如果不在可视列表，则直接reloadData 就可以
         if visibleIndex == nil {
-            self.tableView.reloadData()
+            reloadData()
             return
         }
-        
         //如果在可视列表，则动画删除它
-        self.tableView.beginUpdates()
-        
-        self.tableView.deleteRows(at: [IndexPath(row: index!, section: 0)], with: .fade)
-        
-        self.tableView.endUpdates()
-        
+        beginUpdates()
+        deleteRows(at: [IndexPath(row: index!, section: 0)], with: .fade)
+        endUpdates()
+    }
+    
+}
+class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
+    // 子类接口区
+    func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+        return 0.0
+    }
+    func sectionCount() -> Int {
+        return 1
+    }
+    func rowCount(_ section: Int) -> Int {
+        return 0
+    }
+    func cellAt(_ indexPath: IndexPath) -> UITableViewCell{
+        return UITableViewCell()
+    }
+    func didSelectRowAt(_ indexPath: IndexPath) {
+    }
+    // 实现区
+    var scrollUp : ((_ cb : @escaping Callback)-> Void)?
+    var scrollDown : ((_ cb : @escaping Callback)-> Void)?
+    static fileprivate var _tableView :Table!
+    class var shared: Table {
+        get{
+            if(_tableView != nil){
+                return _tableView!;
+            }
+            _tableView = Table();
+            return _tableView!;
+        }
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return sectionCount()
+    }
+    func beginScrollUp(){
+        mj_header.beginRefreshing();
+    }
+    override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame:frame,style:style)
+        self.dataSource = self
+        self.delegate = self
+        mj_header = V2RefreshHeader(refreshingBlock: {[weak self] () -> Void in
+            if let s = self?.scrollUp{
+                //如果有上拉加载更多 正在执行，则取消它
+                if (self?.mj_footer.isRefreshing())! {
+                    self?.mj_footer.endRefreshing()
+                }
+                s(){moreData in
+                  self?.mj_header.endRefreshing()
+                }
+            }
+        })
+        let footer = V2RefreshFooter(refreshingBlock: {[weak self] () -> Void in
+            if let s = self?.scrollDown{
+                s(){moreData in
+                    self?.mj_footer.endRefreshing()
+                }
 
+            }
+        })
+        footer?.centerOffset = -4
+        mj_footer = footer
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder:aDecoder)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return rowCount(section)
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return rowHeight(indexPath)
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return cellAt(indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        didSelectRowAt(indexPath)
     }
 }
 //NotificationCenter.default.post(name: Notification.Name("dive2"), object: [id,a])
@@ -255,7 +294,14 @@ class Msg {
     class func send( _ name : String, _ object : Any?){
         NotificationCenter.default.post(name: Notification.Name(name), object: object)
     }
+    class func send( _ name : String){
+        send(name,nil)
+    }
+
 //    class func observe(_ owner : NSObject , responser : Any? , _ msg : String, _ object : Any?){
 //        NotificationCenter.default.addObserver(owner, selector: #selector(responser), name: Notification.Name(msg), object: nil)
 //    }
 }
+
+typealias Callback =  (()-> Void)
+

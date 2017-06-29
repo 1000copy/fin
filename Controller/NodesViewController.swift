@@ -82,8 +82,9 @@ extension NodesViewController : UICollectionViewDelegateFlowLayout {
 extension NodesViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath){
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
-        let controller = NodeTopicListViewController()
-        controller.node = nodeModel
-        V2Client.sharedInstance.centerNavigation?.pushViewController(controller, animated: true)
+        Msg.send("openNodeTopicList",[nodeModel.nodeId ,nodeModel.nodeName])
+//        let controller = NodeTopicListViewController()
+//        controller.node = nodeModel
+//        V2Client.sharedInstance.centerNavigation?.pushViewController(controller, animated: true)
     }
 }

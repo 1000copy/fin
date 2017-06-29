@@ -22,9 +22,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.centerNav?.pushViewController(topicDetailController, animated: true)
         
     }
+    func openNodeTopicList(_ obj : NSNotification){
+                let node = NodeModel()
+                let arr = obj.object as! NSArray
+                node.nodeId = arr[0] as? String
+                node.nodeName = arr[1] as? String
+                let controller = NodeTopicListViewController()
+                controller.node = node
+                self.centerNav?.pushViewController(controller, animated: true)
+    }
+    
+    func openLeftDrawer(_ obj : NSNotification){
+        V2Client.sharedInstance.drawerController?.toggleLeftDrawerSide(animated: true, completion: nil)
+    }
+    func openRightDrawer(_ obj : NSNotification){
+        V2Client.sharedInstance.drawerController?.toggleRightDrawerSide(animated: true, completion: nil)
+    }
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         URLProtocol.registerClass(WebViewImageProtocol.self)
-        NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail)), name: Notification.Name("open topic detail"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail), name: Notification.Name("open topic detail"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openLeftDrawer), name: Notification.Name("openLeftDrawer"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openRightDrawer), name: Notification.Name("openRightDrawer"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openNodeTopicList), name: Notification.Name("openNodeTopicList"), object: nil)
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
         self.window?.makeKeyAndVisible();
