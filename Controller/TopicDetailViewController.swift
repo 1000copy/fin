@@ -192,6 +192,35 @@ class Table1:  TableBase,UIActionSheetDelegate{
     override func sectionCount() -> Int {
         return 2
     }
+    func selectedRowWithActionSheet(_ indexPath:IndexPath){
+        self.deselectRow(at: indexPath, animated: true);
+        
+        //这段代码也可以执行，但是当点击时，会有个0.3秒的dismiss动画。
+        //然后再弹出回复页面或者查看对话页面。感觉太长了，暂时不用
+//                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+//                let replyAction = UIAlertAction(title: "回复", style: .Default) { _ in
+//                    self.replyComment(indexPath.row)
+//                }
+//                let thankAction = UIAlertAction(title: "感谢", style: .Default) { _ in
+//                    self.thankComment(indexPath.row)
+//                }
+//                let relevantCommentsAction = UIAlertAction(title: "查看对话", style: .Default) { _ in
+//                    self.relevantComment(indexPath.row)
+//                }
+//                let cancelAction = UIAlertAction(title: "取消", style: .Cancel, handler: nil)
+//                //将action全加进actionSheet
+//                [replyAction,thankAction,relevantCommentsAction,cancelAction].forEach { (action) -> () in
+//                    actionSheet.addAction(action)
+//                }
+//                self.navigationController?.presentViewController(actionSheet, animated: true, completion: nil)
+        
+        //这段代码在iOS8.3中弃用，但是现在还可以使用，先用着吧
+        let actionSheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "取消", destructiveButtonTitle: nil, otherButtonTitles: "回复", "感谢" ,"查看对话")
+        actionSheet.tag = indexPath.row
+        actionSheet.show(in: self)
+        
+    }
+
     override func rowCount(_ section: Int) -> Int {
         let _section = TopicDetailTableViewSection(rawValue: section)!
         switch _section {
