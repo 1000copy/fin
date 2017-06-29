@@ -203,13 +203,22 @@ extension HomeViewController:UITableViewDataSource,UITableViewDelegate {
         let item = self.topicList![indexPath.row]
         
         if let id = item.topicId {
-            let topicDetailController = TopicDetailViewController();
-            topicDetailController.topicId = id ;
-            topicDetailController.ignoreTopicHandler = {[weak self] (topicId) in
-                self?.perform(#selector(HomeViewController.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
+            let a = {[weak self] (topicId : String)->Void in
+                self?.perform(#selector(ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
             }
-            self.navigationController?.pushViewController(topicDetailController, animated: true)
+//            NotificationCenter.default.post(name: Notification.Name("dive2"), object: [id,a])
+            Msg.send("open topic detail",[id,a])
             tableView .deselectRow(at: indexPath, animated: true);
+//            let topicDetailController = TopicDetailViewController();
+//            topicDetailController.topicId = id ;
+//            topicDetailController.ignoreTopicHandler = {[weak self] (topicId) in
+//                self?.perform(#selector(HomeViewController.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
+//            }
+//            _ = [id,{[weak self] (topicId) in
+//                self?.perform(#selector(HomeViewController.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
+//                }] as [Any]
+//            self.navigationController?.pushViewController(topicDetailController, animated: true)
+//            tableView .deselectRow(at: indexPath, animated: true);
         }
     }
     
@@ -239,4 +248,14 @@ extension HomeViewController:UITableViewDataSource,UITableViewDelegate {
         
 
     }
+}
+//NotificationCenter.default.post(name: Notification.Name("dive2"), object: [id,a])
+//NotificationCenter.default.addObserver(self, selector: #selector(dive2), name: Notification.Name("open topic detail"), object: nil)
+class Msg {
+    class func send( _ name : String, _ object : Any?){
+        NotificationCenter.default.post(name: Notification.Name(name), object: object)
+    }
+//    class func observe(_ owner : NSObject , responser : Any? , _ msg : String, _ object : Any?){
+//        NotificationCenter.default.addObserver(owner, selector: #selector(responser), name: Notification.Name(msg), object: nil)
+//    }
 }

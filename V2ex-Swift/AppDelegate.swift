@@ -10,20 +10,29 @@ import SVProgressHUD
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    var centerNav : V2EXNavigationController?
+    func openTopicDetail(_ obj : NSNotification){
+        print(obj)
+        let arr = obj.object as! NSArray
+        let id = arr[0] as! String
+        let c = arr[1] as! ((String) -> Void)
+        let topicDetailController = TopicDetailViewController();
+        topicDetailController.topicId = id ;
+        topicDetailController.ignoreTopicHandler = c
+        self.centerNav?.pushViewController(topicDetailController, animated: true)
+        
+    }
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
         URLProtocol.registerClass(WebViewImageProtocol.self)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail)), name: Notification.Name("open topic detail"), object: nil)
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
         self.window?.makeKeyAndVisible();
 
-        let centerNav = V2EXNavigationController(rootViewController: HomeViewController());
+        centerNav = V2EXNavigationController(rootViewController: HomeViewController());
         let leftViewController = LeftViewController();
         let rightViewController = RightViewController();
-        let drawerController = DrawerController(centerViewController: centerNav, leftDrawerViewController: leftViewController, rightDrawerViewController: rightViewController);
+        let drawerController = DrawerController(centerViewController: centerNav!, leftDrawerViewController: leftViewController, rightDrawerViewController: rightViewController);
         
         self.window?.thmemChangedHandler = {[weak self] (style) -> Void in
             self?.window?.backgroundColor = V2EXColor.colors.v2_backgroundColor;
@@ -38,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        self.window?.rootViewController = MemberViewController()
 
         V2Client.sharedInstance.drawerController = drawerController
-        V2Client.sharedInstance.centerViewController = centerNav.viewControllers[0] as? HomeViewController
+        V2Client.sharedInstance.centerViewController = centerNav?.viewControllers[0] as? HomeViewController
         V2Client.sharedInstance.centerNavigation = centerNav
         #if DEBUG
             let fpsLabel = V2FPSLabel(frame: CGRect(x: 15, y: SCREEN_HEIGHT-40,width: 55,height: 20));
