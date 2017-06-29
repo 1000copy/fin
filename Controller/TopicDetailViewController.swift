@@ -312,7 +312,7 @@ class Table1:  TableBase,UIActionSheetDelegate{
     
     override func didSelectRowAt(_  indexPath: IndexPath) {
         if indexPath.section == 1 {
-//            self.selectedRowWithActionSheet(indexPath)
+            self.selectedRowWithActionSheet(indexPath)
         }
     }
     
