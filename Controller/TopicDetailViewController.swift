@@ -24,6 +24,7 @@ class TopicDetailViewController: BaseViewController{
                 return _tableView!;
             }
             _tableView = Table1();
+            _tableView.viewControler = self
 //            _tableView.model = model
             _tableView.tableView = _tableView
 //            _tableView.commentsArray = commentsArray
@@ -181,8 +182,66 @@ enum TopicDetailTableViewSection: Int {
 enum TopicDetailHeaderComponent: Int {
     case title = 0,  webViewContent, other
 }
+extension Table1: UIActionSheetDelegate {
+    
+    func selectedRowWithActionSheet(_ indexPath:IndexPath){
+        self.deselectRow(at: indexPath, animated: true);
+        let actionSheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "取消", destructiveButtonTitle: nil, otherButtonTitles: "回复", "感谢" ,"查看对话")
+        actionSheet.tag = indexPath.row
+        actionSheet.show(in: self)
+    }
+    func actionSheet(_ actionSheet: UIActionSheet, clickedButtonAt buttonIndex: Int) {
+        if buttonIndex > 0 && buttonIndex <= 3 {
+            self.perform([#selector(replyComment(_:)),#selector(thankComment(_:)),#selector(relevantComment(_:))][buttonIndex - 1], with: actionSheet.tag)
+        }
+    }
+    func replyComment(_ row:NSNumber){
+        V2User.sharedInstance.ensureLoginWithHandler {
+            let item = self.commentsArray[row as Int]
+            Msg.send("replyComment", [viewControler as Any,item.userName as Any,self.model!])
+        }
+    }
+    func thankComment(_ row:NSNumber){
+        guard V2User.sharedInstance.isLogin else {
+            V2Inform("请先登录")
+            return;
+        }
+        let item = self.commentsArray[row as Int]
+        if item.replyId == nil {
+            V2Error("回复replyId为空")
+            return;
+        }
+        if self.model?.token == nil {
+            V2Error("帖子token为空")
+            return;
+        }
+        item.favorites += 1
+        self.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
+        
+        TopicCommentModel.replyThankWithReplyId(item.replyId!, token: self.model!.token!) {
+            [weak item, weak self](response) in
+            if response.success {
+            }
+            else{
+                V2Error("感谢失败了")
+                //失败后 取消增加的数量
+                item?.favorites -= 1
+                self?.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
+            }
+        }
+    }
+    func relevantComment(_ row:NSNumber){
+        let item = self.commentsArray[row as Int]
+        let relevantComments = TopicCommentModel.getRelevantCommentsInArray(self.commentsArray, firstComment: item)
+        if relevantComments.count <= 0 {
+            return;
+        }
+        Msg.send("relevantComment", [viewControler as Any,relevantComments])
+    }
+}
 
-class Table1:  TableBase,UIActionSheetDelegate{
+class Table1:  TableBase{
+    var viewControler : UIViewController?
     var topicId = "0"
     var currentPage = 1
     var tableView : TableBase?
@@ -192,35 +251,7 @@ class Table1:  TableBase,UIActionSheetDelegate{
     override func sectionCount() -> Int {
         return 2
     }
-    func selectedRowWithActionSheet(_ indexPath:IndexPath){
-        self.deselectRow(at: indexPath, animated: true);
-        
-        //这段代码也可以执行，但是当点击时，会有个0.3秒的dismiss动画。
-        //然后再弹出回复页面或者查看对话页面。感觉太长了，暂时不用
-//                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-//                let replyAction = UIAlertAction(title: "回复", style: .Default) { _ in
-//                    self.replyComment(indexPath.row)
-//                }
-//                let thankAction = UIAlertAction(title: "感谢", style: .Default) { _ in
-//                    self.thankComment(indexPath.row)
-//                }
-//                let relevantCommentsAction = UIAlertAction(title: "查看对话", style: .Default) { _ in
-//                    self.relevantComment(indexPath.row)
-//                }
-//                let cancelAction = UIAlertAction(title: "取消", style: .Cancel, handler: nil)
-//                //将action全加进actionSheet
-//                [replyAction,thankAction,relevantCommentsAction,cancelAction].forEach { (action) -> () in
-//                    actionSheet.addAction(action)
-//                }
-//                self.navigationController?.presentViewController(actionSheet, animated: true, completion: nil)
-        
-        //这段代码在iOS8.3中弃用，但是现在还可以使用，先用着吧
-        let actionSheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "取消", destructiveButtonTitle: nil, otherButtonTitles: "回复", "感谢" ,"查看对话")
-        actionSheet.tag = indexPath.row
-        actionSheet.show(in: self)
-        
-    }
-
+   
     override func rowCount(_ section: Int) -> Int {
         let _section = TopicDetailTableViewSection(rawValue: section)!
         switch _section {
@@ -444,12 +475,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
     
     func reply(){
         self.activityView?.dismiss()
-        V2User.sharedInstance.ensureLoginWithHandler {
-            let replyViewController = ReplyingViewController()
-            replyViewController.topicModel = self._tableView.model!
-            let nav = V2EXNavigationController(rootViewController:replyViewController)
-            self.navigationController?.present(nav, animated: true, completion:nil)
-        }
+        Msg.send("replyTopic", [self._tableView.model!,self.navigationController])
     }
     
 }

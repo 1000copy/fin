@@ -262,7 +262,6 @@ extension TopicCommentModel {
                 break;
             }
         }
-        
         return relevantComments
     }
     

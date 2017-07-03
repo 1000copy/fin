@@ -22,6 +22,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.centerNav?.pushViewController(topicDetailController, animated: true)
         
     }
+    func replyComment(_ obj : NSNotification) {
+        let arr = obj.object as! NSArray
+        // viewControler,username ,model
+        let viewControler = arr[0] as! UIViewController
+        let username = arr[1] as! String
+        let model = arr[2] as! TopicDetailModel
+        let replyViewController = ReplyingViewController()
+        replyViewController.atSomeone = "@" + username + " "
+        replyViewController.topicModel = model
+        let nav = V2EXNavigationController(rootViewController:replyViewController)
+        viewControler.navigationController?.present(nav, animated: true, completion:nil)
+    }
     func openNodeTopicList(_ obj : NSNotification){
                 let node = NodeModel()
                 let arr = obj.object as! NSArray
@@ -30,6 +42,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let controller = NodeTopicListViewController()
                 controller.node = node
                 self.centerNav?.pushViewController(controller, animated: true)
+    }
+    func relevantComment(_ obj : NSNotification){
+        //UIViewController ,UIViewController, [TopicCommentModel]
+        let arr = obj.object as! NSArray
+        let v1 = arr[0] as! UIViewController
+        let tc = arr[1] as! [TopicCommentModel]
+        let v2 = RelevantCommentsNav(comments: tc)
+        v1.present(v2, animated: true, completion: nil)
+    }
+    func replyTopic(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let model = arr[0] as! TopicDetailModel
+        let n = arr[1] as! UINavigationController
+        V2User.sharedInstance.ensureLoginWithHandler {
+            let replyViewController = ReplyingViewController()
+            replyViewController.topicModel = model
+            let nav = V2EXNavigationController(rootViewController:replyViewController)
+            n.present(nav, animated: true, completion:nil)
+        }
     }
     
     func openLeftDrawer(_ obj : NSNotification){
@@ -44,6 +75,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(openLeftDrawer), name: Notification.Name("openLeftDrawer"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openRightDrawer), name: Notification.Name("openRightDrawer"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openNodeTopicList), name: Notification.Name("openNodeTopicList"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(relevantComment), name: Notification.Name("relevantComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(replyComment), name: Notification.Name("replyComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(replyTopic), name: Notification.Name("replyTopic"), object: nil)
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
         self.window?.makeKeyAndVisible();
