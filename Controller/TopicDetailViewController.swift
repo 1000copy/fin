@@ -172,53 +172,52 @@ class TopicDetailViewController: BaseViewController{
     }
 }
 
-
-
-//MARK: - UITableView DataSource
-enum TopicDetailTableViewSection: Int {
-    case header = 0, comment, other
-}
-
-enum TopicDetailHeaderComponent: Int {
-    case title = 0,  webViewContent, other
-}
-extension Table1: UIActionSheetDelegate {
-    
-    func selectedRowWithActionSheet(_ indexPath:IndexPath){
-        self.deselectRow(at: indexPath, animated: true);
-        let actionSheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "取消", destructiveButtonTitle: nil, otherButtonTitles: "回复", "感谢" ,"查看对话")
-        actionSheet.tag = indexPath.row
-        actionSheet.show(in: self)
+class Sheet : UIView,UIActionSheetDelegate {
+    var table : Table1!
+    var viewControler : UIViewController?
+    func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :Table1 ) {
+        self.table = table
+        self.viewControler = vc
+        let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
+        sheet.addAction(UIAlertAction(title:"回复", style:UIAlertActionStyle.default, handler:{ action in
+            self.replyComment(indexPath.row)
+        }))
+        sheet.addAction(UIAlertAction(title:"感谢", style:UIAlertActionStyle.default, handler:{ action in
+            self.thankComment(indexPath.row)
+        }))
+        sheet.addAction(UIAlertAction(title:"查看对话", style:UIAlertActionStyle.default, handler:{ action in
+            self.relevantComment(indexPath.row)
+        }))
+        sheet.addAction(UIAlertAction(title:"取消", style:UIAlertActionStyle.cancel, handler:nil))
+        vc.present(sheet, animated:true, completion:nil)
     }
-    func actionSheet(_ actionSheet: UIActionSheet, clickedButtonAt buttonIndex: Int) {
-        if buttonIndex > 0 && buttonIndex <= 3 {
-            self.perform([#selector(replyComment(_:)),#selector(thankComment(_:)),#selector(relevantComment(_:))][buttonIndex - 1], with: actionSheet.tag)
-        }
+    func selectedRowWithActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table : Table1){
+        ActionSheet(indexPath,vc,table)
     }
-    func replyComment(_ row:NSNumber){
+    func replyComment(_ row:Int){
         V2User.sharedInstance.ensureLoginWithHandler {
-            let item = self.commentsArray[row as Int]
-            Msg.send("replyComment", [viewControler as Any,item.userName as Any,self.model!])
+            let item = table.commentsArray[row as Int]
+            Msg.send("replyComment", [viewControler as Any,item.userName as Any,table.model!])
         }
     }
-    func thankComment(_ row:NSNumber){
+    func thankComment(_ row:Int){
         guard V2User.sharedInstance.isLogin else {
             V2Inform("请先登录")
             return;
         }
-        let item = self.commentsArray[row as Int]
+        let item = table.commentsArray[row as Int]
         if item.replyId == nil {
             V2Error("回复replyId为空")
             return;
         }
-        if self.model?.token == nil {
+        if table.model?.token == nil {
             V2Error("帖子token为空")
             return;
         }
         item.favorites += 1
-        self.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
+        table.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
         
-        TopicCommentModel.replyThankWithReplyId(item.replyId!, token: self.model!.token!) {
+        TopicCommentModel.replyThankWithReplyId(item.replyId!, token: table.model!.token!) {
             [weak item, weak self](response) in
             if response.success {
             }
@@ -226,18 +225,27 @@ extension Table1: UIActionSheetDelegate {
                 V2Error("感谢失败了")
                 //失败后 取消增加的数量
                 item?.favorites -= 1
-                self?.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
+                self!.table?.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
             }
         }
     }
-    func relevantComment(_ row:NSNumber){
-        let item = self.commentsArray[row as Int]
-        let relevantComments = TopicCommentModel.getRelevantCommentsInArray(self.commentsArray, firstComment: item)
+    func relevantComment(_ row:Int){
+        let item = table.commentsArray[row as Int]
+        let relevantComments = TopicCommentModel.getRelevantCommentsInArray(table.commentsArray, firstComment: item)
         if relevantComments.count <= 0 {
             return;
         }
         Msg.send("relevantComment", [viewControler as Any,relevantComments])
     }
+}
+
+
+enum TopicDetailTableViewSection: Int {
+    case header = 0, comment, other
+}
+
+enum TopicDetailHeaderComponent: Int {
+    case title = 0,  webViewContent, other
 }
 
 class Table1:  TableBase{
@@ -372,7 +380,10 @@ class Table1:  TableBase{
     
     override func didSelectRowAt(_  indexPath: IndexPath) {
         if indexPath.section == 1 {
-            self.selectedRowWithActionSheet(indexPath)
+            self.deselectRow(at: indexPath, animated: true);
+            let s = Sheet()
+            s.selectedRowWithActionSheet(indexPath,viewControler!,self)
+//            self.selectedRowWithActionSheet(indexPath,viewControler!,)
         }
     }
     

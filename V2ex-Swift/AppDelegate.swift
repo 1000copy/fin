@@ -98,7 +98,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         drawerController.closeDrawerGestureModeMask=CloseDrawerGestureMode.all;
         self.window?.rootViewController = drawerController;
 //        self.window?.rootViewController = MemberViewController()
-
+//        self.window?.rootViewController = Page()
         V2Client.sharedInstance.drawerController = drawerController
         V2Client.sharedInstance.centerViewController = centerNav?.viewControllers[0] as? HomeViewController
         V2Client.sharedInstance.centerNavigation = centerNav
@@ -120,5 +120,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Fabric.with([Crashlytics.self])
         #endif
         return true
+    }
+}
+//取消", destructiveButtonTitle: nil, otherButtonTitles: "回复", "感谢" ,"查看对话
+class Page:UIViewController{
+    override func viewDidAppear(_ animated: Bool) {
+        ActionSheet()
+    }
+    func ActionSheet() {
+        let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
+        sheet.addAction(UIAlertAction(title:"回复", style:UIAlertActionStyle.default, handler:{ action in
+            print ("Do something 1")
+        }))
+        sheet.addAction(UIAlertAction(title:"感谢", style:UIAlertActionStyle.default, handler:{ action in
+            print ("Do something 2")
+        }))
+        sheet.addAction(UIAlertAction(title:"查看对话", style:UIAlertActionStyle.default, handler:{ action in
+            print ("Do something 2")
+        }))
+        sheet.addAction(UIAlertAction(title:"取消", style:UIAlertActionStyle.cancel, handler:nil))
+        self.present(sheet, animated:true, completion:nil)
     }
 }
