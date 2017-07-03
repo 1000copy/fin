@@ -20,7 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         topicDetailController.topicId = id ;
         topicDetailController.ignoreTopicHandler = c
         self.centerNav?.pushViewController(topicDetailController, animated: true)
-        
+    }
+    func openTopicDetail1(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let id = arr[0] as! String
+        let topicDetailController = TopicDetailViewController();
+        topicDetailController.topicId = id ;
+        self.centerNav?.pushViewController(topicDetailController, animated: true)
     }
     func replyComment(_ obj : NSNotification) {
         let arr = obj.object as! NSArray
@@ -72,6 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         URLProtocol.registerClass(WebViewImageProtocol.self)
         NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail), name: Notification.Name("open topic detail"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail1), name: Notification.Name("openTopicDetail1"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLeftDrawer), name: Notification.Name("openLeftDrawer"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openRightDrawer), name: Notification.Name("openRightDrawer"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openNodeTopicList), name: Notification.Name("openNodeTopicList"), object: nil)

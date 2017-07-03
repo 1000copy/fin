@@ -35,7 +35,7 @@ class TopicDetailViewController: BaseViewController{
             regClass(_tableView, cell: TopicDetailWebViewContentCell.self)
             regClass(_tableView, cell: TopicDetailCommentCell.self)
             regClass(_tableView, cell: BaseDetailTableViewCell.self)
-
+            
             
             return _tableView!;
             
@@ -113,10 +113,17 @@ class TopicDetailViewController: BaseViewController{
      */
     func rightClick(){
         if  self._tableView.model != nil {
+//            let activityView = V2ActivityViewController()
+//            let ds = ActivityViewDS()
+//            ds.topicDetailViewController = self
+//            activityView.dataSource = ds
+//            self.navigationController!.present(activityView, animated: true, completion: nil)
+//            self.activityView = activityView
             let activityView = V2ActivityViewController()
             activityView.dataSource = self
             self.navigationController!.present(activityView, animated: true, completion: nil)
             self.activityView = activityView
+            
         }
     }
     /**
@@ -383,7 +390,6 @@ class Table1:  TableBase{
             self.deselectRow(at: indexPath, animated: true);
             let s = Sheet()
             s.selectedRowWithActionSheet(indexPath,viewControler!,self)
-//            self.selectedRowWithActionSheet(indexPath,viewControler!,)
         }
     }
     
@@ -396,6 +402,7 @@ class Table1:  TableBase{
 enum V2ActivityViewTopicDetailAction : Int {
     case block = 0, favorite, grade, explore
 }
+//class ActivityViewDS : UIViewController,V2ActivityViewDataSource{
 
 extension TopicDetailViewController: V2ActivityViewDataSource {
     func V2ActivityView(_ activityView: V2ActivityViewController, numberOfCellsInSection section: Int) -> Int {
@@ -425,7 +432,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
             make.top.right.bottom.left.equalTo(view)
         }
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TopicDetailViewController.reply)))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reply)))
         
         return view
     }
@@ -440,15 +447,16 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
             V2Inform("请先登录")
             return;
         }
+        let topicDetailViewController = self
         switch action {
         case .block:
             V2BeginLoading()
-            if let topicId = self._tableView.model?.topicId  {
+            if let topicId = topicDetailViewController._tableView.model?.topicId  {
                 TopicDetailModel.ignoreTopicWithTopicId(topicId, completionHandler: {[weak self] (response) -> Void in
                     if response.success {
                         V2Success("忽略成功")
-                        self?.navigationController?.popViewController(animated: true)
-                        self?.ignoreTopicHandler?(topicId)
+                        topicDetailViewController.navigationController?.popViewController(animated: true)
+                        topicDetailViewController.ignoreTopicHandler?(topicId)
                     }
                     else{
                         V2Error("忽略失败")
@@ -457,7 +465,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
             }
         case .favorite:
             V2BeginLoading()
-            if let topicId = self._tableView.model?.topicId ,let token = self._tableView.model?.token {
+            if let topicId = topicDetailViewController._tableView.model?.topicId ,let token = topicDetailViewController._tableView.model?.token {
                 TopicDetailModel.favoriteTopicWithTopicId(topicId, token: token, completionHandler: { (response) -> Void in
                     if response.success {
                         V2Success("收藏成功")
@@ -469,7 +477,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
             }
         case .grade:
             V2BeginLoading()
-            if let topicId = self._tableView.model?.topicId ,let token = self._tableView.model?.token {
+            if let topicId = topicDetailViewController._tableView.model?.topicId ,let token = topicDetailViewController._tableView.model?.token {
                 TopicDetailModel.topicThankWithTopicId(topicId, token: token, completionHandler: { (response) -> Void in
                     if response.success {
                         V2Success("成功送了一波铜币")
@@ -480,13 +488,14 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
                 })
             }
         case .explore:
-            UIApplication.shared.openURL(URL(string: V2EXURL + "t/" + self._tableView.model!.topicId!)!)
+            UIApplication.shared.openURL(URL(string: V2EXURL + "t/" + topicDetailViewController._tableView.model!.topicId!)!)
         }
     }
     
     func reply(){
-        self.activityView?.dismiss()
-        Msg.send("replyTopic", [self._tableView.model!,self.navigationController])
+        let topicDetailViewController = self
+        topicDetailViewController.activityView?.dismiss()
+        Msg.send("replyTopic", [topicDetailViewController._tableView.model!,topicDetailViewController.navigationController])
     }
     
 }

@@ -120,11 +120,8 @@ class FavoritesViewController: BaseViewController,UITableViewDataSource,UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = self.topicList![indexPath.row]
-        
         if let id = item.topicId {
-            let topicDetailController = TopicDetailViewController();
-            topicDetailController.topicId = id ;
-            self.navigationController?.pushViewController(topicDetailController, animated: true)
+            Msg.send("openTopicDetail1",[id])
             tableView .deselectRow(at: indexPath, animated: true);
         }
     }
