@@ -1,22 +1,9 @@
-//
-//  TopicDetailViewController.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 1/16/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
-
 import UIKit
-
 class TopicDetailViewController: BaseViewController{
     
     var topicId = "0"
     var currentPage = 1
-//
-//    fileprivate var model:TopicDetailModel?
-//    fileprivate var commentsArray:[TopicCommentModel] = []
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?
-    
     fileprivate var _tableView :Table1!
     fileprivate var tableView: Table1 {
         get{
@@ -179,10 +166,10 @@ class TopicDetailViewController: BaseViewController{
     }
 }
 
-class Sheet : UIView,UIActionSheetDelegate {
+fileprivate class Sheet : UIView,UIActionSheetDelegate {
     var table : Table1!
     var viewControler : UIViewController?
-    func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :Table1 ) {
+    fileprivate func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :Table1 ) {
         self.table = table
         self.viewControler = vc
         let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
@@ -255,7 +242,7 @@ enum TopicDetailHeaderComponent: Int {
     case title = 0,  webViewContent, other
 }
 
-class Table1:  TableBase{
+fileprivate class Table1:  TableBase{
     var viewControler : UIViewController?
     var topicId = "0"
     var currentPage = 1

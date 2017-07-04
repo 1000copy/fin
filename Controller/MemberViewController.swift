@@ -17,7 +17,7 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
     var followButton:UIButton?
     var model:MemberModel?
     
-    var backgroundImageView:UIImageView?
+//    var backgroundImageView:UIImageView?
     fileprivate var _tableView :UITableView!
     fileprivate var tableView: UITableView {
         get{
@@ -50,13 +50,13 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
         super.viewDidLoad()
         self.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
         
-        self.backgroundImageView = UIImageView(image: UIImage(named: "12.jpg"))
-        self.backgroundImageView!.frame = self.view.frame
-        self.backgroundImageView!.contentMode = .scaleToFill
-        view.addSubview(self.backgroundImageView!)
+        let backgroundImageView = UIImageView(image: UIImage(named: "12.jpg"))
+        backgroundImageView.frame = self.view.frame
+        backgroundImageView.contentMode = .scaleToFill
+        view.addSubview(backgroundImageView)
         
         let frostedView = FXBlurView()
-        frostedView.underlyingView = self.backgroundImageView!
+        frostedView.underlyingView = backgroundImageView
         frostedView.isDynamic = false
         frostedView.frame = self.view.frame
         frostedView.tintColor = UIColor.black
@@ -266,22 +266,13 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var id:String?
-        
-        if indexPath.section == 1 {
-            id = self.model?.topics[indexPath.row].topicId
-        }
-        else if indexPath.section == 2 {
-            id = self.model?.replies[indexPath.row].topicId
-        }
-        
+        let id = indexPath.section == 1 ?
+                self.model?.topics[indexPath.row].topicId:
+                self.model?.replies[indexPath.row].topicId
         if let id = id {
-            let topicDetailController = TopicDetailViewController();
-            topicDetailController.topicId = id ;
-            self.navigationController?.pushViewController(topicDetailController, animated: true)
-            tableView .deselectRow(at: indexPath, animated: true);
+            Msg.send("openTopicDetail1", [id])
+            tableView.deselectRow(at: indexPath, animated: true)
         }
-        
     }
 
 }

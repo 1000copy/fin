@@ -1,13 +1,4 @@
-//
-//  FavoritesViewController.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 1/30/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
-
 import UIKit
-
 class FavoritesViewController: BaseViewController {
     var currentPage = 1
     //最大的Page
@@ -27,7 +18,6 @@ class FavoritesViewController: BaseViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(hideLoadingView), name: Notification.Name("FavoritesViewControllerLoaded"), object: nil)
         self.title = NSLocalizedString("favorites")
         self.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
         self.view.addSubview(self.tableView);
@@ -48,7 +38,7 @@ class FavoritesViewController: BaseViewController {
                     weakSelf.tableView.topicList = list
                     weakSelf.maxPage = maxPage
                     weakSelf.tableView.reloadData()
-                    Msg.send("FavoritesViewControllerLoaded")
+                    weakSelf.hideLoadingView()
                 }
             }
             cb()

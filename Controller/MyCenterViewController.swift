@@ -17,9 +17,9 @@ class MyCenterViewController: MemberViewController {
         self.settingsButton!.contentMode = .center
         self.settingsButton!.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -20)
         self.settingsButton!.setImage(UIImage.imageUsedTemplateMode("ic_supervisor_account")!.withRenderingMode(.alwaysTemplate), for: UIControlState())
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingsButton!)
-        self.settingsButton!.addTarget(self, action: #selector(MyCenterViewController.accountManagerClick), for: .touchUpInside)
+        self.settingsButton!.addTarget(self, action: #selector(accountManagerClick), for: .touchUpInside)
         self.settingsButton!.isHidden = true
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingsButton!)
     }
     
     override func getDataSuccessfully(_ aModel: MemberModel) {
@@ -28,6 +28,6 @@ class MyCenterViewController: MemberViewController {
     }
     
     func accountManagerClick(){
-        self.navigationController?.pushViewController(AccountsManagerViewController(), animated: true)
+        Msg.send("openAccountsManager")
     }
 }

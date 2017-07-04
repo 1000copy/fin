@@ -225,6 +225,15 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     }
     func didSelectRowAt(_ indexPath: IndexPath) {
     }
+    func canEditRowAt(_ indexPath: IndexPath) -> Bool {
+        return true
+    }
+    func commitDelete(_ indexPath: IndexPath){
+        
+    }
+    func commitInsert(_ indexPath: IndexPath){
+        
+    }
     // 实现区
     var scrollUp : ((_ cb : @escaping Callback)-> Void)?
     var scrollDown : ((_ cb : @escaping CallbackMore)-> Void)?
@@ -237,6 +246,18 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
             _tableView = Table();
             return _tableView!;
         }
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            commitDelete(indexPath)
+        }else if editingStyle == .insert {
+            commitInsert(indexPath)
+        }else{
+            
+        }
+    }
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return canEditRowAt(indexPath)
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         return sectionCount()

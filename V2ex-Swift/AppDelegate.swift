@@ -1,3 +1,4 @@
+
 import UIKit
 import Fabric
 import Crashlytics
@@ -49,6 +50,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 controller.node = node
                 self.centerNav?.pushViewController(controller, animated: true)
     }
+    func openAccountsManager(_ obj : NSNotification){
+        self.centerNav?.pushViewController(AccountsManagerViewController(), animated: true)
+    }
+    
+    
+    
     func relevantComment(_ obj : NSNotification){
         //UIViewController ,UIViewController, [TopicCommentModel]
         let arr = obj.object as! NSArray
@@ -85,6 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(relevantComment), name: Notification.Name("relevantComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(replyComment), name: Notification.Name("replyComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(replyTopic), name: Notification.Name("replyTopic"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openAccountsManager), name: Notification.Name("openAccountsManager"), object: nil)
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
         self.window?.makeKeyAndVisible();
@@ -126,6 +134,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #else
             Fabric.with([Crashlytics.self])
         #endif
+
         return true
     }
 }
@@ -149,3 +158,4 @@ class Page:UIViewController{
         self.present(sheet, animated:true, completion:nil)
     }
 }
+
