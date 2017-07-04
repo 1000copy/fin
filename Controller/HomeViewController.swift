@@ -101,7 +101,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    func getNextPage(_ cb : @escaping Callback){
+    func getNextPage(_ cb : @escaping CallbackMore){
         if let count = self.tableView.topicList?.count , count <= 0{
             self.tableView.mj_footer.endRefreshing()
             return;
@@ -121,7 +121,7 @@ class HomeViewController: UIViewController {
                 //加载失败，重置page
                 self.currentPage -= 1
             }
-            cb()
+            cb(true)
         }
     }
     
@@ -227,7 +227,7 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     }
     // 实现区
     var scrollUp : ((_ cb : @escaping Callback)-> Void)?
-    var scrollDown : ((_ cb : @escaping Callback)-> Void)?
+    var scrollDown : ((_ cb : @escaping CallbackMore)-> Void)?
     static fileprivate var _tableView :Table!
     class var shared: Table {
         get{
@@ -244,6 +244,20 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     func beginScrollUp(){
         mj_header.beginRefreshing();
     }
+    func beginRefresh(){
+        mj_header.beginRefreshing();
+    }
+    func endRefresh(_ hasMoreData : Bool = true){
+        if hasMoreData{
+            self.mj_footer.endRefreshing()
+        }else{
+            self.mj_footer.endRefreshingWithNoMoreData()
+        }
+    }
+    
+    func resetNoMoreData(){
+        self.mj_footer.resetNoMoreData()
+    }
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
         self.dataSource = self
@@ -254,15 +268,19 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
                 if (self?.mj_footer.isRefreshing())! {
                     self?.mj_footer.endRefreshing()
                 }
-                s(){moreData in
-                  self?.mj_header.endRefreshing()
+                s(){
+                    self?.mj_header.endRefreshing()
                 }
             }
         })
         let footer = V2RefreshFooter(refreshingBlock: {[weak self] () -> Void in
             if let s = self?.scrollDown{
                 s(){moreData in
-                    self?.mj_footer.endRefreshing()
+                    if moreData {
+                        self?.mj_footer.endRefreshing()
+                    }else{
+                        self?.mj_footer.endRefreshingWithNoMoreData()
+                    }
                 }
 
             }
@@ -304,4 +322,5 @@ class Msg {
 }
 
 typealias Callback =  (()-> Void)
+typealias CallbackMore =  ((_ moreData : Bool)-> Void)
 
