@@ -84,15 +84,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         URLProtocol.registerClass(WebViewImageProtocol.self)
-        NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail), name: Notification.Name("open topic detail"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openTopicDetail1), name: Notification.Name("openTopicDetail1"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openLeftDrawer), name: Notification.Name("openLeftDrawer"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openRightDrawer), name: Notification.Name("openRightDrawer"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openNodeTopicList), name: Notification.Name("openNodeTopicList"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(relevantComment), name: Notification.Name("relevantComment"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(replyComment), name: Notification.Name("replyComment"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(replyTopic), name: Notification.Name("replyTopic"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openAccountsManager), name: Notification.Name("openAccountsManager"), object: nil)
+        let a : [String:Selector] = [
+                "openTopicDetail1":#selector(openTopicDetail1),
+                "openTopicDetail":#selector(openTopicDetail),
+                "openLeftDrawer":#selector(openLeftDrawer),
+                "openRightDrawer":#selector(openRightDrawer),
+                "openNodeTopicList":#selector(openNodeTopicList),
+                "relevantComment":#selector(relevantComment),
+                "replyComment":#selector(replyComment),
+                "replyTopic":#selector(replyTopic),
+                "openAccountsManager":#selector(openAccountsManager)
+        ]
+        for (key, value) in  a {
+                NotificationCenter.default.addObserver(self, selector: value, name: Notification.Name(key), object: nil)
+        }
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
         self.window?.makeKeyAndVisible();
@@ -138,24 +143,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 }
-//取消", destructiveButtonTitle: nil, otherButtonTitles: "回复", "感谢" ,"查看对话
-class Page:UIViewController{
-    override func viewDidAppear(_ animated: Bool) {
-        ActionSheet()
-    }
-    func ActionSheet() {
-        let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
-        sheet.addAction(UIAlertAction(title:"回复", style:UIAlertActionStyle.default, handler:{ action in
-            print ("Do something 1")
-        }))
-        sheet.addAction(UIAlertAction(title:"感谢", style:UIAlertActionStyle.default, handler:{ action in
-            print ("Do something 2")
-        }))
-        sheet.addAction(UIAlertAction(title:"查看对话", style:UIAlertActionStyle.default, handler:{ action in
-            print ("Do something 2")
-        }))
-        sheet.addAction(UIAlertAction(title:"取消", style:UIAlertActionStyle.cancel, handler:nil))
-        self.present(sheet, animated:true, completion:nil)
-    }
-}
-

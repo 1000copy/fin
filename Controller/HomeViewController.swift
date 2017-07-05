@@ -185,7 +185,7 @@ fileprivate class  TableHome : TableBase {
             let a = {[weak self] (topicId : String)->Void in
                 self?.perform(#selector(self?.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
             }
-            Msg.send("open topic detail",[id,a])
+            Msg.send("openTopicDetail",[id,a])
             deselectRow(at: indexPath, animated: true);
         }
     }
