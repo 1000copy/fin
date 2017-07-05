@@ -18,17 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          star = BigBrotherWatchingYou(centerNav)
         let leftViewController = LeftViewController();
         let rightViewController = RightViewController();
-        let drawerController = DrawerController(centerViewController: centerNav!, leftDrawerViewController: leftViewController, rightDrawerViewController: rightViewController);
-        
+        let drawerController = Drawer(centerNav!, leftViewController, rightViewController)
+        self.window?.rootViewController = drawerController;
         self.window?.thmemChangedHandler = {[weak self] (style) -> Void in
             self?.window?.backgroundColor = V2EXColor.colors.v2_backgroundColor;
             drawerController.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
         }
-        drawerController.maximumLeftDrawerWidth=230;
-        drawerController.maximumRightDrawerWidth = rightViewController.maximumRightDrawerWidth()
-        drawerController.openDrawerGestureModeMask=OpenDrawerGestureMode.panningCenterView
-        drawerController.closeDrawerGestureModeMask=CloseDrawerGestureMode.all;
-        self.window?.rootViewController = drawerController;
         V2Client.sharedInstance.drawerController = drawerController
         V2Client.sharedInstance.centerViewController = centerNav?.viewControllers[0] as? HomeViewController
         V2Client.sharedInstance.centerNavigation = centerNav
@@ -51,6 +46,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         return true
+    }
+}
+class Drawer : DrawerController{
+    init( _ centerViewController: UIViewController!, _ leftDrawerViewController: UIViewController, _ rightDrawerViewController: UIViewController) {
+        super.init(centerViewController: centerViewController, leftDrawerViewController: leftDrawerViewController, rightDrawerViewController: rightDrawerViewController)
+        let drawerController = self
+        drawerController.maximumLeftDrawerWidth=230;
+        drawerController.maximumRightDrawerWidth = (rightDrawerViewController as! RightViewController).maximumRightDrawerWidth()
+        drawerController.openDrawerGestureModeMask=OpenDrawerGestureMode.panningCenterView
+        drawerController.closeDrawerGestureModeMask=CloseDrawerGestureMode.all;
+
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 class BigBrotherWatchingYou : UIResponder{
