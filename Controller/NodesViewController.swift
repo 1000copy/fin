@@ -1,34 +1,15 @@
-//
-//  NodesViewController.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 2/2/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
-
 import UIKit
 class NodesViewController: BaseViewController {
-    var nodeGroupArray:[NodeGroupModel]?
-    var collectionView:UICollectionView?
+    fileprivate var collectionView:CollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = NSLocalizedString("Navigation")
         self.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
-        
-        let layout = V2LeftAlignedCollectionViewFlowLayout();
-        layout.sectionInset = UIEdgeInsetsMake(10, 15, 10, 15);
-        self.collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
-        self.collectionView?.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-        self.collectionView!.dataSource = self
-        self.collectionView!.delegate = self
+        self.collectionView = CollectionView(frame: self.view.bounds)
         self.view.addSubview(self.collectionView!)
-        
-        self.collectionView!.register(NodeTableViewCell.self, forCellWithReuseIdentifier: "cell")
-        self.collectionView!.register(NodeCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "nodeGroupNameView")
-    
         NodeGroupModel.getNodes { (response) -> Void in
             if response.success {
-                self.nodeGroupArray = response.value
+                self.collectionView.nodeGroupArray = response.value
                 self.collectionView?.reloadData()
             }
             self.hideLoadingView()
@@ -37,54 +18,110 @@ class NodesViewController: BaseViewController {
     }
 }
 
-
-//MARK: - UICollectionViewDataSource
-extension NodesViewController : UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
+fileprivate class CollectionView : CollectionViewBase {
+    convenience init(frame: CGRect){
+        let layout = V2LeftAlignedCollectionViewFlowLayout();
+        layout.sectionInset = UIEdgeInsetsMake(10, 15, 10, 15);
+        self.init(frame:frame,collectionViewLayout:layout)
+        register(NodeTableViewCell.self, forCellWithReuseIdentifier: "cell")
+        register(NodeCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "nodeGroupNameView")
+        backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        dataSource = self
+        delegate = self
+    }
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    var nodeGroupArray:[NodeGroupModel]?
+    override func sectionCount() -> Int {
         if let count = self.nodeGroupArray?.count{
             return count
         }
         return 0
     }
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func numberOfItemsIn(_ section: Int) -> Int {
         return self.nodeGroupArray![section].children.count
     }
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func cellForItemAt(_ indexPath: IndexPath) -> UICollectionViewCell {
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! NodeTableViewCell;
+        let cell = self.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! NodeTableViewCell;
         cell.textLabel.text = nodeModel.nodeName
         return cell;
     }
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let nodeGroupNameView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "nodeGroupNameView", for: indexPath)
+    override func viewForSupplementaryElement(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
+        let nodeGroupNameView = self.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "nodeGroupNameView", for: indexPath)
         (nodeGroupNameView as! NodeCollectionReusableView).label.text = self.nodeGroupArray![indexPath.section].groupName
         return nodeGroupNameView
     }
-}
-
-
-//MARK: - UICollectionViewDelegateFlowLayout
-extension NodesViewController : UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    override func didSelectItemAt(_ indexPath: IndexPath){
+        let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
+        Msg.send("openNodeTopicList",[nodeModel.nodeId ,nodeModel.nodeName])
+    }
+    override func sizeForItemAt(_ collectionViewLayout: UICollectionViewLayout, _ indexPath: IndexPath) -> CGSize {
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
         return CGSize(width: nodeModel.width, height: 25);
     }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat{
+    override func minimumInteritemSpacingForSectionAt(_ collectionViewLayout: UICollectionViewLayout, section: Int) -> CGFloat{
         return 15
     }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 35);
+    override   func referenceSizeForHeaderIn(_  collectionViewLayout: UICollectionViewLayout, _ section: Int) -> CGSize{
+        return CGSize(width: self.bounds.size.width, height: 35);
+
     }
 }
-
-
-//MARK: - UICollectionViewDelegate
-extension NodesViewController : UICollectionViewDelegate {
+class CollectionViewBase : UICollectionView,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
+    func sectionCount() -> Int {
+        return 0
+    }
+    func numberOfItemsIn(_ section: Int) -> Int {
+        return 0
+    }
+    func cellForItemAt(_ indexPath: IndexPath) -> UICollectionViewCell {
+        return UICollectionViewCell()
+    }
+    func viewForSupplementaryElement(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
+        return UICollectionReusableView()
+    }
+    func didSelectItemAt(_ indexPath: IndexPath){
+    }
+    func sizeForItemAt(_ collectionViewLayout: UICollectionViewLayout, _ indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 0, height: 0);
+    }
+    func minimumInteritemSpacingForSectionAt(_ collectionViewLayout: UICollectionViewLayout, section: Int) -> CGFloat{
+        return 0.0
+    }
+    func referenceSizeForHeaderIn(_  collectionViewLayout: UICollectionViewLayout, _ section: Int) -> CGSize{
+        return CGSize(width: self.bounds.size.width, height: 35);
+    }
+    
+    // implements
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath){
-        let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
-        Msg.send("openNodeTopicList",[nodeModel.nodeId ,nodeModel.nodeName])
-//        let controller = NodeTopicListViewController()
-//        controller.node = nodeModel
-//        V2Client.sharedInstance.centerNavigation?.pushViewController(controller, animated: true)
+        didSelectItemAt(indexPath)
+    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return sectionCount()
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return numberOfItemsIn(section)
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return cellForItemAt(indexPath)
+    }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return viewForSupplementaryElement(kind, indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return sizeForItemAt(collectionViewLayout,indexPath)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat{
+        return minimumInteritemSpacingForSectionAt(collectionViewLayout, section: section)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize{
+        return referenceSizeForHeaderIn(collectionViewLayout, section)
     }
 }
