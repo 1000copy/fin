@@ -3,16 +3,13 @@ class FavoritesViewController: BaseViewController {
     var currentPage = 1
     //最大的Page
     var maxPage = 1
-    fileprivate var _tableView :Table2!
-    fileprivate var tableView: Table2 {
+    fileprivate var _tableView :FavTable!
+    fileprivate var tableView: FavTable {
         get{
             if(_tableView != nil){
                 return _tableView!;
             }
-            _tableView = Table2();
-            _tableView.backgroundColor = V2EXColor.colors.v2_backgroundColor
-            _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
-            regClass(_tableView, cell: HomeTopicListTableViewCell.self)
+            _tableView = FavTable();
             return _tableView!;
         }
     }
@@ -45,12 +42,12 @@ class FavoritesViewController: BaseViewController {
         }
     }
     func getNextPage(_ cb : @escaping CallbackMore){
-        if let count = self.tableView.topicList?.count, count <= 0 {
-            self.tableView.endRefresh()
+        if self.tableView.topicList?.count == 0 {
+            self.tableView.endScrollDown()
             return;
         }
         if self.currentPage >= maxPage {
-            self.tableView.endRefresh(false)
+            self.tableView.endScrollDown(false)
             return;
         }
         self.currentPage += 1
@@ -68,7 +65,16 @@ class FavoritesViewController: BaseViewController {
         }
     }
 }
-class Table2 : TableBase{
+fileprivate class FavTable : TableBase{
+    override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame:frame,style:style)
+        backgroundColor = V2EXColor.colors.v2_backgroundColor
+        separatorStyle = UITableViewCellSeparatorStyle.none;
+        regClass(self, cell: HomeTopicListTableViewCell.self)
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     var topicList:[TopicListModel]?
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         let item = self.topicList![indexPath.row]

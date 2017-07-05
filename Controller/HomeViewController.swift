@@ -18,9 +18,9 @@ let kHomeTab = "me.fin.homeTab"
 class HomeViewController: UIViewController {
     var tab:String? = nil
     var currentPage = 0
-    fileprivate var tableView: Table {
+    fileprivate var tableView: TableHome {
         get{
-            return Table.shared
+            return TableHome.shared
         }
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -139,9 +139,17 @@ class HomeViewController: UIViewController {
     }
 }
 
-
-//MARK: - TableViewDataSource
-class  Table : TableBase {
+fileprivate class  TableHome : TableBase {
+    static fileprivate var _tableView :TableHome!
+    fileprivate class var shared: TableHome {
+        get{
+            if(_tableView != nil){
+                return _tableView!;
+            }
+            _tableView = TableHome();
+            return _tableView!;
+        }
+    }
     var topicList:Array<TopicListModel>?
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
@@ -209,139 +217,3 @@ class  Table : TableBase {
     }
     
 }
-class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
-    // 子类接口区
-    func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        return 0.0
-    }
-    func sectionCount() -> Int {
-        return 1
-    }
-    func rowCount(_ section: Int) -> Int {
-        return 0
-    }
-    func cellAt(_ indexPath: IndexPath) -> UITableViewCell{
-        return UITableViewCell()
-    }
-    func didSelectRowAt(_ indexPath: IndexPath) {
-    }
-    func canEditRowAt(_ indexPath: IndexPath) -> Bool {
-        return true
-    }
-    func commitDelete(_ indexPath: IndexPath){
-        
-    }
-    func commitInsert(_ indexPath: IndexPath){
-        
-    }
-    // 实现区
-    var scrollUp : ((_ cb : @escaping Callback)-> Void)?
-    var scrollDown : ((_ cb : @escaping CallbackMore)-> Void)?
-    static fileprivate var _tableView :Table!
-    class var shared: Table {
-        get{
-            if(_tableView != nil){
-                return _tableView!;
-            }
-            _tableView = Table();
-            return _tableView!;
-        }
-    }
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            commitDelete(indexPath)
-        }else if editingStyle == .insert {
-            commitInsert(indexPath)
-        }else{
-            
-        }
-    }
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return canEditRowAt(indexPath)
-    }
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionCount()
-    }
-    func beginScrollUp(){
-        mj_header.beginRefreshing();
-    }
-    func beginRefresh(){
-        mj_header.beginRefreshing();
-    }
-    func endRefresh(_ hasMoreData : Bool = true){
-        if hasMoreData{
-            self.mj_footer.endRefreshing()
-        }else{
-            self.mj_footer.endRefreshingWithNoMoreData()
-        }
-    }
-    
-    func resetNoMoreData(){
-        self.mj_footer.resetNoMoreData()
-    }
-    override init(frame: CGRect, style: UITableViewStyle) {
-        super.init(frame:frame,style:style)
-        self.dataSource = self
-        self.delegate = self
-        mj_header = V2RefreshHeader(refreshingBlock: {[weak self] () -> Void in
-            if let s = self?.scrollUp{
-                //如果有上拉加载更多 正在执行，则取消它
-                if (self?.mj_footer.isRefreshing())! {
-                    self?.mj_footer.endRefreshing()
-                }
-                s(){
-                    self?.mj_header.endRefreshing()
-                }
-            }
-        })
-        let footer = V2RefreshFooter(refreshingBlock: {[weak self] () -> Void in
-            if let s = self?.scrollDown{
-                s(){moreData in
-                    if moreData {
-                        self?.mj_footer.endRefreshing()
-                    }else{
-                        self?.mj_footer.endRefreshingWithNoMoreData()
-                    }
-                }
-
-            }
-        })
-        footer?.centerOffset = -4
-        mj_footer = footer
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return rowCount(section)
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return rowHeight(indexPath)
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return cellAt(indexPath)
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        didSelectRowAt(indexPath)
-    }
-}
-//NotificationCenter.default.post(name: Notification.Name("dive2"), object: [id,a])
-//NotificationCenter.default.addObserver(self, selector: #selector(dive2), name: Notification.Name("open topic detail"), object: nil)
-class Msg {
-    class func send( _ name : String, _ object : Any?){
-        NotificationCenter.default.post(name: Notification.Name(name), object: object)
-    }
-    class func send( _ name : String){
-        send(name,nil)
-    }
-
-//    class func observe(_ owner : NSObject , responser : Any? , _ msg : String, _ object : Any?){
-//        NotificationCenter.default.addObserver(owner, selector: #selector(responser), name: Notification.Name(msg), object: nil)
-//    }
-}
-
-typealias Callback =  (()-> Void)
-typealias CallbackMore =  ((_ moreData : Bool)-> Void)
-
