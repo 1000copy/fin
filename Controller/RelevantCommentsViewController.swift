@@ -81,6 +81,7 @@ class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITa
         super.viewDidLoad()
         
         frostedView.underlyingView = V2Client.sharedInstance.centerNavigation!.view
+        frostedView.underlyingView = self.view
         frostedView.isDynamic = false
         frostedView.blurRadius = 35
         frostedView.tintColor = UIColor.black
@@ -111,9 +112,10 @@ class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITa
         
         self.view.addSubview(self.tableView);
         self.tableView.snp.remakeConstraints{ (make) -> Void in
-            make.left.right.equalTo(self.view);
-            make.height.equalTo(self.view)
-            make.top.equalTo(self.view.snp.bottom)
+            make.left.right.top.bottom.equalTo(self.view);
+//            make.left.right.equalTo(self.view);
+//            make.height.equalTo(self.view)
+//            make.top.equalTo(self.view.snp.bottom)
         }
         
     }

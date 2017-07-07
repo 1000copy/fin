@@ -186,9 +186,7 @@ class HomeTopicListTableViewCell: UITableViewCell {
     
     func userNameTap(_ sender:UITapGestureRecognizer) {
         if let _ = self.itemModel , let username = itemModel?.userName {
-            let memberViewController = MemberViewController()
-            memberViewController.username = username
-            V2Client.sharedInstance.centerNavigation?.pushViewController(memberViewController, animated: true)
+            Msg.send("pushMemberViewController",[username])
         }
     }
     

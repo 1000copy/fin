@@ -119,48 +119,37 @@ class LeftViewController: UIViewController,UITableViewDataSource,UITableViewDele
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 if !V2User.sharedInstance.isLogin {
-                    let loginViewController = LoginViewController()
-                    V2Client.sharedInstance.centerViewController!.navigationController?.present(loginViewController, animated: true, completion: nil);
+                    Msg.send("presentLoginViewController")
                 }else{
-                    let memberViewController = MyCenterViewController()
-                    memberViewController.username = V2User.sharedInstance.username
-                    V2Client.sharedInstance.centerNavigation?.pushViewController(memberViewController, animated: true)
-                    V2Client.sharedInstance.drawerController?.closeDrawer(animated: true, completion: nil)
+                    Msg.send("pushMyCenterViewController",[V2User.sharedInstance.username])
                 }
             }
         }
         else if indexPath.section == 1 {
             if !V2User.sharedInstance.isLogin {
-                let loginViewController = LoginViewController()
-                V2Client.sharedInstance.centerNavigation?.present(loginViewController, animated: true, completion: nil);
+                Msg.send("presentLoginViewController")
                 return
             }
             if indexPath.row == 0 {
-                let memberViewController = MyCenterViewController()
-                memberViewController.username = V2User.sharedInstance.username
-                V2Client.sharedInstance.centerNavigation?.pushViewController(memberViewController, animated: true)
+                Msg.send("pushMyCenterViewController",[V2User.sharedInstance.username])
             }
             else if indexPath.row == 1 {
-                let notificationsViewController = NotificationsViewController()
-                V2Client.sharedInstance.centerNavigation?.pushViewController(notificationsViewController, animated: true)
+                Msg.send("pushNotificationsViewController")
             }
             else if indexPath.row == 2 {
-                let favoritesViewController = FavoritesViewController()
-                V2Client.sharedInstance.centerNavigation?.pushViewController(favoritesViewController, animated: true)
+                Msg.send("pushFavoritesViewController")
             }
-            V2Client.sharedInstance.drawerController?.closeDrawer(animated: true, completion: nil)
+            Msg.send("closeDrawer")
             
         }
         else if indexPath.section == 2 {
             if indexPath.row == 0 {
-                let nodesViewController = NodesViewController()
-                V2Client.sharedInstance.centerViewController!.navigationController?.pushViewController(nodesViewController, animated: true)
+                Msg.send("pushNodesViewController")
             }
             else if indexPath.row == 1 {
-                let moreViewController = MoreViewController()
-                V2Client.sharedInstance.centerViewController!.navigationController?.pushViewController(moreViewController, animated: true)
+                Msg.send("pushMoreViewController")
             }
-            V2Client.sharedInstance.drawerController?.closeDrawer(animated: true, completion: nil)
+            Msg.send("closeDrawer")
         }
     }
     

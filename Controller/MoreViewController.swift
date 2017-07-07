@@ -76,7 +76,7 @@ class MoreViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 1 {
-            V2Client.sharedInstance.centerNavigation?.pushViewController(SettingsTableViewController(), animated: true)
+            Msg.send("pushSettingsTableViewController")
         }
         else if indexPath.row == 3 {
             let str = "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=1078157349"
@@ -89,7 +89,7 @@ class MoreViewController: UITableViewController {
             UIApplication.shared.openURL(URL(string: "https://github.com/Finb/V2ex-Swift")!)
         }
         else if indexPath.row == 7 {
-            V2Client.sharedInstance.centerNavigation?.pushViewController(PodsTableViewController(), animated: true)
+            Msg.send("pushPodsTableViewController")
         }
     }
 }

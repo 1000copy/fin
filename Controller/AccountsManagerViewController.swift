@@ -93,8 +93,7 @@ fileprivate class Table1 : TableBase{
                         self.reloadData()
                     })
                     if is2FALoggedIn {
-                        let twoFaViewController = TwoFAViewController()
-                        V2Client.sharedInstance.centerViewController!.navigationController?.present(twoFaViewController, animated: true, completion: nil);
+                        Msg.send("presentTwoFAViewController", [])
                     }
                 }
                 else{

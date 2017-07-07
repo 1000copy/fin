@@ -24,10 +24,11 @@ class HomeViewController: UIViewController {
         }
     }
     override func viewWillAppear(_ animated: Bool) {
-        V2Client.sharedInstance.drawerController?.openDrawerGestureModeMask = .panningCenterView
+        Msg.send("PanningGestureEnable")
+        
     }
     override func viewWillDisappear(_ animated: Bool) {
-        V2Client.sharedInstance.drawerController?.openDrawerGestureModeMask = []
+        Msg.send("PanningGestureDisable")
     }
     
     override func viewDidLoad() {

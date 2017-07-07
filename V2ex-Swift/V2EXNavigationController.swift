@@ -47,10 +47,11 @@ class V2EXNavigationController: UINavigationController {
         super.viewDidLoad()
         UIApplication.shared.setStatusBarStyle(.default, animated: true);
         self.navigationBar.setBackgroundImage(createImageWithColor(UIColor.clear), for: .default)
-
+        self.navigationBar.superview!.backgroundColor = .red
         let maskingView = UIView()
         maskingView.isUserInteractionEnabled = false
         maskingView.backgroundColor = UIColor(white: 0, alpha: 0.0);
+        
         self.navigationBar.superview!.insertSubview(maskingView, belowSubview: self.navigationBar)
         maskingView.snp.makeConstraints{ (make) -> Void in
             make.left.bottom.right.equalTo(self.navigationBar)

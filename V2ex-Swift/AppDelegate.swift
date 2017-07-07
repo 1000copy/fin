@@ -13,19 +13,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
         self.window?.makeKeyAndVisible();
-
-        centerNav = V2EXNavigationController(rootViewController: HomeViewController());
-         star = BigBrotherWatchingYou(centerNav)
+        let home = HomeViewController()
+        centerNav = V2EXNavigationController(rootViewController: home);
+        
+        
         let leftViewController = LeftViewController();
         let rightViewController = RightViewController();
         let drawerController = Drawer(centerNav!, leftViewController, rightViewController)
+        star = BigBrotherWatchingYou()
+        star.centerNavigation = centerNav
+        star.drawerController = drawerController
+        star.centerViewController = home
         self.window?.rootViewController = drawerController;
         self.window?.thmemChangedHandler = {[weak self] (style) -> Void in
             self?.window?.backgroundColor = V2EXColor.colors.v2_backgroundColor;
             drawerController.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
         }
-        V2Client.sharedInstance.drawerController = drawerController
-        V2Client.sharedInstance.centerViewController = centerNav?.viewControllers[0] as? HomeViewController
         V2Client.sharedInstance.centerNavigation = centerNav
         #if DEBUG
             let fpsLabel = V2FPSLabel(frame: CGRect(x: 15, y: SCREEN_HEIGHT-40,width: 55,height: 20));
@@ -63,24 +66,101 @@ class Drawer : DrawerController{
     }
 }
 class BigBrotherWatchingYou : UIResponder{
-    var centerNav :V2EXNavigationController!
-    init(_ centerNav :V2EXNavigationController) {
+    var centerNavigation :V2EXNavigationController!
+    var drawerController : DrawerController!
+    var centerViewController : HomeViewController!
+    override init() {
         super.init()
-        self.centerNav = centerNav
         let a : [String:Selector] = [
             "openTopicDetail1":#selector(openTopicDetail1),
             "openTopicDetail":#selector(openTopicDetail),
             "openLeftDrawer":#selector(openLeftDrawer),
             "openRightDrawer":#selector(openRightDrawer),
+            "closeDrawer":#selector(closeDrawer),
             "openNodeTopicList":#selector(openNodeTopicList),
             "relevantComment":#selector(relevantComment),
             "replyComment":#selector(replyComment),
             "replyTopic":#selector(replyTopic),
-            "openAccountsManager":#selector(openAccountsManager)
+            "openAccountsManager":#selector(openAccountsManager),
+            "PanningGestureDisable":#selector(PanningGestureDisable),
+            "PanningGestureEnable":#selector(PanningGestureEnable),
+            "ChangeTab":#selector(ChangeTab),
+            "presentTwoFAViewController":#selector(presentTwoFAViewController),
+            "pushMemberViewController":#selector(pushMemberViewController),
+            "presentLoginViewController":#selector(presentLoginViewController),
+            "pushNotificationsViewController":#selector(pushNotificationsViewController),
+            "pushFavoritesViewController":#selector(pushFavoritesViewController),
+            "pushNodesViewController":#selector(pushNodesViewController),
+            "pushMoreViewController":#selector(pushMoreViewController),
+            "pushMyCenterViewController":#selector(pushMyCenterViewController),
+            "pushSettingsTableViewController":#selector(pushSettingsTableViewController),
+            "pushPodsTableViewController":#selector(pushPodsTableViewController),
         ]
         for (key, value) in  a {
             NotificationCenter.default.addObserver(self, selector: value, name: Notification.Name(key), object: nil)
         }
+    }
+//    func Template(_ obj : NSNotification){
+//        let arr = obj.object as! NSArray
+//        let nodeTab = arr[0] as! String
+//    }
+    
+    
+    func pushPodsTableViewController(_ obj : NSNotification){
+        centerNavigation?.pushViewController(PodsTableViewController(), animated: true)
+    }
+    func pushSettingsTableViewController(_ obj : NSNotification){
+        centerNavigation?.pushViewController(SettingsTableViewController(), animated: true)
+    }
+    func pushNotificationsViewController(_ obj : NSNotification){
+        let notificationsViewController = NotificationsViewController()
+        centerNavigation?.pushViewController(notificationsViewController, animated: true)
+    }
+    func pushFavoritesViewController(_ obj : NSNotification){
+        let favoritesViewController = FavoritesViewController()
+        centerNavigation?.pushViewController(favoritesViewController, animated: true)
+    }
+    func pushNodesViewController(_ obj : NSNotification){
+        let nodesViewController = NodesViewController()
+        centerNavigation?.pushViewController(nodesViewController, animated: true)
+    }
+    func pushMoreViewController(_ obj : NSNotification){
+        let moreViewController = MoreViewController()
+        centerNavigation?.pushViewController(moreViewController, animated: true)
+    }
+    func pushMyCenterViewController(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let username = arr[0] as! String
+        let memberViewController = MyCenterViewController()
+        memberViewController.username = username
+        centerNavigation?.pushViewController(memberViewController, animated: true)
+        Msg.send("closeDrawer")
+    }
+    func presentLoginViewController(_ obj : NSNotification){
+        let loginViewController = LoginViewController()
+        centerNavigation?.present(loginViewController, animated: true, completion: nil);
+    }
+    func pushMemberViewController(_ obj : NSNotification){
+            let arr = obj.object as! NSArray
+            let username = arr[0] as! String
+            let memberViewController = MemberViewController()
+            memberViewController.username = username
+            centerNavigation?.pushViewController(memberViewController, animated: true)
+    }
+   
+    
+    func presentTwoFAViewController(_ obj : NSNotification){
+        let twoFaViewController = TwoFAViewController()
+        centerNavigation?.present(twoFaViewController, animated: true, completion: nil);
+    }
+    func ChangeTab(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let nodeTab = arr[0] as! String
+        centerViewController.tab = nodeTab
+        centerViewController.refreshPage()
+    }
+    func closeDrawer(_ obj : NSNotification){
+        drawerController?.closeDrawer(animated: true, completion: nil)
     }
     func openTopicDetail(_ obj : NSNotification){
         print(obj)
@@ -90,14 +170,14 @@ class BigBrotherWatchingYou : UIResponder{
         let topicDetailController = TopicDetailViewController();
         topicDetailController.topicId = id ;
         topicDetailController.ignoreTopicHandler = c
-        self.centerNav?.pushViewController(topicDetailController, animated: true)
+        self.centerNavigation?.pushViewController(topicDetailController, animated: true)
     }
     func openTopicDetail1(_ obj : NSNotification){
         let arr = obj.object as! NSArray
         let id = arr[0] as! String
         let topicDetailController = TopicDetailViewController();
         topicDetailController.topicId = id ;
-        self.centerNav?.pushViewController(topicDetailController, animated: true)
+        self.centerNavigation?.pushViewController(topicDetailController, animated: true)
     }
     func replyComment(_ obj : NSNotification) {
         let arr = obj.object as! NSArray
@@ -118,10 +198,10 @@ class BigBrotherWatchingYou : UIResponder{
         node.nodeName = arr[1] as? String
         let controller = NodeTopicListViewController()
         controller.node = node
-        self.centerNav?.pushViewController(controller, animated: true)
+        self.centerNavigation?.pushViewController(controller, animated: true)
     }
     func openAccountsManager(_ obj : NSNotification){
-        self.centerNav?.pushViewController(AccountsManagerViewController(), animated: true)
+        self.centerNavigation?.pushViewController(AccountsManagerViewController(), animated: true)
     }
     func relevantComment(_ obj : NSNotification){
         //UIViewController ,UIViewController, [TopicCommentModel]
@@ -143,9 +223,15 @@ class BigBrotherWatchingYou : UIResponder{
         }
     }
     func openLeftDrawer(_ obj : NSNotification){
-        V2Client.sharedInstance.drawerController?.toggleLeftDrawerSide(animated: true, completion: nil)
+        drawerController?.toggleLeftDrawerSide(animated: true, completion: nil)
     }
     func openRightDrawer(_ obj : NSNotification){
-        V2Client.sharedInstance.drawerController?.toggleRightDrawerSide(animated: true, completion: nil)
+        drawerController?.toggleRightDrawerSide(animated: true, completion: nil)
+    }
+    func PanningGestureDisable(_ obj : NSNotification){
+        drawerController?.openDrawerGestureModeMask = []
+    }
+    func PanningGestureEnable(_ obj : NSNotification){
+        drawerController?.openDrawerGestureModeMask = .panningCenterView
     }
 }

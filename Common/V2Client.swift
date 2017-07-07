@@ -12,8 +12,8 @@ import DrawerController
 class V2Client: NSObject {
     static let sharedInstance = V2Client()
     
-    var drawerController :DrawerController? = nil
-    var centerViewController : HomeViewController? = nil
+//    var drawerController :DrawerController? = nil
+//    var centerViewController : HomeViewController? = nil
     var centerNavigation : V2EXNavigationController? = nil
     
     // 当前程序中，最上层的 NavigationController
