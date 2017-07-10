@@ -38,7 +38,7 @@ class TwoFAViewController: UIViewController ,UITextFieldDelegate{
     }
 
     func cancelClick (){
-        V2User.sharedInstance.loginOut()
+        User.shared.loginOut()
         self.dismiss(animated: true, completion: nil)
     }
     

@@ -196,13 +196,13 @@ fileprivate class Sheet : UIView,UIActionSheetDelegate {
         ActionSheet(indexPath,vc,table)
     }
     func replyComment(_ row:Int){
-        V2User.sharedInstance.ensureLoginWithHandler {
+        User.shared.ensureLoginWithHandler {
             let item = table.commentsArray[row as Int]
             Msg.send("replyComment", [viewControler as Any,item.userName as Any,table.model!])
         }
     }
     func thankComment(_ row:Int){
-        guard V2User.sharedInstance.isLogin else {
+        guard User.shared.isLogin else {
             V2Inform("请先登录")
             return;
         }
@@ -435,7 +435,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         activityView.dismiss()
         let action = V2ActivityViewTopicDetailAction(rawValue: indexPath.row)!
         
-        guard V2User.sharedInstance.isLogin
+        guard User.shared.isLogin
             // 用safari打开是不用登录的
             || action == V2ActivityViewTopicDetailAction.explore else {
             V2Inform("请先登录")

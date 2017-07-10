@@ -56,8 +56,8 @@ class LeftViewController: UIViewController,UITableViewDataSource,UITableViewDele
             make.top.right.bottom.left.equalTo(self.view);
         }
         
-        if V2User.sharedInstance.isLogin {
-            self.getUserInfo(V2User.sharedInstance.username!)
+        if User.shared.isLogin {
+            self.getUserInfo(User.shared.username!)
         }
         self.thmemChangedHandler = {[weak self] (style) -> Void in
             if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
@@ -118,20 +118,20 @@ class LeftViewController: UIViewController,UITableViewDataSource,UITableViewDele
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-                if !V2User.sharedInstance.isLogin {
+                if !User.shared.isLogin {
                     Msg.send("presentLoginViewController")
                 }else{
-                    Msg.send("pushMyCenterViewController",[V2User.sharedInstance.username])
+                    Msg.send("pushMyCenterViewController",[User.shared.username])
                 }
             }
         }
         else if indexPath.section == 1 {
-            if !V2User.sharedInstance.isLogin {
+            if !User.shared.isLogin {
                 Msg.send("presentLoginViewController")
                 return
             }
             if indexPath.row == 0 {
-                Msg.send("pushMyCenterViewController",[V2User.sharedInstance.username])
+                Msg.send("pushMyCenterViewController",[User.shared.username])
             }
             else if indexPath.row == 1 {
                 Msg.send("pushNotificationsViewController")

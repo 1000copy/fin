@@ -239,7 +239,7 @@ class BigBrotherWatchingYou : UIResponder{
         let arr = obj.object as! NSArray
         let model = arr[0] as! TopicDetailModel
         let n = arr[1] as! UINavigationController
-        V2User.sharedInstance.ensureLoginWithHandler {
+        User.shared.ensureLoginWithHandler {
             let replyViewController = ReplyingViewController()
             replyViewController.topicModel = model
             let nav = V2EXNavigationController(rootViewController:replyViewController)

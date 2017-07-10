@@ -82,9 +82,9 @@ class LeftNotifictionCell : LeftNodeTableViewCell{
             make.height.equalTo(14)
         }
         
-        self.kvoController.observe(V2User.sharedInstance, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
-            if V2User.sharedInstance.notificationCount > 0 {
-                self?.notifictionCountLabel.text = "   \(V2User.sharedInstance.notificationCount)   "
+        self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
+            if User.shared.notificationCount > 0 {
+                self?.notifictionCountLabel.text = "   \(User.shared.notificationCount)   "
             }
             else{
                 self?.notifictionCountLabel.text = ""

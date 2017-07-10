@@ -47,7 +47,7 @@ fileprivate class Table1 : TableBase{
         let totalNumOfRows = self.tableView(self, numberOfRowsInSection: 0)
         if indexPath.row < self.users.count {
             let user = self.users[indexPath.row]
-            if user.username == V2User.sharedInstance.username {
+            if user.username == User.shared.username {
                 return;
             }
             alertView = AlertToggleUser()
@@ -66,7 +66,7 @@ fileprivate class Table1 : TableBase{
     var alert : AlertLogout!
     func alertView1(_ buttonIndex: Int){
         if buttonIndex == 1 {
-            V2User.sharedInstance.loginOut()
+            User.shared.loginOut()
             self.owner.navigationController?.popToRootViewController(animated: true)
         }
         
@@ -75,7 +75,7 @@ fileprivate class Table1 : TableBase{
         if buttonIndex == 0 {
             return
         }
-        V2User.sharedInstance.loginOut()
+        User.shared.loginOut()
         self.reloadData()
         let user = self.users[alertView.alertView.tag]
         if let username = user.username,let password = user.password {

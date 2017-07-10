@@ -23,7 +23,6 @@
 		0618768B1C7C19F0002E9C33 /* PodCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */; };
 		0618768D1C7C5F8C002E9C33 /* 12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0618768C1C7C5F8C002E9C33 /* 12.jpg */; };
 		0618768F1C7C6A50002E9C33 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0618768E1C7C6A50002E9C33 /* SettingsTableViewController.swift */; };
-		0623EB211C5EF6BB0016E816 /* NotificationMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0623EB201C5EF6BB0016E816 /* NotificationMenuButton.swift */; };
 		0623EB231C5F04630016E816 /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0623EB221C5F04630016E816 /* MemberViewController.swift */; };
 		06267CFB1CB38F1000756970 /* NodeCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06267CFA1CB38F1000756970 /* NodeCollectionReusableView.swift */; };
 		063671701C7AEDB100B72D9F /* V2Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0636716F1C7AEDB100B72D9F /* V2Photo.swift */; };
@@ -102,8 +101,8 @@
 		06E583891C3FA1CA00FCA361 /* UITableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E583881C3FA1CA00FCA361 /* UITableView+Extension.swift */; };
 		06FA34D11C8AA458001D6830 /* SVProgressHUD+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06FA34D01C8AA458001D6830 /* SVProgressHUD+Extension.swift */; };
 		2D43B43D1CAA2CDD007B0007 /* V2ProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D43B43C1CAA2CDD007B0007 /* V2ProgressHUD.swift */; };
-		2D6B1BB01CA93F970050121D /* V2User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6B1BAF1CA93F970050121D /* V2User.swift */; };
 		6F0E813F1F0CBF8500452CAC /* fx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0E813E1F0CBF8500452CAC /* fx.swift */; };
+		6FE111B91F134F3100A43027 /* V2User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE111B81F134F3100A43027 /* V2User.swift */; };
 		E6CF51642632624E565E3ABE /* Pods_V2ex_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2168789C1B9CBD1DF1A5A619 /* Pods_V2ex_Swift.framework */; };
 /* End PBXBuildFile section */
 
@@ -124,7 +123,6 @@
 		0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PodCellTableViewCell.swift; sourceTree = "<group>"; };
 		0618768C1C7C5F8C002E9C33 /* 12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 12.jpg; sourceTree = "<group>"; };
 		0618768E1C7C6A50002E9C33 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
-		0623EB201C5EF6BB0016E816 /* NotificationMenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationMenuButton.swift; sourceTree = "<group>"; };
 		0623EB221C5F04630016E816 /* MemberViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberViewController.swift; sourceTree = "<group>"; };
 		06267CFA1CB38F1000756970 /* NodeCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeCollectionReusableView.swift; sourceTree = "<group>"; };
 		0636716F1C7AEDB100B72D9F /* V2Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2Photo.swift; sourceTree = "<group>"; };
@@ -207,10 +205,10 @@
 		06FA34D01C8AA458001D6830 /* SVProgressHUD+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SVProgressHUD+Extension.swift"; sourceTree = "<group>"; };
 		2168789C1B9CBD1DF1A5A619 /* Pods_V2ex_Swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_V2ex_Swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D43B43C1CAA2CDD007B0007 /* V2ProgressHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2ProgressHUD.swift; sourceTree = "<group>"; };
-		2D6B1BAF1CA93F970050121D /* V2User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2User.swift; sourceTree = "<group>"; };
 		52700928D2B67AA24FBCC006 /* Pods-V2ex-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2ex-Swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-V2ex-Swift/Pods-V2ex-Swift.debug.xcconfig"; sourceTree = "<group>"; };
 		61362A97378A23EFC5EDD56C /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F0E813E1F0CBF8500452CAC /* fx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = fx.swift; sourceTree = "<group>"; };
+		6FE111B81F134F3100A43027 /* V2User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2User.swift; sourceTree = "<group>"; };
 		8659DB1BFBA4E17FA63A4C14 /* Pods-V2ex-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-V2ex-Swift.release.xcconfig"; path = "Pods/Target Support Files/Pods-V2ex-Swift/Pods-V2ex-Swift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -313,6 +311,7 @@
 		069508F61C3F75A60088D031 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				6FE111B81F134F3100A43027 /* V2User.swift */,
 				0678D2031C61B3F0007FFCFD /* Extension */,
 				0653CFA61C44E09B00E4FC05 /* UITableView+FINAutomaticHeightCell */,
 				06DD400A1C43726600CE293D /* V2EXColor.swift */,
@@ -323,7 +322,6 @@
 				06BB48ED1C56096000A4A909 /* V2EXMentionedBindingParser.swift */,
 				06D300271C6C720800547CE6 /* V2UsersKeychain.swift */,
 				065B69101C75ABE1009AAC37 /* AnalyzeURLHelper.swift */,
-				2D6B1BAF1CA93F970050121D /* V2User.swift */,
 				2D43B43C1CAA2CDD007B0007 /* V2ProgressHUD.swift */,
 				0614FDC81CB371A600C3740A /* V2LeftAlignedCollectionViewFlowLayout.swift */,
 				0666E0EF1DBF49C0009A1F71 /* WebViewImageProtocol.swift */,
@@ -414,7 +412,6 @@
 				06E2E0811C8526A000D56116 /* V2RefreshFooter.swift */,
 				06BA47CA1C59C95500CE2A0D /* V2LoadingView.swift */,
 				0684A1E71C5B58D600B12437 /* UIButton+Extension.swift */,
-				0623EB201C5EF6BB0016E816 /* NotificationMenuButton.swift */,
 				060C72561C8D6100000F4D2F /* V2ActivityViewController.swift */,
 				06D0EE2D1C917696003095FF /* V2Slider.swift */,
 				06CE3D8E1DA8ACB000E16F23 /* INSImageView.swift */,
@@ -525,6 +522,7 @@
 						CreatedOnToolsVersion = 7.1.1;
 						DevelopmentTeam = 62KYF3H5LN;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -638,6 +636,7 @@
 				064D37A61C53C4A8002E7226 /* LeftNodeTableViewCell.swift in Sources */,
 				06CE3D8F1DA8ACB000E16F23 /* INSImageView.swift in Sources */,
 				06536F591C4F4B5000CE2CF8 /* TopicDetailCommentCell.swift in Sources */,
+				6FE111B91F134F3100A43027 /* V2User.swift in Sources */,
 				06D0EE311C91787F003095FF /* FontSizeSliderTableViewCell.swift in Sources */,
 				06D0EE331C917E4C003095FF /* FontDisplayTableViewCell.swift in Sources */,
 				0678D20C1C61EAA8007FFCFD /* UIImageView+Extension.swift in Sources */,
@@ -689,7 +688,6 @@
 				06662CA81C4A8A370024452C /* TopicDetailModel.swift in Sources */,
 				06BB48EE1C56096000A4A909 /* V2EXMentionedBindingParser.swift in Sources */,
 				0653CFA81C44E0B200E4FC05 /* UITableView+FINAutomaticHeightCell.swift in Sources */,
-				0623EB211C5EF6BB0016E816 /* NotificationMenuButton.swift in Sources */,
 				6F0E813F1F0CBF8500452CAC /* fx.swift in Sources */,
 				06E145A21C60A5E600BDD63D /* NodeTableViewCell.swift in Sources */,
 				068DF8211C803A38008FC29D /* V2PhotoBrowserSwipeInteractiveTransition.swift in Sources */,
@@ -703,7 +701,6 @@
 				06E1BA371C70280D00867454 /* V2WebViewProgressView.swift in Sources */,
 				0684A1E21C5B4BA500B12437 /* NotificationTableViewCell.swift in Sources */,
 				06662CA61C4A89520024452C /* TopicDetailViewController.swift in Sources */,
-				2D6B1BB01CA93F970050121D /* V2User.swift in Sources */,
 				0648F4AC1C54FC3F00475567 /* V2EXSettings.swift in Sources */,
 				06A490681C67018E00F6A063 /* MyCenterViewController.swift in Sources */,
 				06E2E0821C8526A000D56116 /* V2RefreshFooter.swift in Sources */,
@@ -841,6 +838,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 62KYF3H5LN;
 				INFOPLIST_FILE = "V2ex-Swift/Info.plist";
@@ -849,7 +848,9 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = liu.chuanjun;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -859,13 +860,17 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 62KYF3H5LN;
 				INFOPLIST_FILE = "V2ex-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = liu.chuanjun;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

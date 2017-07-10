@@ -59,7 +59,7 @@ extension UserModel{
     class func Login(_ username:String,password:String ,
                      completionHandler: @escaping (_ response:V2ValueResponse<String>, _ is2FALoggedIn:Bool) -> Void
         ) -> Void{
-        V2User.sharedInstance.removeAllCookies()
+        User.shared.removeAllCookies()
         
         Alamofire.request(V2EXURL+"signin", headers: MOBILE_CLIENT_HEADERS).responseJiHtml{
             (response) -> Void in
@@ -132,11 +132,11 @@ extension UserModel{
     
     class func twoFALogin(code:String,
                           completionHandler: @escaping (Bool) -> Void) {
-        V2User.sharedInstance.getOnce { (response) in
+        User.shared.getOnce { (response) in
             if(response.success){
                 let prames = [
                     "code":code,
-                    "once":V2User.sharedInstance.once!
+                    "once":User.shared.once!
                     ] as [String:Any]
                 let url = V2EXURL + "2fa"
                 Alamofire.request(url, method: .post, parameters: prames, headers: MOBILE_CLIENT_HEADERS).responseJiHtml { (response) -> Void in
@@ -165,7 +165,7 @@ extension UserModel{
         ]
         Alamofire.request(V2EXURL+"api/members/show.json", parameters: prame, headers: MOBILE_CLIENT_HEADERS).responseObject { (response : DataResponse<UserModel>) in
             if let model = response.result.value {
-                V2User.sharedInstance.user = model
+                User.shared.user = model
                 
                 //将头像更新进 keychain保存的users中
                 if let avatar = model.avatar_large {
@@ -181,9 +181,9 @@ extension UserModel{
 
 
     class func dailyRedeem() {
-        V2User.sharedInstance.getOnce { (response) -> Void in
+        User.shared.getOnce { (response) -> Void in
             if response.success {
-                Alamofire.request(V2EXURL + "mission/daily/redeem?once=" + V2User.sharedInstance.once! , headers: MOBILE_CLIENT_HEADERS).responseJiHtml{ (response) in
+                Alamofire.request(V2EXURL + "mission/daily/redeem?once=" + User.shared.once! , headers: MOBILE_CLIENT_HEADERS).responseJiHtml{ (response) in
                     if let jiHtml = response .result.value{
                         if let aRootNode = jiHtml.xPath("//*[@id='Wrapper']/div/div/div[@class='message']")?.first {
                             if aRootNode.content == "已成功领取每日登录奖励" {

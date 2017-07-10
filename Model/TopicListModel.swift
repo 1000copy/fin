@@ -204,7 +204,7 @@ extension TopicListModel {
                     }
 
                     //更新通知数量
-                    V2User.sharedInstance.getNotificationsCount(jiHtml.rootNode!)
+                    User.shared.getNotificationsCount(jiHtml.rootNode!)
                 }
                 DispatchQueue.global().async {
                     //领取奖励
@@ -242,7 +242,7 @@ extension TopicListModel {
                     }
 
                     //更新通知数量
-                    V2User.sharedInstance.getNotificationsCount(jiHtml.rootNode!)
+                    User.shared.getNotificationsCount(jiHtml.rootNode!)
                 }
                 
                 if let node = jiHtml.xPath("//*[@id='Wrapper']/div/div[1]/div[1]/div[1]/a")?.first{
@@ -272,7 +272,7 @@ extension TopicListModel {
                     }
                 }
                 //更新通知数量
-                V2User.sharedInstance.getNotificationsCount(jiHtml.rootNode!)
+                User.shared.getNotificationsCount(jiHtml.rootNode!)
 
                 //获取最大页码 只有第一页需要获取maxPage
                 if page <= 1
@@ -299,10 +299,10 @@ extension TopicListModel {
         _ nodeId:String,
         type:NSInteger
     ){
-        V2User.sharedInstance.getOnce { (response) in
+        User.shared.getOnce { (response) in
             if(response.success){
                 let action = type == 0 ? "favorite/node/" : "unfavorite/node/"
-                let url = V2EXURL + action + nodeId + "?once=" + V2User.sharedInstance.once!
+                let url = V2EXURL + action + nodeId + "?once=" + User.shared.once!
                 Alamofire.request(url , headers: MOBILE_CLIENT_HEADERS).responseJiHtml { (response) in
                     
                 }

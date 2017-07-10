@@ -52,15 +52,15 @@ class LeftUserHeadCell: UITableViewCell {
             make.centerX.equalTo(self.avatarImageView)
         }
 
-        self.kvoController.observe(V2User.sharedInstance, keyPath: "username", options: [.initial , .new]){
+        self.kvoController.observe(User.shared, keyPath: "username", options: [.initial , .new]){
             [weak self] (observe, observer, change) -> Void in
             if let weakSelf = self {
-                if let user = V2User.sharedInstance.user {
+                if let user = User.shared.user {
                     weakSelf.userNameLabel.text = user.username
                     if let avatar = user.avatar_large {
                         weakSelf.avatarImageView.kf.setImage(with: URL(string: "https:"+avatar)!, placeholder: nil, options: nil, completionHandler: { (image, error, cacheType, imageURL) -> () in
                             //如果请求到图片时，客户端已经不是登录状态了，则将图片清除
-                            if !V2User.sharedInstance.isLogin {
+                            if !User.shared.isLogin {
                                 weakSelf.avatarImageView.image = nil
                             }
                         })

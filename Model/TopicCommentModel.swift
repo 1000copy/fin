@@ -178,11 +178,11 @@ extension TopicCommentModel {
                                 completionHandler: @escaping (V2Response) -> Void){
         let url = V2EXURL + "t/" + topic.topicId!
         
-        V2User.sharedInstance.getOnce(url) { (response) -> Void in
+        User.shared.getOnce(url) { (response) -> Void in
             if response.success {
                 let prames = [
                     "content":content,
-                    "once":V2User.sharedInstance.once!
+                    "once":User.shared.once!
                 ] as [String:Any]
                 
                 Alamofire.request(url, method: .post, parameters: prames, headers: MOBILE_CLIENT_HEADERS).responseJiHtml { (response) -> Void in
@@ -196,7 +196,7 @@ extension TopicCommentModel {
                         
                         //不管成功还是失败，更新一下once
                         if let jiHtml = response .result.value{
-                            V2User.sharedInstance.once = jiHtml.xPath("//*[@name='once'][1]")?.first?["value"]
+                            User.shared.once = jiHtml.xPath("//*[@name='once'][1]")?.first?["value"]
                         }
                         return
                     }

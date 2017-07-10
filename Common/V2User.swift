@@ -12,8 +12,8 @@ import Ji
 
 let kUserName = "me.fin.username"
 
-class V2User: NSObject {
-    static let sharedInstance = V2User()
+class User: NSObject {
+    static let shared = User()
     /// 用户信息
     fileprivate var _user:UserModel?
     var user:UserModel? {
