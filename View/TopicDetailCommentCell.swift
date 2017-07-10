@@ -173,7 +173,7 @@ class TopicDetailCommentCell: UITableViewCell{
             if layout.attachments != nil {
                 for attachment in layout.attachments! {
                     if let image = attachment.content as? V2CommentAttachmentImage{
-                        image.delegate = self
+//                        image.delegate = self
                     }
                 }
             }
@@ -187,41 +187,41 @@ class TopicDetailCommentCell: UITableViewCell{
 }
 
 //MARK: - 点击图片
-extension TopicDetailCommentCell : V2CommentAttachmentImageTapDelegate ,V2PhotoBrowserDelegate {
-    func V2CommentAttachmentImageSingleTap(_ imageView: V2CommentAttachmentImage) {
-        Msg.send("presentV2PhotoBrowser",[self,imageView.index])
-//        let photoBrowser = V2PhotoBrowser(delegate: self)
-//        photoBrowser.currentPageIndex = imageView.index
-//        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
-    }
-    
-    //V2PhotoBrowser Delegate
-    func numberOfPhotosInPhotoBrowser(_ photoBrowser: V2PhotoBrowser) -> Int {
-        return self.itemModel!.images.count
-    }
-    func photoAtIndexInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> V2Photo {
-        let photo = V2Photo(url: URL(string: self.itemModel!.images[index] as! String)!)
-        return photo
-    }
-    func guideContentModeInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIViewContentMode {
-        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
-            return image.contentMode
-        }
-        return .center
-    }
-    func guideFrameInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> CGRect {
-        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
-            return image .convert(image.bounds, to: UIApplication.shared.keyWindow!)
-        }
-        return CGRect.zero
-    }
-    func guideImageInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIImage? {
-        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
-            return image.image
-        }
-        return nil
-    }
-}
+//extension TopicDetailCommentCell : V2CommentAttachmentImageTapDelegate ,V2PhotoBrowserDelegate {
+//    func V2CommentAttachmentImageSingleTap(_ imageView: V2CommentAttachmentImage) {
+//        Msg.send("presentV2PhotoBrowser",[self,imageView.index])
+////        let photoBrowser = V2PhotoBrowser(delegate: self)
+////        photoBrowser.currentPageIndex = imageView.index
+////        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
+//    }
+//    
+//    //V2PhotoBrowser Delegate
+//    func numberOfPhotosInPhotoBrowser(_ photoBrowser: V2PhotoBrowser) -> Int {
+//        return self.itemModel!.images.count
+//    }
+//    func photoAtIndexInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> V2Photo {
+//        let photo = V2Photo(url: URL(string: self.itemModel!.images[index] as! String)!)
+//        return photo
+//    }
+//    func guideContentModeInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIViewContentMode {
+//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
+//            return image.contentMode
+//        }
+//        return .center
+//    }
+//    func guideFrameInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> CGRect {
+//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
+//            return image .convert(image.bounds, to: UIApplication.shared.keyWindow!)
+//        }
+//        return CGRect.zero
+//    }
+//    func guideImageInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIImage? {
+//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
+//            return image.image
+//        }
+//        return nil
+//    }
+//}
 
 //MARK: - 长按复制功能
 extension TopicDetailCommentCell {

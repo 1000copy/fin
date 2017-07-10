@@ -5,7 +5,6 @@
 //  Created by huangfeng on 1/19/16.
 //  Copyright © 2016 Fin. All rights reserved.
 //
-
 import UIKit
 import KVOController
 import JavaScriptCore
@@ -107,7 +106,8 @@ class TopicDetailWebViewContentCell: UITableViewCell ,UIWebViewDelegate {
         }
         
         self.tapImageInfo = TapImageInfo(url: url, width: w, height: h, left: l, top: t)
-        Msg.send("presentV2PhotoBrowser",[self])
+//        Msg.send("presentV2PhotoBrowser",[self])
+        Msg.send("presentPhotoBrower",[url])
         
         
     }
@@ -174,30 +174,30 @@ class TopicDetailWebViewContentCell: UITableViewCell ,UIWebViewDelegate {
 }
 
 //MARK: - 点击图片放大
-extension TopicDetailWebViewContentCell : V2PhotoBrowserDelegate {
-    //V2PhotoBrowser Delegate
-    func numberOfPhotosInPhotoBrowser(_ photoBrowser: V2PhotoBrowser) -> Int {
-        return 1
-    }
-    func photoAtIndexInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> V2Photo {
-        let photo = V2Photo(url: URL(string: self.tapImageInfo!.url)!)
-        return photo
-    }
-    func guideContentModeInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIViewContentMode {
-        return .scaleAspectFit
-    }
-    func guideFrameInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> CGRect {
-        let location = self.contentWebView.convert(self.contentWebView.bounds, to: UIApplication.shared.keyWindow!)
-        return CGRect(x: tapImageInfo!.left + Int(location.origin.x), y: tapImageInfo!.top + Int(location.origin.y), width: tapImageInfo!.width, height: tapImageInfo!.height)
-    }
-    func guideImageInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIImage? {
-        var image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: URL(string:tapImageInfo!.url)!.cacheKey)
-        if image == nil {
-            image = KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: URL(string:tapImageInfo!.url)!.cacheKey)
-        }
-        return image
-    }
-}
+//extension TopicDetailWebViewContentCell : V2PhotoBrowserDelegate {
+//    //V2PhotoBrowser Delegate
+//    func numberOfPhotosInPhotoBrowser(_ photoBrowser: V2PhotoBrowser) -> Int {
+//        return 1
+//    }
+//    func photoAtIndexInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> V2Photo {
+//        let photo = V2Photo(url: URL(string: self.tapImageInfo!.url)!)
+//        return photo
+//    }
+//    func guideContentModeInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIViewContentMode {
+//        return .scaleAspectFit
+//    }
+//    func guideFrameInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> CGRect {
+//        let location = self.contentWebView.convert(self.contentWebView.bounds, to: UIApplication.shared.keyWindow!)
+//        return CGRect(x: tapImageInfo!.left + Int(location.origin.x), y: tapImageInfo!.top + Int(location.origin.y), width: tapImageInfo!.width, height: tapImageInfo!.height)
+//    }
+//    func guideImageInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIImage? {
+//        var image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: URL(string:tapImageInfo!.url)!.cacheKey)
+//        if image == nil {
+//            image = KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: URL(string:tapImageInfo!.url)!.cacheKey)
+//        }
+//        return image
+//    }
+//}
 
 extension TopicDetailWebViewContentCell {
     //让点击图片手势 和webView的手势能共存

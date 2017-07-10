@@ -1,3 +1,4 @@
+import SKPhotoBrowser
 import UIKit
 import Fabric
 import Crashlytics
@@ -94,40 +95,41 @@ class BigBrotherWatchingYou : UIResponder{
             "pushMyCenterViewController":#selector(pushMyCenterViewController),
             "pushSettingsTableViewController":#selector(pushSettingsTableViewController),
             "pushPodsTableViewController":#selector(pushPodsTableViewController),
-            "presentV2PhotoBrowser":#selector(presentV2PhotoBrowser),
+//            "presentV2PhotoBrowser":#selector(presentV2PhotoBrowser),
             "pushV2WebViewViewController":#selector(pushV2WebViewViewController),
+            "presentPhotoBrower":#selector(presentPhotoBrower),
         ]
         for (key, value) in  a {
             NotificationCenter.default.addObserver(self, selector: value, name: Notification.Name(key), object: nil)
         }
     }
-//    func Template(_ obj : NSNotification){
-//        let arr = obj.object as! NSArray
-//        let nodeTab = arr[0] as! String
-//    }
-    
-    
-    
-    
-    
+    func presentPhotoBrower(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let url = arr[0] as! String
+        var images = [SKPhoto]()
+        let photo = SKPhoto.photoWithImageURL(url)// add some UIImage
+        images.append(photo)
+        let browser = SKPhotoBrowser(photos: images)
+        browser.initializePageIndex(0)
+        self.centerNavigation.pushViewController(browser, animated: true)
+    }
     func pushV2WebViewViewController(_ obj : NSNotification){
         let arr = obj.object as! NSArray
         let url = arr[0] as! String
         let controller = V2WebViewViewController(url: url)
         self.centerNavigation.pushViewController(controller, animated: true)
     }
-    func presentV2PhotoBrowser(_ obj : NSNotification){
-        let arr = obj.object as! NSArray
-        let vc = arr[0] as! TopicDetailWebViewContentCell
-        var index = 0
-        if arr.count == 2 {
-            index = arr[0] as! Int
-        }
-        let photoBrowser = V2PhotoBrowser(delegate: vc)
-        photoBrowser.currentPageIndex = index;
-        self.centerNavigation.present(photoBrowser, animated: true, completion: nil)
-    }
-    
+//    func presentV2PhotoBrowser(_ obj : NSNotification){
+//        let arr = obj.object as! NSArray
+//        let vc = arr[0] as! TopicDetailWebViewContentCell
+//        var index = 0
+//        if arr.count == 2 {
+//            index = arr[0] as! Int
+//        }
+//        let photoBrowser = V2PhotoBrowser(delegate: vc)
+//        photoBrowser.currentPageIndex = index;
+//        self.centerNavigation.present(photoBrowser, animated: true, completion: nil)
+//    }
     func pushPodsTableViewController(_ obj : NSNotification){
         centerNavigation?.pushViewController(PodsTableViewController(), animated: true)
     }

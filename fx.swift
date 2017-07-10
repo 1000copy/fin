@@ -443,5 +443,4 @@ fileprivate class V2RefreshFooter: MJRefreshAutoFooter {
         self.loadingView!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2 + self.centerOffset);
         self.stateLabel!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2  + self.centerOffset);
     }
-    
 }
