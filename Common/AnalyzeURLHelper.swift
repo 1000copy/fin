@@ -108,8 +108,7 @@ struct UrlActionModel: AnalyzeURLActionProtocol{
         self.url = url;
     }
     func run() {
-        let controller = V2WebViewViewController(url: url)
-        V2Client.sharedInstance.topNavigationController.pushViewController(controller, animated: true)
+        Msg.send("pushV2WebViewViewController",[url])
     }
 }
 
@@ -124,9 +123,7 @@ struct MemberActionModel: AnalyzeURLActionProtocol {
         }
     }
     func run() {
-        let memberViewController = MemberViewController()
-        memberViewController.username = username
-        V2Client.sharedInstance.topNavigationController.pushViewController(memberViewController, animated: true)
+        Msg.send("pushMemberViewController",[username])
     }
 }
 
@@ -150,9 +147,10 @@ struct TopicActionModel: AnalyzeURLActionProtocol {
         }
     }
     func run() {
-        let controller = TopicDetailViewController()
-        controller.topicId = topicID
-        V2Client.sharedInstance.topNavigationController.pushViewController(controller, animated: true)
+        Msg.send("openTopicDetail1", [topicID])
+//        let controller = TopicDetailViewController()
+//        controller.topicId = topicID
+//        V2Client.sharedInstance.topNavigationController.pushViewController(controller, animated: true)
     }
 }
 

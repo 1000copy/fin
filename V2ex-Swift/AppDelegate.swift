@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self?.window?.backgroundColor = V2EXColor.colors.v2_backgroundColor;
             drawerController.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
         }
-        V2Client.sharedInstance.centerNavigation = centerNav
+//        V2Client.sharedInstance.centerNavigation = centerNav
         #if DEBUG
             let fpsLabel = V2FPSLabel(frame: CGRect(x: 15, y: SCREEN_HEIGHT-40,width: 55,height: 20));
             self.window?.addSubview(fpsLabel);
@@ -95,6 +95,8 @@ class BigBrotherWatchingYou : UIResponder{
             "pushMyCenterViewController":#selector(pushMyCenterViewController),
             "pushSettingsTableViewController":#selector(pushSettingsTableViewController),
             "pushPodsTableViewController":#selector(pushPodsTableViewController),
+            "presentV2PhotoBrowser":#selector(presentV2PhotoBrowser),
+            "pushV2WebViewViewController":#selector(pushV2WebViewViewController),
         ]
         for (key, value) in  a {
             NotificationCenter.default.addObserver(self, selector: value, name: Notification.Name(key), object: nil)
@@ -105,6 +107,27 @@ class BigBrotherWatchingYou : UIResponder{
 //        let nodeTab = arr[0] as! String
 //    }
     
+    
+    
+    
+    
+    func pushV2WebViewViewController(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let url = arr[0] as! String
+        let controller = V2WebViewViewController(url: url)
+        self.centerNavigation.pushViewController(controller, animated: true)
+    }
+    func presentV2PhotoBrowser(_ obj : NSNotification){
+        let arr = obj.object as! NSArray
+        let vc = arr[0] as! TopicDetailWebViewContentCell
+        var index = 0
+        if arr.count == 2 {
+            index = arr[0] as! Int
+        }
+        let photoBrowser = V2PhotoBrowser(delegate: vc)
+        photoBrowser.currentPageIndex = index;
+        self.centerNavigation.present(photoBrowser, animated: true, completion: nil)
+    }
     
     func pushPodsTableViewController(_ obj : NSNotification){
         centerNavigation?.pushViewController(PodsTableViewController(), animated: true)
@@ -208,8 +231,10 @@ class BigBrotherWatchingYou : UIResponder{
         let arr = obj.object as! NSArray
         let v1 = arr[0] as! UIViewController
         let tc = arr[1] as! [TopicCommentModel]
-        let v2 = RelevantCommentsNav(comments: tc)
-        v1.present(v2, animated: true, completion: nil)
+        let v2 = RelevantCommentsViewController()
+        v2.commentsArray = tc 
+//        v1.present(v2, animated: true, completion: nil)
+        self.centerNavigation.pushViewController(v2, animated: true)
     }
     func replyTopic(_ obj : NSNotification){
         let arr = obj.object as! NSArray

@@ -10,49 +10,52 @@ import UIKit
 import FXBlurView
 import Shimmer
 
-class RelevantCommentsNav:V2EXNavigationController , UIViewControllerTransitioningDelegate {
-    override init(nibName : String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: "", bundle: nil)
-    }
-    init(comments:[TopicCommentModel]) {
-        let viewController = RelevantCommentsViewController()
-        viewController.commentsArray = comments
-        super.init(rootViewController: viewController)
-        self.transitioningDelegate = self
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return RelevantCommentsViewControllerTransionPresent()
-    }
-}
+//class RelevantCommentsNav: UIViewController, UIViewControllerTransitioningDelegate {
+//    override init(nibName : String?, bundle nibBundleOrNil: Bundle?) {
+//        super.init(nibName: "", bundle: nil)
+//    }
+//    init(comments:[TopicCommentModel]) {
+//        let viewController = RelevantCommentsViewController()
+//        viewController.commentsArray = comments
+//        super.init(rootViewController: viewController)
+//        self.transitioningDelegate = self
+//    }
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//    
+//    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        return RelevantCommentsViewControllerTransionPresent()
+//    }
+//}
+//
+//class RelevantCommentsViewControllerTransionPresent:NSObject,UIViewControllerAnimatedTransitioning {
+//    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+//        return 0.3
+//    }
+//    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+//        let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as! RelevantCommentsNav
+//        let container = transitionContext.containerView
+//        container.addSubview(toVC.view)
+//        toVC.view.alpha = 0
+//        
+//        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: { () -> Void in
+//            
+//            toVC.view.alpha = 1
+//            
+//            }) { (finished: Bool) -> Void in
+//                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+//        }
+//    }
+//}
 
-class RelevantCommentsViewControllerTransionPresent:NSObject,UIViewControllerAnimatedTransitioning {
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.3
-    }
-    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as! RelevantCommentsNav
-        let container = transitionContext.containerView
-        container.addSubview(toVC.view)
-        toVC.view.alpha = 0
-        
-        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: { () -> Void in
-            
-            toVC.view.alpha = 1
-            
-            }) { (finished: Bool) -> Void in
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        }
-    }
-}
 
-
-
+//class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
 class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
-    
+//    init(comments:[TopicCommentModel]) {
+//        self.commentsArray = comments
+//        super.init(nibName: "", bundle: nil)
+//    }
     var commentsArray:[TopicCommentModel] = []
     fileprivate var dismissing = false
     fileprivate var _tableView :UITableView!
@@ -80,11 +83,17 @@ class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        frostedView.underlyingView = V2Client.sharedInstance.centerNavigation!.view
-        frostedView.underlyingView = self.view
+        let maskingView = UIView()
+        maskingView.isUserInteractionEnabled = false
+        maskingView.backgroundColor = UIColor(white: 0, alpha: 1);
+        self.view.addSubview(maskingView)
+        maskingView.snp.makeConstraints{ (make) -> Void in
+            make.top.left.bottom.right.equalTo(self.view)
+        }
+        frostedView.underlyingView = maskingView
         frostedView.isDynamic = false
         frostedView.blurRadius = 35
-        frostedView.tintColor = UIColor.black
+//        frostedView.tintColor = UIColor.black
         frostedView.frame = self.view.frame
         self.view.addSubview(frostedView)
         
@@ -121,9 +130,10 @@ class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITa
     }
     override func viewDidAppear(_ animated: Bool) {
         self.tableView.snp.remakeConstraints{ (make) -> Void in
-            make.left.right.equalTo(self.view);
-            make.height.equalTo(self.view)
-            make.top.equalTo(self.view)
+//            make.left.right.top.bottom.equalTo(self.view);
+//            make.left.right.equalTo(self.view);
+//            make.height.equalTo(self.view)
+//            make.top.equalTo(self.view)
         }
         
         UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 8, options: UIViewAnimationOptions.curveLinear, animations: { () -> Void in
@@ -132,11 +142,13 @@ class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITa
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        (self.navigationController as! V2EXNavigationController).navigationBarAlpha = 0
+//        (self.navigationController as! V2EXNavigationController).navigationBarAlpha = 0
+        
     }
     override func viewWillDisappear(_ animated: Bool) {
         if !self.dismissing{
-            (self.navigationController as! V2EXNavigationController).navigationBarAlpha = 1
+//            (self.navigationController as! V2EXNavigationController).navigationBarAlpha = 1
+            
         }
     }
     

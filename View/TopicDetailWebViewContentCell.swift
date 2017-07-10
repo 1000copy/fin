@@ -107,10 +107,8 @@ class TopicDetailWebViewContentCell: UITableViewCell ,UIWebViewDelegate {
         }
         
         self.tapImageInfo = TapImageInfo(url: url, width: w, height: h, left: l, top: t)
+        Msg.send("presentV2PhotoBrowser",[self])
         
-        let photoBrowser = V2PhotoBrowser(delegate: self)
-        photoBrowser.currentPageIndex = 0;
-        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
         
     }
     private func fixUrl(url:String) -> String {

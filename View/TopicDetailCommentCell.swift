@@ -152,9 +152,7 @@ class TopicDetailCommentCell: UITableViewCell{
     }
     func userNameTap(_ sender:UITapGestureRecognizer) {
         if let _ = self.itemModel , let username = itemModel?.userName {
-            let memberViewController = MemberViewController()
-            memberViewController.username = username
-            V2Client.sharedInstance.topNavigationController.pushViewController(memberViewController, animated: true)
+            Msg.send("pushMemberViewController",[username])
         }
     }
     func bind(_ model:TopicCommentModel){
@@ -191,9 +189,10 @@ class TopicDetailCommentCell: UITableViewCell{
 //MARK: - 点击图片
 extension TopicDetailCommentCell : V2CommentAttachmentImageTapDelegate ,V2PhotoBrowserDelegate {
     func V2CommentAttachmentImageSingleTap(_ imageView: V2CommentAttachmentImage) {
-        let photoBrowser = V2PhotoBrowser(delegate: self)
-        photoBrowser.currentPageIndex = imageView.index
-        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
+        Msg.send("presentV2PhotoBrowser",[self,imageView.index])
+//        let photoBrowser = V2PhotoBrowser(delegate: self)
+//        photoBrowser.currentPageIndex = imageView.index
+//        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
     }
     
     //V2PhotoBrowser Delegate

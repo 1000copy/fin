@@ -10,7 +10,6 @@
 		06098B3F1C52171D00848159 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06098B3E1C52171D00848159 /* LoginViewController.swift */; };
 		06098B431C5232D800848159 /* 32.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 06098B421C5232D800848159 /* 32.jpg */; };
 		060C4E401C4897BB004FBECC /* V2FPSLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C4E3F1C4897BB004FBECC /* V2FPSLabel.swift */; };
-		060C4E421C48EC39004FBECC /* V2Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C4E411C48EC39004FBECC /* V2Client.swift */; };
 		060C72571C8D6100000F4D2F /* V2ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C72561C8D6100000F4D2F /* V2ActivityViewController.swift */; };
 		0610F1B01C46136300481402 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0610F1AF1C46136300481402 /* BaseModel.swift */; };
 		0610F1B21C4613D800481402 /* TopicListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0610F1B11C4613D800481402 /* TopicListModel.swift */; };
@@ -113,7 +112,6 @@
 		06098B3E1C52171D00848159 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		06098B421C5232D800848159 /* 32.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 32.jpg; sourceTree = "<group>"; };
 		060C4E3F1C4897BB004FBECC /* V2FPSLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2FPSLabel.swift; sourceTree = "<group>"; };
-		060C4E411C48EC39004FBECC /* V2Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2Client.swift; sourceTree = "<group>"; };
 		060C72561C8D6100000F4D2F /* V2ActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2ActivityViewController.swift; sourceTree = "<group>"; };
 		0610F1AF1C46136300481402 /* BaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
 		0610F1B11C4613D800481402 /* TopicListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopicListModel.swift; sourceTree = "<group>"; };
@@ -322,7 +320,6 @@
 				06DD400A1C43726600CE293D /* V2EXColor.swift */,
 				06D0EE1E1C915CAD003095FF /* V2Style.swift */,
 				06C49B6C1C43BFAB00684CA6 /* V2ex+Define.swift */,
-				060C4E411C48EC39004FBECC /* V2Client.swift */,
 				06C532B51C534D3F00258A55 /* V2Response.swift */,
 				0648F4AB1C54FC3F00475567 /* V2EXSettings.swift */,
 				06BB48ED1C56096000A4A909 /* V2EXMentionedBindingParser.swift */,
@@ -690,7 +687,6 @@
 				06BA47CB1C59C95500CE2A0D /* V2LoadingView.swift in Sources */,
 				06C49B6D1C43BFAB00684CA6 /* V2ex+Define.swift in Sources */,
 				0618768F1C7C6A50002E9C33 /* SettingsTableViewController.swift in Sources */,
-				060C4E421C48EC39004FBECC /* V2Client.swift in Sources */,
 				06D3002A1C6D801100547CE6 /* LogoutTableViewCell.swift in Sources */,
 				069806931CA3AA7700388DB6 /* TopicCommentModel.swift in Sources */,
 				0666E0F01DBF49C0009A1F71 /* WebViewImageProtocol.swift in Sources */,
