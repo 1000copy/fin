@@ -12,6 +12,7 @@ class V2SpacingLabel: UILabel {
     var spacing :CGFloat = 3.0
     override var text: String?{
         set{
+            //            super.text =  newValue
             if let len = newValue?.Lenght, len > 0 {
                 let attributedString = NSMutableAttributedString(string: newValue!);
                 let paragraphStyle = NSMutableParagraphStyle();

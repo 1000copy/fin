@@ -29,7 +29,6 @@
 		063671721C7AF44300B72D9F /* V2ZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063671711C7AF44300B72D9F /* V2ZoomingScrollView.swift */; };
 		063671741C7AF45B00B72D9F /* V2PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063671731C7AF45B00B72D9F /* V2PhotoBrowser.swift */; };
 		063671761C7AF55800B72D9F /* V2TapDetectingImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063671751C7AF55800B72D9F /* V2TapDetectingImageView.swift */; };
-		063C05D91C5889E1005B7CA1 /* V2RefreshHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063C05D81C5889E1005B7CA1 /* V2RefreshHeader.swift */; };
 		0648F4AC1C54FC3F00475567 /* V2EXSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0648F4AB1C54FC3F00475567 /* V2EXSettings.swift */; };
 		064BD2651C880ADB00B55558 /* RelevantCommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064BD2641C880ADB00B55558 /* RelevantCommentsViewController.swift */; };
 		064D37A41C53BD4C002E7226 /* LeftUserHeadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064D37A31C53BD4C002E7226 /* LeftUserHeadCell.swift */; };
@@ -92,7 +91,6 @@
 		06E145A61C60A9F400BDD63D /* Request+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E145A51C60A9F400BDD63D /* Request+Extension.swift */; };
 		06E1BA331C7023D900867454 /* V2WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E1BA321C7023D900867454 /* V2WebViewViewController.swift */; };
 		06E1BA371C70280D00867454 /* V2WebViewProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E1BA361C70280D00867454 /* V2WebViewProgressView.swift */; };
-		06E2E0821C8526A000D56116 /* V2RefreshFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E2E0811C8526A000D56116 /* V2RefreshFooter.swift */; };
 		06E4B74B1C5C76190056A673 /* MoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E4B74A1C5C76190056A673 /* MoreViewController.swift */; };
 		06E4B7511C5CA0300056A673 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E4B7501C5CA0300056A673 /* FavoritesViewController.swift */; };
 		06E52F781E012A8000E69084 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E52F771E012A8000E69084 /* UIView+Extension.swift */; };
@@ -129,7 +127,6 @@
 		063671711C7AF44300B72D9F /* V2ZoomingScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2ZoomingScrollView.swift; sourceTree = "<group>"; };
 		063671731C7AF45B00B72D9F /* V2PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2PhotoBrowser.swift; sourceTree = "<group>"; };
 		063671751C7AF55800B72D9F /* V2TapDetectingImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2TapDetectingImageView.swift; sourceTree = "<group>"; };
-		063C05D81C5889E1005B7CA1 /* V2RefreshHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2RefreshHeader.swift; sourceTree = "<group>"; };
 		0648F4AB1C54FC3F00475567 /* V2EXSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2EXSettings.swift; sourceTree = "<group>"; };
 		064BD2641C880ADB00B55558 /* RelevantCommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelevantCommentsViewController.swift; sourceTree = "<group>"; };
 		064D37A31C53BD4C002E7226 /* LeftUserHeadCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftUserHeadCell.swift; sourceTree = "<group>"; };
@@ -195,7 +192,6 @@
 		06E145A51C60A9F400BDD63D /* Request+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Request+Extension.swift"; sourceTree = "<group>"; };
 		06E1BA321C7023D900867454 /* V2WebViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2WebViewViewController.swift; sourceTree = "<group>"; };
 		06E1BA361C70280D00867454 /* V2WebViewProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2WebViewProgressView.swift; sourceTree = "<group>"; };
-		06E2E0811C8526A000D56116 /* V2RefreshFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2RefreshFooter.swift; sourceTree = "<group>"; };
 		06E4B74A1C5C76190056A673 /* MoreViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreViewController.swift; sourceTree = "<group>"; };
 		06E4B7501C5CA0300056A673 /* FavoritesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
 		06E52F771E012A8000E69084 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
@@ -408,8 +404,6 @@
 				06E1BA351C7027C000867454 /* V2WebViewProgress */,
 				06C49B6F1C43C11700684CA6 /* V2SpacingLabel.swift */,
 				060C4E3F1C4897BB004FBECC /* V2FPSLabel.swift */,
-				063C05D81C5889E1005B7CA1 /* V2RefreshHeader.swift */,
-				06E2E0811C8526A000D56116 /* V2RefreshFooter.swift */,
 				06BA47CA1C59C95500CE2A0D /* V2LoadingView.swift */,
 				0684A1E71C5B58D600B12437 /* UIButton+Extension.swift */,
 				060C72561C8D6100000F4D2F /* V2ActivityViewController.swift */,
@@ -703,8 +697,6 @@
 				06662CA61C4A89520024452C /* TopicDetailViewController.swift in Sources */,
 				0648F4AC1C54FC3F00475567 /* V2EXSettings.swift in Sources */,
 				06A490681C67018E00F6A063 /* MyCenterViewController.swift in Sources */,
-				06E2E0821C8526A000D56116 /* V2RefreshFooter.swift in Sources */,
-				063C05D91C5889E1005B7CA1 /* V2RefreshHeader.swift in Sources */,
 				063671721C7AF44300B72D9F /* V2ZoomingScrollView.swift in Sources */,
 				063671741C7AF45B00B72D9F /* V2PhotoBrowser.swift in Sources */,
 				06BB48F01C56153A00A4A909 /* WritingViewController.swift in Sources */,

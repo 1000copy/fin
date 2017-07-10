@@ -57,20 +57,13 @@ class TopicDetailViewController: UIViewController{
         rightButton.setImage(UIImage(named: "ic_more_horiz_36pt")!.withRenderingMode(.alwaysTemplate), for: UIControlState())
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
         rightButton.addTarget(self, action: #selector(TopicDetailViewController.rightClick), for: .touchUpInside)
-        
-        
         self.showLoadingView()
-        self.getData()
-        
-        self.tableView.mj_header = V2RefreshHeader(refreshingBlock: {[weak self] in
-            self?.getData()
-        })
-        self.tableView.mj_footer = V2RefreshFooter(refreshingBlock: {[weak self] in
-            self?.getNextPage()
-        })
+        self.tableView.scrollUp = getData
+        self.tableView.scrollDown = getNextPage
+        self.tableView.beginScrollUp()
     }
     
-    func getData(){
+    func getData(_ cb : @escaping Callback){
         //根据 topicId 获取 帖子信息 、回复。
         TopicDetailModel.getTopicDetailById(self.topicId){
             (response:V2ValueResponse<(TopicDetailModel?,[TopicCommentModel])>) -> Void in
@@ -79,97 +72,51 @@ class TopicDetailViewController: UIViewController{
                 if let aModel = response.value!.0{
                     self.tableView.model = aModel
                 }
-                
                 self._tableView.commentsArray = response.value!.1
-                
                 self.currentPage = 1
-                
                 //清除将帖子内容cell,因为这是个缓存，如果赋值后，就会cache到这个变量，之后直接读这个变量不重新赋值。
                 //这里刷新了，则可能需要更新帖子内容cell ,实际上只是重新调用了 cell.load(_:)方法
                 self.webViewContentCell = nil
-                
                 self.tableView.reloadData()
-                
             }
             else{
                 V2Error("刷新失败");
             }
-            if self.tableView.mj_header.isRefreshing(){
-                self.tableView.mj_header.endRefreshing()
-            }
-            self.tableView.mj_footer.resetNoMoreData()
             self.hideLoadingView()
+            cb()
         }
     }
-    
-    /**
-     点击右上角 more 按钮
-     */
     func rightClick(){
         if  self._tableView.model != nil {
-//            let activityView = V2ActivityViewController()
-//            let ds = ActivityViewDS()
-//            ds.topicDetailViewController = self
-//            activityView.dataSource = ds
-//            self.navigationController!.present(activityView, animated: true, completion: nil)
-//            self.activityView = activityView
             let activityView = V2ActivityViewController()
             activityView.dataSource = self
             self.navigationController!.present(activityView, animated: true, completion: nil)
             self.activityView = activityView
-            
         }
     }
-    /**
-     点击节点
-     */
-    
-    
-    /**
-     获取下一页评论，如果有的话
-     */
-    func getNextPage(){
+    func getNextPage(_ cb : @escaping CallbackMore){
         if self._tableView.model == nil || self._tableView.commentsArray.count <= 0 {
-            self.endRefreshingWithNoDataAtAll()
+            cb(false)
             return;
         }
         self.currentPage += 1
-        
         if self._tableView.model == nil || self.currentPage > self._tableView.model!.commentTotalPages {
-            self.endRefreshingWithNoMoreData()
+            cb(false)
             return;
         }
-        
         TopicDetailModel.getTopicCommentsById(self.topicId, page: self.currentPage) { (response) -> Void in
             if response.success {
                 self._tableView.commentsArray += response.value!
                 self.tableView.reloadData()
-                self.tableView.mj_footer.endRefreshing()
-                
+                cb(true)
                 if self.currentPage == self._tableView.model?.commentTotalPages {
-                    self.endRefreshingWithNoMoreData()
+                    cb(false)
                 }
             }
             else{
                 self.currentPage -= 1
             }
         }
-    }
-    
-    /**
-     禁用上拉加载更多，并显示一个字符串提醒
-     */
-    func endRefreshingWithStateString(_ string:String){
-        (self.tableView.mj_footer as! V2RefreshFooter).noMoreDataStateString = string
-        self.tableView.mj_footer.endRefreshingWithNoMoreData()
-    }
-
-    func endRefreshingWithNoDataAtAll() {
-        self.endRefreshingWithStateString("暂无评论")
-    }
-
-    func endRefreshingWithNoMoreData() {
-        self.endRefreshingWithStateString("没有更多评论了")
     }
 }
 

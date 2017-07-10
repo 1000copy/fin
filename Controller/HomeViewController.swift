@@ -84,24 +84,11 @@ class HomeViewController: UIViewController {
             if response.success {
                 self.tableView.topicList = response.value
                 self.tableView.reloadData()
-                //判断标签是否能加载下一页, 不能就提示下
-                let refreshFooter = self.tableView.mj_footer as! V2RefreshFooter
-                if self.tab == nil || self.tab == "all" {
-                    refreshFooter.noMoreDataStateString = nil
-                    refreshFooter.resetNoMoreData()
-                }
-                else{
-                    refreshFooter.noMoreDataStateString = "没更多帖子了,只有【\(NSLocalizedString("all"))】标签能翻页"
-                    refreshFooter.endRefreshingWithNoMoreData()
-                }
-                //重置page
                 self.currentPage = 0
-                
             }
             cb()
         }
     }
-    
     func getNextPage(_ cb : @escaping CallbackMore){
         if let count = self.tableView.topicList?.count , count <= 0{
             self.tableView.mj_footer.endRefreshing()
@@ -240,6 +227,7 @@ fileprivate class NotificationMenuButton: UIButton {
         self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
             if User.shared.notificationCount > 0 {
                 self?.aPointImageView!.isHidden = false
+                
             }
             else{
                 self?.aPointImageView!.isHidden = true
