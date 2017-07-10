@@ -1,6 +1,13 @@
 import UIKit
-class TopicDetailViewController: BaseViewController{
+class TopicDetailViewController: UIViewController{
+    fileprivate weak var _loadView:V2LoadingView?
+    func showLoadingView (){
+        self._loadView = V2LoadingView(view)
+    }
     
+    func hideLoadingView() {
+        self._loadView?.hideLoadingView()
+    }
     var topicId = "0"
     var currentPage = 1
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?

@@ -8,8 +8,15 @@
 
 import UIKit
 import MJRefresh
-class NotificationsViewController: BaseViewController,UITableViewDataSource,UITableViewDelegate {
-
+class NotificationsViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
+    fileprivate weak var _loadView:V2LoadingView?
+    func showLoadingView (){
+        self._loadView = V2LoadingView(view)
+    }
+    
+    func hideLoadingView() {
+        self._loadView?.hideLoadingView()
+    }
     fileprivate var notificationsArray:[NotificationsModel] = []
     
     fileprivate var _tableView :UITableView!

@@ -1,5 +1,13 @@
 import UIKit
-class NodesViewController: BaseViewController {
+class NodesViewController: UIViewController {
+    fileprivate weak var _loadView:V2LoadingView?
+    func showLoadingView (){
+        self._loadView = V2LoadingView(view)
+    }
+    
+    func hideLoadingView() {
+        self._loadView?.hideLoadingView()
+    }
     fileprivate var collectionView:CollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()

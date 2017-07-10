@@ -31,7 +31,7 @@ let noticeString = [
 
 class V2LoadingView: UIView {
     var activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-    init (){
+    init (_ view : UIView){
         super.init(frame:CGRect.zero)
         self.addSubview(self.activityIndicatorView)
         self.activityIndicatorView.snp.makeConstraints{ (make) -> Void in
@@ -52,7 +52,11 @@ class V2LoadingView: UIView {
             make.top.equalTo(self.activityIndicatorView.snp.bottom).offset(10)
             make.centerX.equalTo(self.activityIndicatorView)
         }
-        
+        backgroundColor = view.backgroundColor
+        view.addSubview(self)
+        self.snp.makeConstraints{ (make) -> Void in
+            make.top.right.bottom.left.equalTo(view)
+        }
         self.thmemChangedHandler = {[weak self] (style) -> Void in
             if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
                 self?.activityIndicatorView.activityIndicatorViewStyle = .gray
@@ -62,7 +66,9 @@ class V2LoadingView: UIView {
             }
         }
     }
-
+    func hideLoadingView() {
+        self.removeFromSuperview()
+    }
     override func willMove(toSuperview newSuperview: UIView?) {
         self.activityIndicatorView.startAnimating()
     }

@@ -1,5 +1,13 @@
 import UIKit
-class FavoritesViewController: BaseViewController {
+class FavoritesViewController: UIViewController {
+    fileprivate weak var _loadView:V2LoadingView?
+    func showLoadingView (){
+        self._loadView = V2LoadingView(view)
+    }
+    
+    func hideLoadingView() {
+        self._loadView?.hideLoadingView()
+    }
     var currentPage = 1
     //最大的Page
     var maxPage = 1

@@ -1,5 +1,13 @@
 import UIKit
-class NodeTopicListViewController: BaseViewController   {
+class NodeTopicListViewController: UIViewController   {
+    fileprivate weak var _loadView:V2LoadingView?
+    func showLoadingView (){
+        self._loadView = V2LoadingView(view)
+    }
+    
+    func hideLoadingView() {
+        self._loadView?.hideLoadingView()
+    }
     var node:NodeModel?
     var favorited:Bool = false
     var favoriteUrl:String? {
