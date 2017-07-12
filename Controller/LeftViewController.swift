@@ -53,7 +53,23 @@ fileprivate class FrostedView : FXBlurView{
         }
     }
 }
+
+
 fileprivate class LeftTable : TableBase{
+    let data = [
+        [
+            [HeadCell.self,"url","login"]
+        ],
+        [
+            [ MeCell.self, "me","ic_face"],
+            [ NotifyCell.self, "me","ic_face"],
+            [ FavoriteCell.self, "favorites","ic_turned_in_not"]
+        ],
+        [
+            [ NodeCell.self, "me","ic_face"],
+            [ MoreCell.self, "me","ic_face"],
+            ]
+    ]
     static var shared_ : LeftTable!
     static var shared : LeftTable{
         get{
@@ -68,35 +84,24 @@ fileprivate class LeftTable : TableBase{
         backgroundColor = UIColor.clear
         estimatedRowHeight=100;
         separatorStyle = .none;
-        registerCells(Array(dict.values))
-    }
-    let dict:[String:UITableViewCell.Type] = [
-        "[0, 0]":HeadCell.self,
-        "[1, 0]":MeCell.self,
-        "[1, 1]":NotifyCell.self,
-        "[1, 2]":FavoriteCell.self,
-        "[2, 0]":NodeCell.self,
-        "[2, 1]":MoreCell.self,
-        ]
-    func registerCells(_ cells:[AnyClass]){
-        for cell in cells {
-            self.register( cell, forCellReuseIdentifier: "\(cell)");
+        var arr : [CellBase.Type] = []
+        for item in data{
+            for i in item{
+                let cb = i[0]
+                arr.append(cb as! CellBase.Type )
+            }
         }
+        registerCells(arr)
     }
-    func registerCell(_ cell:AnyClass){
-        self.register( cell, forCellReuseIdentifier: "\(cell)");
-    }
-    func dequeneCell<T: UITableViewCell>(_ cell: T.Type ,_ indexPath:IndexPath) -> T {
-        return self.dequeueReusableCell(withIdentifier: "\(cell)", for: indexPath) as! T ;
-    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     override func sectionCount() -> Int {
-        return 3
+        return data.count
     }
     override func rowCount(_ section: Int) -> Int {
-        return [1,3,2][section]
+        return data[section].count
     }
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         if (indexPath.section == 1 && indexPath.row == 2)
@@ -107,12 +112,9 @@ fileprivate class LeftTable : TableBase{
         return [180,55+SEPARATOR_HEIGHT,55+SEPARATOR_HEIGHT][indexPath.section]
     }
     override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        let key = indexPath.description
-        if  dict[key] != nil{
-            return dequeneCell(dict[key]!, indexPath);
-        }else{
-            return UITableViewCell()
-        }
+        let cell = dequeneCell(data[indexPath.section][indexPath.row][0] as! CellBase.Type, indexPath) as CellBase
+        cell.load(data[indexPath.section][indexPath.row])
+        return cell
     }
     override func didSelectRowAt(_ indexPath: IndexPath) {
         let cell = self.cellForRow(at: indexPath)
@@ -249,8 +251,11 @@ fileprivate class MeCell:LeftNodeTableViewCell{
     }
     override fileprivate func setup() {
         super.setup()
-        nodeNameLabel.text = NSLocalizedString("me")
-        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_face")
+    }
+    fileprivate override func load(_ data: Any) {
+        let a = (data) as! [Any]
+        nodeNameLabel.text = NSLocalizedString(a[1] as! String)
+        nodeImageView.image = UIImage.imageUsedTemplateMode(a[2] as! String)
     }
 }
 fileprivate class FavoriteCell:LeftNodeTableViewCell{

@@ -87,7 +87,8 @@ class CellBase : UITableViewCell {
     }
     func setup(){
     }
-    func load(){
+    func load(_ data : Any){
+        
     }
     func action(_ indexPath : IndexPath){
     }
@@ -121,6 +122,17 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     }
     func commitInsert(_ indexPath: IndexPath){
         
+    }
+    func registerCells(_ cells:[AnyClass]){
+        for cell in cells {
+            self.register( cell, forCellReuseIdentifier: "\(cell)");
+        }
+    }
+    func registerCell(_ cell:AnyClass){
+        self.register( cell, forCellReuseIdentifier: "\(cell)");
+    }
+    func dequeneCell<T: UITableViewCell>(_ cell: T.Type ,_ indexPath:IndexPath) -> T {
+        return self.dequeueReusableCell(withIdentifier: "\(cell)", for: indexPath) as! T ;
     }
     // 实现区
     var scrollUp : ((_ cb : @escaping Callback)-> Void)?
