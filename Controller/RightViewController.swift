@@ -43,7 +43,7 @@ class RightViewController: UIViewController{
         if currentTab == nil {
             currentTab = "all"
         }
-        self.tableView.currentSelectedTabIndex = (tableView.right as! RightTableData).rightNodes.index { $0.nodeTab == currentTab }!
+        self.tableView.currentSelectedTabIndex = (tableView.tableData as! RightTableData).rightNodes.index { $0.nodeTab == currentTab }!
         
         self.backgroundImageView = UIImageView()
         self.backgroundImageView!.frame = self.view.frame
@@ -79,7 +79,7 @@ class RightViewController: UIViewController{
         // 调整RightView宽度
         let cell = RightNodeTableViewCell()
         let cellFont = UIFont(name: cell.nodeNameLabel.font.familyName, size: cell.nodeNameLabel.font.pointSize)
-        for node in (tableView.right as! RightTableData).rightNodes {
+        for node in (tableView.tableData as! RightTableData).rightNodes {
             let size = node.nodeName!.boundingRect(with: CGSize(width: CGFloat(MAXFLOAT), height: CGFloat(MAXFLOAT)),
                                                    options: NSStringDrawingOptions.usesLineFragmentOrigin,
                                                    attributes: ["NSFontAttributeName":cellFont!],
@@ -130,7 +130,7 @@ fileprivate class RightTableData : TableData{
 fileprivate class RightTable : RightTableWithData{
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
-        right = RightTableData()
+        tableData = RightTableData()
         backgroundColor = UIColor.clear
         estimatedRowHeight=100;
         separatorStyle = .none;
@@ -140,23 +140,7 @@ fileprivate class RightTable : RightTableWithData{
         fatalError("init(coder:) has not been implemented")
     }
 }
-fileprivate class RightTableWithData : TableBase{
-    var right : TableData!
-    var currentSelectedTabIndex = 0;
-    var firstAutoHighLightCell:UITableViewCell?
-    fileprivate override func rowCount(_ section: Int) -> Int {
-        return right.rowCount(section)
-    }
-    fileprivate override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        return right.rowHeight(indexPath)
-    }
-    fileprivate override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        let ctype = right.cellTypeAt(indexPath)
-        let cell = dequeneCell(ctype, indexPath) as! CellBase
-        cell.load(right.getDataItem(indexPath))
-        return cell ;
-    }
-    
+fileprivate class RightTableWithData : DataTableBase{
     fileprivate override func didSelectRowAt(_ indexPath: IndexPath) {
         if let highLightCell = self.firstAutoHighLightCell{
             self.firstAutoHighLightCell = nil
@@ -164,7 +148,7 @@ fileprivate class RightTableWithData : TableBase{
                 highLightCell.setSelected(false, animated: false)
             }
         }
-        let node = self.right.getDataItem(indexPath) as! rightNodeModel
+        let node = self.tableData.getDataItem(indexPath) as! rightNodeModel
         Msg.send("ChangeTab",[node.nodeTab])
         Msg.send("closeDrawer")
     }
@@ -177,6 +161,25 @@ fileprivate class RightTableWithData : TableBase{
             cell.setSelected(true, animated: true)
         }
     }
+    var currentSelectedTabIndex = 0;
+    var firstAutoHighLightCell:UITableViewCell?
+}
+fileprivate class DataTableBase : TableBase{
+    var tableData : TableData!
+    fileprivate override func rowCount(_ section: Int) -> Int {
+        return tableData.rowCount(section)
+    }
+    fileprivate override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+        return tableData.rowHeight(indexPath)
+    }
+    fileprivate override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
+        let ctype = tableData.cellTypeAt(indexPath)
+        let cell = dequeneCell(ctype, indexPath) as! CellBase
+        cell.load(tableData.getDataItem(indexPath))
+        return cell ;
+    }
+    
+   
 
 }
 
