@@ -100,7 +100,8 @@ class BigBrotherWatchingYou : UIResponder{
             "presentPhotoBrower":#selector(presentPhotoBrower),
         ]
         for (key, value) in  a {
-            NotificationCenter.default.addObserver(self, selector: value, name: Notification.Name(key), object: nil)
+//            NotificationCenter.default.addObserver(self, selector: value, name: Notification.Name(key), object: nil)
+            Msg.observe(self, value, key)
         }
     }
     func presentPhotoBrower(_ obj : NSNotification){

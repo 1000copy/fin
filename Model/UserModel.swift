@@ -158,7 +158,9 @@ extension UserModel{
             }
         }
     }
-
+    class func refresh(_ username:String){
+        getUserInfoByUsername(username,completionHandler:nil)
+    }
     class func getUserInfoByUsername(_ username:String ,completionHandler:((V2ValueResponse<UserModel>) -> Void)? ){
         let prame = [
             "username":username

@@ -77,6 +77,22 @@ class  Table : TableBase {
     }
     
 }
+class CellBase : UITableViewCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        self.setup();
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    func setup(){
+    }
+    func load(){
+    }
+    func action(_ indexPath : IndexPath){
+    }
+}
+
 class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     // 子类接口区
     func rowHeight(_ indexPath: IndexPath) -> CGFloat {
@@ -92,6 +108,10 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
         return UITableViewCell()
     }
     func didSelectRowAt(_ indexPath: IndexPath) {
+        let cell = self.cellForRow(at: indexPath)
+        if let p  = cell as? CellBase {
+            p.action(indexPath)
+        }
     }
     func canEditRowAt(_ indexPath: IndexPath) -> Bool {
         return true
@@ -199,20 +219,6 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         didSelectRowAt(indexPath)
     }
-}
-//NotificationCenter.default.post(name: Notification.Name("dive2"), object: [id,a])
-//NotificationCenter.default.addObserver(self, selector: #selector(dive2), name: Notification.Name("open topic detail"), object: nil)
-class Msg {
-    class func send( _ name : String, _ object : Any?){
-        NotificationCenter.default.post(name: Notification.Name(name), object: object)
-    }
-    class func send( _ name : String){
-        send(name,nil)
-    }
-    
-    //    class func observe(_ owner : NSObject , responser : Any? , _ msg : String, _ object : Any?){
-    //        NotificationCenter.default.addObserver(owner, selector: #selector(responser), name: Notification.Name(msg), object: nil)
-    //    }
 }
 
 typealias Callback =  (()-> Void)
@@ -442,5 +448,27 @@ fileprivate class V2RefreshFooter: MJRefreshAutoFooter {
         super.placeSubviews()
         self.loadingView!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2 + self.centerOffset);
         self.stateLabel!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2  + self.centerOffset);
+    }
+}
+class ImageBase : UIImageView{
+    func kfImage(_ url : String,_ cb : @escaping Callback){
+        kf.setImage(with: URL(string: url)!, placeholder: nil, options: nil){
+            (image, error, cacheType, imageURL) -> () in
+            cb()
+        }
+    }
+}
+class Msg {
+    class func send( _ name : String, _ object : Any?){
+        NotificationCenter.default.post(name: Notification.Name(name), object: object)
+    }
+    class func send( _ name : String){
+        send(name,nil)
+    }
+    class func observe(_ owner : NSObject , _ responser : Selector , _ msg : String, _ object : Any?){
+        NotificationCenter.default.addObserver(owner, selector: responser, name: Notification.Name(msg), object: nil)
+    }
+    class func observe(_ owner : NSObject , _ responser : Selector , _ msg : String){
+        observe(owner, responser, msg,nil)
     }
 }
