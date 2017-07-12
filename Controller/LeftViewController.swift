@@ -53,8 +53,6 @@ fileprivate class FrostedView : FXBlurView{
         }
     }
 }
-
-
 fileprivate class LeftTable : TableBase{
     let data = [
         [
@@ -62,13 +60,13 @@ fileprivate class LeftTable : TableBase{
         ],
         [
             [ MeCell.self, "me","ic_face"],
-            [ NotifyCell.self, "me","ic_face"],
+            [ NotifyCell.self, "notifications","ic_notifications_none"],
             [ FavoriteCell.self, "favorites","ic_turned_in_not"]
         ],
         [
-            [ NodeCell.self, "me","ic_face"],
-            [ MoreCell.self, "me","ic_face"],
-            ]
+            [ NodeCell.self, "nodes","ic_navigation"],
+            [ MoreCell.self, "more","ic_settings_input_svideo"],
+        ]
     ]
     static var shared_ : LeftTable!
     static var shared : LeftTable{
@@ -93,7 +91,6 @@ fileprivate class LeftTable : TableBase{
         }
         registerCells(arr)
     }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -104,9 +101,7 @@ fileprivate class LeftTable : TableBase{
         return data[section].count
     }
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        if (indexPath.section == 1 && indexPath.row == 2)
-            
-        {
+        if (indexPath.section == 1 && indexPath.row == 2){
             return 55+10
         }
         return [180,55+SEPARATOR_HEIGHT,55+SEPARATOR_HEIGHT][indexPath.section]
@@ -121,7 +116,6 @@ fileprivate class LeftTable : TableBase{
         if let p  = cell as? CellBase {
             p.action(indexPath)
         }
-        
     }
 }
 fileprivate class AvatarImageView : ImageBase{
@@ -161,24 +155,6 @@ fileprivate class AvatarImageView : ImageBase{
         }
     }
 }
-//protocol CellAction{
-//    func action(_ indexPath : IndexPath)-> Void
-//}
-//class CellBase : UITableViewCell ,CellAction{
-//    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier);
-//        self.setup();
-//    }
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
-//    func setup(){
-//    }
-//    func load(){
-//    }
-//    func action(_ indexPath : IndexPath){
-//    }
-//}
 fileprivate class HeadCell: CellBase {
     override func action(_ indexPath : IndexPath){
         print(indexPath)
@@ -224,8 +200,8 @@ fileprivate class NodeCell:LeftNodeTableViewCell{
     }
     override fileprivate func setup() {
         super.setup()
-        nodeNameLabel.text = NSLocalizedString("nodes")
-        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_navigation")
+//        nodeNameLabel.text = NSLocalizedString("nodes")
+//        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_navigation")
     }
 }
 fileprivate class MoreCell:LeftNodeTableViewCell{
@@ -235,8 +211,7 @@ fileprivate class MoreCell:LeftNodeTableViewCell{
     }
     override fileprivate func setup() {
         super.setup()
-        nodeNameLabel.text = NSLocalizedString("more")
-        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_settings_input_svideo")
+
     }
 }
 fileprivate class MeCell:LeftNodeTableViewCell{
@@ -251,11 +226,6 @@ fileprivate class MeCell:LeftNodeTableViewCell{
     }
     override fileprivate func setup() {
         super.setup()
-    }
-    fileprivate override func load(_ data: Any) {
-        let a = (data) as! [Any]
-        nodeNameLabel.text = NSLocalizedString(a[1] as! String)
-        nodeImageView.image = UIImage.imageUsedTemplateMode(a[2] as! String)
     }
 }
 fileprivate class FavoriteCell:LeftNodeTableViewCell{
@@ -289,7 +259,11 @@ fileprivate class LeftNodeTableViewCell: CellBase {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+    fileprivate override func load(_ data: Any) {
+        let a = (data) as! [Any]
+        nodeNameLabel.text = NSLocalizedString(a[1] as! String)
+        nodeImageView.image = UIImage.imageUsedTemplateMode(a[2] as! String)
+    }
     override func setup(){
         self.selectionStyle = .none
         self.backgroundColor = UIColor.clear

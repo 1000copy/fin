@@ -9,49 +9,27 @@
 import UIKit
 import FXBlurView
 
-class RightViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
-    let rightNodes = [
-        rightNodeModel(nodeName: NSLocalizedString("tech" ), nodeTab: "tech"),
-        rightNodeModel(nodeName: NSLocalizedString("creative" ), nodeTab: "creative"),
-        rightNodeModel(nodeName: NSLocalizedString("play" ), nodeTab: "play"),
-        rightNodeModel(nodeName: NSLocalizedString("apple" ), nodeTab: "apple"),
-        rightNodeModel(nodeName: NSLocalizedString("jobs" ), nodeTab: "jobs"),
-        rightNodeModel(nodeName: NSLocalizedString("deals" ), nodeTab: "deals"),
-        rightNodeModel(nodeName: NSLocalizedString("city" ), nodeTab: "city"),
-        rightNodeModel(nodeName: NSLocalizedString("qna" ), nodeTab: "qna"),
-        rightNodeModel(nodeName: NSLocalizedString("hot"), nodeTab: "hot"),
-        rightNodeModel(nodeName: NSLocalizedString("all"), nodeTab: "all"),
-        rightNodeModel(nodeName: NSLocalizedString("r2" ), nodeTab: "r2"),
-        rightNodeModel(nodeName: NSLocalizedString("nodes" ), nodeTab: "nodes"),
-        rightNodeModel(nodeName: NSLocalizedString("members" ), nodeTab: "members"),
-    ]
-    var currentSelectedTabIndex = 0;
+class RightViewController: UIViewController{
+    
     /**
      第一次自动高亮的cell，
      因为再次点击其他cell，这个cell并不会自动调用 setSelected 取消自身的选中状态
      所以保存这个cell用于手动取消选中状态
      我也不知道这是不是BUG，还是我用法不对。
     */
-    var firstAutoHighLightCell:UITableViewCell?
+    
     
     var backgroundImageView:UIImageView?
     var frostedView = FXBlurView()
     
-    fileprivate var _tableView :UITableView!
-    fileprivate var tableView: UITableView {
+    fileprivate var _tableView :RightTable!
+    fileprivate var tableView: RightTable {
         get{
             if(_tableView != nil){
                 return _tableView!;
             }
-            _tableView = UITableView();
-            _tableView.backgroundColor = UIColor.clear
-            _tableView.estimatedRowHeight=100;
-            _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
+            _tableView = RightTable();
             
-            regClass(self.tableView, cell: RightNodeTableViewCell.self)
-            
-            _tableView.delegate = self;
-            _tableView.dataSource = self;
             return _tableView!;
             
         }
@@ -65,7 +43,7 @@ class RightViewController: UIViewController,UITableViewDelegate,UITableViewDataS
         if currentTab == nil {
             currentTab = "all"
         }
-        self.currentSelectedTabIndex = rightNodes.index { $0.nodeTab == currentTab }!
+        self.tableView.currentSelectedTabIndex = (tableView.right as! RightTableData).rightNodes.index { $0.nodeTab == currentTab }!
         
         self.backgroundImageView = UIImageView()
         self.backgroundImageView!.frame = self.view.frame
@@ -92,8 +70,8 @@ class RightViewController: UIViewController,UITableViewDelegate,UITableViewDataS
             self?.frostedView.updateAsynchronously(true, completion: nil)
         }
         
-        let rowHeight = self.tableView(self.tableView, heightForRowAt: IndexPath(row: 0, section: 0))
-        let rowCount = self.tableView(self.tableView, numberOfRowsInSection: 0)
+        let rowHeight = self._tableView.tableView(self.tableView, heightForRowAt: IndexPath(row: 0, section: 0))
+        let rowCount = self._tableView.tableView(self.tableView, numberOfRowsInSection: 0)
         let paddingTop = (SCREEN_HEIGHT - CGFloat(rowCount) * rowHeight) / 2
         self.tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: paddingTop))
     }
@@ -101,7 +79,7 @@ class RightViewController: UIViewController,UITableViewDelegate,UITableViewDataS
         // 调整RightView宽度
         let cell = RightNodeTableViewCell()
         let cellFont = UIFont(name: cell.nodeNameLabel.font.familyName, size: cell.nodeNameLabel.font.pointSize)
-        for node in rightNodes {
+        for node in (tableView.right as! RightTableData).rightNodes {
             let size = node.nodeName!.boundingRect(with: CGSize(width: CGFloat(MAXFLOAT), height: CGFloat(MAXFLOAT)),
                                                    options: NSStringDrawingOptions.usesLineFragmentOrigin,
                                                    attributes: ["NSFontAttributeName":cellFont!],
@@ -113,29 +91,83 @@ class RightViewController: UIViewController,UITableViewDelegate,UITableViewDataS
         }
         return 100
     }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return rightNodes.count;
+   }
+class TableData : NSObject{
+    func rowCount(_ section: Int) -> Int {
+        return 0;
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         return 48
     }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = getCell(tableView, cell: RightNodeTableViewCell.self, indexPath: indexPath);
-        cell.nodeNameLabel.text = self.rightNodes[indexPath.row].nodeName
+    func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
+         return CellBase.self
+    }
+    func getDataItem(_ indexPath : IndexPath) -> Any{
+        return 0
+    }
+}
+fileprivate class RightTableData : TableData{
+    let arr = ["tech","creative","play","apple","jobs","deals","city","qna","hot","all","r2","nodes","members",]
+    var rightNodes:[rightNodeModel] = []
+    override init() {
+        for item in arr{
+            rightNodes.append( rightNodeModel(nodeName: NSLocalizedString(item ), nodeTab: item))
+        }
+    }
+    override func rowCount(_ section: Int) -> Int {
+        return rightNodes.count;
+    }
+    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+        return 48
+    }
+    override func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type {
+        return RightNodeTableViewCell.self
+    }
+    override func getDataItem(_ indexPath: IndexPath) -> Any {
+        return rightNodes[indexPath.row]
+    }
+}
+fileprivate class RightTable : RightTableWithData{
+    override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame:frame,style:style)
+        right = RightTableData()
+        backgroundColor = UIColor.clear
+        estimatedRowHeight=100;
+        separatorStyle = .none;
+        registerCell(RightNodeTableViewCell.self)
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+fileprivate class RightTableWithData : TableBase{
+    var right : TableData!
+    var currentSelectedTabIndex = 0;
+    var firstAutoHighLightCell:UITableViewCell?
+    fileprivate override func rowCount(_ section: Int) -> Int {
+        return right.rowCount(section)
+    }
+    fileprivate override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+        return right.rowHeight(indexPath)
+    }
+    fileprivate override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
+        let ctype = right.cellTypeAt(indexPath)
+        let cell = dequeneCell(ctype, indexPath) as! CellBase
+        cell.load(right.getDataItem(indexPath))
         return cell ;
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+    fileprivate override func didSelectRowAt(_ indexPath: IndexPath) {
         if let highLightCell = self.firstAutoHighLightCell{
             self.firstAutoHighLightCell = nil
             if(indexPath.row != self.currentSelectedTabIndex){
                 highLightCell.setSelected(false, animated: false)
             }
         }
-        let node = self.rightNodes[indexPath.row];
+        let node = self.right.getDataItem(indexPath) as! rightNodeModel
         Msg.send("ChangeTab",[node.nodeTab])
         Msg.send("closeDrawer")
     }
-
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == self.currentSelectedTabIndex && cell.isSelected == false {
             if let highLightCell = self.firstAutoHighLightCell{
@@ -145,11 +177,57 @@ class RightViewController: UIViewController,UITableViewDelegate,UITableViewDataS
             cell.setSelected(true, animated: true)
         }
     }
+
 }
-
-
 
 struct rightNodeModel {
     var nodeName:String?
     var nodeTab:String?
+}
+fileprivate class RightNodeTableViewCell: CellBase {
+    fileprivate override func load(_ data: Any) {
+        let item = data as! rightNodeModel
+        nodeNameLabel.text = item.nodeName
+    }
+    var nodeNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = v2Font(15)
+        return label
+    }()
+    
+    var panel = UIView()
+    override func setup()->Void{
+        self.selectionStyle = .none
+        self.backgroundColor = UIColor.clear
+        
+        self.contentView.addSubview(panel)
+        self.panel.snp.makeConstraints{ (make) -> Void in
+            make.left.top.right.equalTo(self.contentView)
+            make.bottom.equalTo(self.contentView).offset(-1 * SEPARATOR_HEIGHT)
+        }
+        
+        panel.addSubview(self.nodeNameLabel)
+        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
+            make.right.equalTo(panel).offset(-22)
+            make.centerY.equalTo(panel)
+        }
+        
+        self.thmemChangedHandler = {[weak self] (style) -> Void in
+            self?.refreshBackgroundColor()
+            self?.nodeNameLabel.textColor = V2EXColor.colors.v2_LeftNodeTintColor
+        }
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated);
+        self.refreshBackgroundColor()
+    }
+    func refreshBackgroundColor() {
+        if self.isSelected {
+            self.panel.backgroundColor = V2EXColor.colors.v2_LeftNodeBackgroundHighLightedColor
+        }
+        else{
+            self.panel.backgroundColor = V2EXColor.colors.v2_LeftNodeBackgroundColor
+        }
+    }
 }
