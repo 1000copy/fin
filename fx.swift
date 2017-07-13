@@ -84,7 +84,16 @@ class  Table : TableBase {
 }
 
 class DataTableBase : TableBase{
-    var tableData : TableDataSource!
+    var tableData_ : TableDataSource!
+    var tableData : TableDataSource!{
+        get{
+            return tableData_
+        }
+        set{
+            tableData_ = newValue
+            registerCells()
+        }
+    }
     override func sectionCount() -> Int {
         return tableData.sectionCount()
     }
@@ -94,11 +103,24 @@ class DataTableBase : TableBase{
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         return tableData.rowHeight(indexPath)
     }
+    func registerCells(){
+        registerCells(tableData.cellTypes())
+    }
     override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
         let ctype = tableData.cellTypeAt(indexPath)
         let cell = dequeneCell(ctype, indexPath) as! CellBase
         cell.load(tableData,tableData.getDataItem(indexPath), indexPath)
         return cell ;
+    }
+    override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame:frame,style:style)
+//        if tableData.cellTypes().count > 0 {
+//            registerCells(tableData.cellTypes())
+//        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 typealias  TableDataSourceItem = [String:Any]
@@ -113,7 +135,14 @@ class TableDataSource : NSObject{
         return 48
     }
     func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
-        return CellBase.self
+        if cellTypes().count == 1 {
+            return cellTypes()[0]
+        }else{
+            return CellBase.self
+        }
+    }
+    func cellTypes() ->[UITableViewCell.Type]{
+        return []
     }
     func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
         return [:]
