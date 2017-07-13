@@ -92,25 +92,19 @@ class RightViewController: UIViewController{
         return 100
     }
    }
-class TableData : NSObject{
-    func rowCount(_ section: Int) -> Int {
-        return 0;
-    }
-    func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        return 48
-    }
-    func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
-         return CellBase.self
-    }
-    func getDataItem(_ indexPath : IndexPath) -> Any{
-        return 0
-    }
-}
-fileprivate class RightTableData : TableData{
+
+fileprivate class RightTableData : TableDataSource{
     let arr = ["tech","creative","play","apple","jobs","deals","city","qna","hot","all","r2","nodes","members",]
     var rightNodes:[rightNodeModel] = []
+    var nodes : [TableDataSourceItem] = []
     override init() {
         for item in arr{
+            var  a : TableDataSourceItem = [:]
+            a["nodeName"] =  NSLocalizedString(item )
+            a["nodeTab"] =  item
+//            a.setValue( NSLocalizedString(item ), forKey: "nodeName")
+//            a.setValue( item, forKey: "nodeTab")
+            nodes.append(a)
             rightNodes.append( rightNodeModel(nodeName: NSLocalizedString(item ), nodeTab: item))
         }
     }
@@ -123,8 +117,9 @@ fileprivate class RightTableData : TableData{
     override func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type {
         return RightNodeTableViewCell.self
     }
-    override func getDataItem(_ indexPath: IndexPath) -> Any {
-        return rightNodes[indexPath.row]
+    override func getDataItem(_ indexPath: IndexPath) -> TableDataSourceItem {
+//        return rightNodes[indexPath.row]
+        return nodes[indexPath.row]
     }
 }
 fileprivate class RightTable : RightTableWithData{
@@ -142,14 +137,15 @@ fileprivate class RightTable : RightTableWithData{
 }
 fileprivate class RightTableWithData : DataTableBase{
     fileprivate override func didSelectRowAt(_ indexPath: IndexPath) {
+        super.didSelectRowAt(indexPath)
         if let highLightCell = self.firstAutoHighLightCell{
             self.firstAutoHighLightCell = nil
             if(indexPath.row != self.currentSelectedTabIndex){
                 highLightCell.setSelected(false, animated: false)
             }
         }
-        let node = self.tableData.getDataItem(indexPath) as! rightNodeModel
-        Msg.send("ChangeTab",[node.nodeTab])
+        let node = self.tableData.getDataItem(indexPath)
+        Msg.send("ChangeTab",[node["nodeTab"] as! String])
         Msg.send("closeDrawer")
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -164,34 +160,19 @@ fileprivate class RightTableWithData : DataTableBase{
     var currentSelectedTabIndex = 0;
     var firstAutoHighLightCell:UITableViewCell?
 }
-fileprivate class DataTableBase : TableBase{
-    var tableData : TableData!
-    fileprivate override func rowCount(_ section: Int) -> Int {
-        return tableData.rowCount(section)
-    }
-    fileprivate override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        return tableData.rowHeight(indexPath)
-    }
-    fileprivate override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        let ctype = tableData.cellTypeAt(indexPath)
-        let cell = dequeneCell(ctype, indexPath) as! CellBase
-        cell.load(tableData.getDataItem(indexPath))
-        return cell ;
-    }
-    
-   
-
-}
 
 struct rightNodeModel {
     var nodeName:String?
     var nodeTab:String?
 }
 fileprivate class RightNodeTableViewCell: CellBase {
-    fileprivate override func load(_ data: Any) {
-        let item = data as! rightNodeModel
-        nodeNameLabel.text = item.nodeName
+    fileprivate override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+        nodeNameLabel.text = item["nodeName"] as! String
     }
+    override fileprivate func action(_ indexPath: IndexPath) {
+        print(indexPath)
+    }
+    
     var nodeNameLabel: UILabel = {
         let label = UILabel()
         label.font = v2Font(15)

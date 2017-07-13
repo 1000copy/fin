@@ -53,7 +53,7 @@ fileprivate class FrostedView : FXBlurView{
         }
     }
 }
-fileprivate class LeftTable : TableBase{
+class LeftTableData : TJTableDataSource{
     let data = [
         [
             [HeadCell.self,"url","login"]
@@ -66,8 +66,27 @@ fileprivate class LeftTable : TableBase{
         [
             [ NodeCell.self, "nodes","ic_navigation"],
             [ MoreCell.self, "more","ic_settings_input_svideo"],
-        ]
+            ]
     ]
+    override func sectionCount() -> Int {
+        return data.count
+    }
+    override func rowCount(_ section: Int) -> Int {
+        return data[section].count
+    }
+    
+    override func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
+        return data[indexPath.section][indexPath.row][0] as! UITableViewCell.Type
+    }
+    override func getDataItem(_ indexPath : IndexPath) -> TJTableDataSourceItem{
+        var a : TableDataSourceItem = [:]
+        a["title"] = NSLocalizedString(data[indexPath.section][indexPath.row][1] as! String)
+        a["icon"] = data[indexPath.section][indexPath.row][2]
+        return a
+    }
+}
+fileprivate class LeftTable : TJTable{
+    
     static var shared_ : LeftTable!
     static var shared : LeftTable{
         get{
@@ -83,7 +102,8 @@ fileprivate class LeftTable : TableBase{
         estimatedRowHeight=100;
         separatorStyle = .none;
         var arr : [CellBase.Type] = []
-        for item in data{
+        self.tableData = LeftTableData()
+        for item in (tableData as! LeftTableData).data{
             for i in item{
                 let cb = i[0]
                 arr.append(cb as! CellBase.Type )
@@ -94,22 +114,12 @@ fileprivate class LeftTable : TableBase{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    override func sectionCount() -> Int {
-        return data.count
-    }
-    override func rowCount(_ section: Int) -> Int {
-        return data[section].count
-    }
+    
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         if (indexPath.section == 1 && indexPath.row == 2){
             return 55+10
         }
         return [180,55+SEPARATOR_HEIGHT,55+SEPARATOR_HEIGHT][indexPath.section]
-    }
-    override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        let cell = dequeneCell(data[indexPath.section][indexPath.row][0] as! CellBase.Type, indexPath) as CellBase
-        cell.load(data[indexPath.section][indexPath.row])
-        return cell
     }
     override func didSelectRowAt(_ indexPath: IndexPath) {
         let cell = self.cellForRow(at: indexPath)
@@ -198,20 +208,11 @@ fileprivate class NodeCell:LeftNodeTableViewCell{
         Msg.send("pushNodesViewController")
         Msg.send("closeDrawer")
     }
-    override fileprivate func setup() {
-        super.setup()
-//        nodeNameLabel.text = NSLocalizedString("nodes")
-//        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_navigation")
-    }
 }
 fileprivate class MoreCell:LeftNodeTableViewCell{
     override func action(_ indexPath : IndexPath){
         Msg.send("pushMoreViewController")
         Msg.send("closeDrawer")
-    }
-    override fileprivate func setup() {
-        super.setup()
-
     }
 }
 fileprivate class MeCell:LeftNodeTableViewCell{
@@ -224,9 +225,6 @@ fileprivate class MeCell:LeftNodeTableViewCell{
         Msg.send("closeDrawer")
 
     }
-    override fileprivate func setup() {
-        super.setup()
-    }
 }
 fileprivate class FavoriteCell:LeftNodeTableViewCell{
     override func action(_ indexPath : IndexPath){
@@ -237,13 +235,8 @@ fileprivate class FavoriteCell:LeftNodeTableViewCell{
         Msg.send("pushFavoritesViewController")
          Msg.send("closeDrawer")
     }
-    override fileprivate func setup() {
-        super.setup()
-        nodeNameLabel.text =  NSLocalizedString("favorites")
-        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_turned_in_not")
-    }
 }
-fileprivate class LeftNodeTableViewCell: CellBase {
+fileprivate class LeftNodeTableViewCell: TJCell {
     var nodeImageView: UIImageView = UIImageView()
     var nodeNameLabel: UILabel = {
         let label =  UILabel()
@@ -252,17 +245,9 @@ fileprivate class LeftNodeTableViewCell: CellBase {
     }()
     var panel = UIView()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    fileprivate override func load(_ data: Any) {
-        let a = (data) as! [Any]
-        nodeNameLabel.text = NSLocalizedString(a[1] as! String)
-        nodeImageView.image = UIImage.imageUsedTemplateMode(a[2] as! String)
+    fileprivate override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+        nodeNameLabel.text = item["title"] as! String
+        nodeImageView.image = UIImage.imageUsedTemplateMode(item["icon"] as! String)
     }
     override func setup(){
         self.selectionStyle = .none

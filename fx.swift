@@ -1,3 +1,8 @@
+typealias TJCell = CellBase
+typealias TJTable = DataTableBase
+typealias TJTableDataSource = TableDataSource
+typealias TJTableDataSourceItem = TableDataSourceItem
+
 // Button,TableView,CollectView
 import UIKit
 import SnapKit
@@ -77,6 +82,43 @@ class  Table : TableBase {
     }
     
 }
+
+class DataTableBase : TableBase{
+    var tableData : TableDataSource!
+    override func sectionCount() -> Int {
+        return tableData.sectionCount()
+    }
+    override func rowCount(_ section: Int) -> Int {
+        return tableData.rowCount(section)
+    }
+    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+        return tableData.rowHeight(indexPath)
+    }
+    override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
+        let ctype = tableData.cellTypeAt(indexPath)
+        let cell = dequeneCell(ctype, indexPath) as! CellBase
+        cell.load(tableData,tableData.getDataItem(indexPath), indexPath)
+        return cell ;
+    }
+}
+typealias  TableDataSourceItem = [String:Any]
+class TableDataSource : NSObject{
+    func sectionCount() -> Int {
+        return 1
+    }
+    func rowCount(_ section: Int) -> Int {
+        return 0;
+    }
+    func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+        return 48
+    }
+    func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
+        return CellBase.self
+    }
+    func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
+        return [:]
+    }
+}
 class CellBase : UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
@@ -87,9 +129,13 @@ class CellBase : UITableViewCell {
     }
     func setup(){
     }
-    func load(_ data : Any){
+    func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         
     }
+    func loadCell(_ data : TableDataSourceItem){
+        
+    }
+    
     func action(_ indexPath : IndexPath){
     }
 }
@@ -123,6 +169,7 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     func commitInsert(_ indexPath: IndexPath){
         
     }
+    // 实现区
     func registerCells(_ cells:[AnyClass]){
         for cell in cells {
             self.register( cell, forCellReuseIdentifier: "\(cell)");
@@ -134,7 +181,6 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     func dequeneCell<T: UITableViewCell>(_ cell: T.Type ,_ indexPath:IndexPath) -> T {
         return self.dequeueReusableCell(withIdentifier: "\(cell)", for: indexPath) as! T ;
     }
-    // 实现区
     var scrollUp : ((_ cb : @escaping Callback)-> Void)?
     var scrollDown : ((_ cb : @escaping CallbackMore)-> Void)?
     
