@@ -91,7 +91,7 @@ class DataTableBase : TableBase{
         }
         set{
             tableData_ = newValue
-            registerCells()
+            
         }
     }
     override func sectionCount() -> Int {
@@ -103,22 +103,37 @@ class DataTableBase : TableBase{
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         return tableData.rowHeight(indexPath)
     }
+    var registed : Bool = false
     func registerCells(){
-        registerCells(tableData.cellTypes())
+        if !registed {
+            registerCells(cellTypes())
+            registed = true
+        }
     }
     override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        let ctype = tableData.cellTypeAt(indexPath)
+        let ctype = cellTypeAt(indexPath)
+        registerCells()
         let cell = dequeneCell(ctype, indexPath) as! CellBase
         cell.load(tableData,tableData.getDataItem(indexPath), indexPath)
         return cell ;
     }
+    func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
+        if cellTypes().count == 1 {
+            return cellTypes()[0]
+        }else if tableData != nil{
+            return tableData.cellTypeAt(indexPath)
+        }
+        return UITableViewCell.self
+    }
+    func cellTypes() ->[UITableViewCell.Type]{
+        if tableData != nil{
+            return tableData.cellTypes()
+        }
+        return []
+    }
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
-//        if tableData.cellTypes().count > 0 {
-//            registerCells(tableData.cellTypes())
-//        }
     }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -149,13 +164,7 @@ class TableDataSource : NSObject{
     }
 }
 class CellBase : UITableViewCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+    // interface
     func setup(){
     }
     func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
@@ -166,6 +175,24 @@ class CellBase : UITableViewCell {
     }
     
     func action(_ indexPath : IndexPath){
+    }
+    // imple
+    func deselect(){
+        tableView?.deselectRow(at:(tableView?.indexPath(for: self))!,animated: true)
+    }
+    var tableView: UITableView? {
+        var view = self.superview
+        while (view != nil && view!.isKind(of: UITableView.self) == false) {
+            view = view!.superview
+        }
+        return view as? UITableView
+    }
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        self.setup();
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 }
 

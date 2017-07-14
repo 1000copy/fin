@@ -119,81 +119,35 @@ class TopicDetailViewController: UIViewController{
         }
     }
 }
-
-fileprivate class Sheet : UIView,UIActionSheetDelegate {
-    var table : Table1!
-    var viewControler : UIViewController?
-    fileprivate func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :Table1 ) {
-        self.table = table
-        self.viewControler = vc
-        let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
-        sheet.addAction(UIAlertAction(title:"回复", style:UIAlertActionStyle.default, handler:{ action in
-            self.replyComment(indexPath.row)
-        }))
-        sheet.addAction(UIAlertAction(title:"感谢", style:UIAlertActionStyle.default, handler:{ action in
-            self.thankComment(indexPath.row)
-        }))
-        sheet.addAction(UIAlertAction(title:"查看对话", style:UIAlertActionStyle.default, handler:{ action in
-            self.relevantComment(indexPath.row)
-        }))
-        sheet.addAction(UIAlertAction(title:"取消", style:UIAlertActionStyle.cancel, handler:nil))
-        vc.present(sheet, animated:true, completion:nil)
-    }
-    func selectedRowWithActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table : Table1){
-        ActionSheet(indexPath,vc,table)
-    }
-    func replyComment(_ row:Int){
-        User.shared.ensureLoginWithHandler {
-            let item = table.commentsArray[row as Int]
-            Msg.send("replyComment", [viewControler as Any,item.userName as Any,table.model!])
-        }
-    }
-    func thankComment(_ row:Int){
-        guard User.shared.isLogin else {
-            V2Inform("请先登录")
-            return;
-        }
-        let item = table.commentsArray[row as Int]
-        if item.replyId == nil {
-            V2Error("回复replyId为空")
-            return;
-        }
-        if table.model?.token == nil {
-            V2Error("帖子token为空")
-            return;
-        }
-        item.favorites += 1
-        table.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
-        
-        TopicCommentModel.replyThankWithReplyId(item.replyId!, token: table.model!.token!) {
-            [weak item, weak self](response) in
-            if response.success {
-            }
-            else{
-                V2Error("感谢失败了")
-                //失败后 取消增加的数量
-                item?.favorites -= 1
-                self!.table?.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
-            }
-        }
-    }
-    func relevantComment(_ row:Int){
-        let item = table.commentsArray[row as Int]
-        let relevantComments = TopicCommentModel.getRelevantCommentsInArray(table.commentsArray, firstComment: item)
-        if relevantComments.count <= 0 {
-            return;
-        }
-        Msg.send("relevantComment", [viewControler as Any,relevantComments])
-    }
-}
-
-
 enum TopicDetailTableViewSection: Int {
     case header = 0, comment, other
 }
 
 enum TopicDetailHeaderComponent: Int {
     case title = 0,  webViewContent, other
+}
+class TopicTitleLabel :V2SpacingLabel{
+    override init(frame:CGRect) {
+        super.init(frame: frame)
+        let label = self
+        label.textColor = V2EXColor.colors.v2_TopicListTitleColor;
+        label.font = v2Font(17);
+        label.numberOfLines = 0;
+        label.preferredMaxLayoutWidth = SCREEN_WIDTH-24;
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    class func heightFor(_ text : String?) -> CGFloat{
+        if let t = text {
+            let  lbl = TopicTitleLabel()
+            lbl.text = t
+            return lbl.sizeThatFits(CGSize(width: SCREEN_WIDTH - 12 - 12 , height: 9999)).height
+        }else
+        {
+            return 0
+        }
+    }
 }
 
 fileprivate class Table1:  TableBase{
@@ -224,6 +178,14 @@ fileprivate class Table1:  TableBase{
             return 0;
         }
     }
+    var topicTitleLabel: UILabel = {
+        let label = V2SpacingLabel();
+        label.textColor = V2EXColor.colors.v2_TopicListTitleColor;
+        label.font = v2Font(17);
+        label.numberOfLines = 0;
+        label.preferredMaxLayoutWidth = SCREEN_WIDTH-24;
+        return label
+    }()
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         let _section = TopicDetailTableViewSection(rawValue: indexPath.section)!
         var _headerComponent = TopicDetailHeaderComponent.other
@@ -234,12 +196,13 @@ fileprivate class Table1:  TableBase{
         case .header:
             switch _headerComponent {
             case .title:
-                return tableView!.fin_heightForCellWithIdentifier(TopicDetailHeaderCell.self, indexPath: indexPath) { (cell) -> Void in
-                    cell.bind(self.model!);
-                }
+//                let  h = tableView!.fin_heightForCellWithIdentifier(TopicDetailHeaderCell.self, indexPath: indexPath) { (cell) -> Void in
+//                    cell.bind(self.model!)
+//                }
+                return TopicTitleLabel.heightFor(self.model!.topicTitle) + 12 + 48 + 12
             case .webViewContent:
                 if let height =  self.webViewContentCell?.contentHeight , height > 0 {
-                    return self.webViewContentCell!.contentHeight
+                    return height
                 }
                 else {
                     return 1
@@ -325,15 +288,6 @@ fileprivate class Table1:  TableBase{
             return UITableViewCell();
         }
     }
-    
-    override func didSelectRowAt(_  indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            self.deselectRow(at: indexPath, animated: true);
-            let s = Sheet()
-            s.selectedRowWithActionSheet(indexPath,viewControler!,self)
-        }
-    }
-    
     func nodeClick() {
         Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
     }
@@ -439,4 +393,215 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         Msg.send("replyTopic", [topicDetailViewController._tableView.model!,topicDetailViewController.navigationController])
     }
     
+}
+fileprivate class Sheet : UIView,UIActionSheetDelegate {
+    var table : Table1!
+    var viewControler : UIViewController?
+    fileprivate func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :Table1 ) {
+        self.table = table
+        self.viewControler = vc
+        let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
+        sheet.addAction(UIAlertAction(title:"回复", style:UIAlertActionStyle.default, handler:{ action in
+            self.replyComment(indexPath.row)
+        }))
+        sheet.addAction(UIAlertAction(title:"感谢", style:UIAlertActionStyle.default, handler:{ action in
+            self.thankComment(indexPath.row)
+        }))
+        sheet.addAction(UIAlertAction(title:"查看对话", style:UIAlertActionStyle.default, handler:{ action in
+            self.relevantComment(indexPath.row)
+        }))
+        sheet.addAction(UIAlertAction(title:"取消", style:UIAlertActionStyle.cancel, handler:nil))
+        vc.present(sheet, animated:true, completion:nil)
+    }
+    func selectedRowWithActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table : Table1){
+        ActionSheet(indexPath,vc,table)
+    }
+    func replyComment(_ row:Int){
+        User.shared.ensureLoginWithHandler {
+            let item = table.commentsArray[row as Int]
+            Msg.send("replyComment", [viewControler as Any,item.userName as Any,table.model!])
+        }
+    }
+    func thankComment(_ row:Int){
+        guard User.shared.isLogin else {
+            V2Inform("请先登录")
+            return;
+        }
+        let item = table.commentsArray[row as Int]
+        if item.replyId == nil {
+            V2Error("回复replyId为空")
+            return;
+        }
+        if table.model?.token == nil {
+            V2Error("帖子token为空")
+            return;
+        }
+        item.favorites += 1
+        table.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
+        
+        TopicCommentModel.replyThankWithReplyId(item.replyId!, token: table.model!.token!) {
+            [weak item, weak self](response) in
+            if response.success {
+            }
+            else{
+                V2Error("感谢失败了")
+                //失败后 取消增加的数量
+                item?.favorites -= 1
+                self!.table?.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
+            }
+        }
+    }
+    func relevantComment(_ row:Int){
+        let item = table.commentsArray[row as Int]
+        let relevantComments = TopicCommentModel.getRelevantCommentsInArray(table.commentsArray, firstComment: item)
+        if relevantComments.count <= 0 {
+            return;
+        }
+        Msg.send("relevantComment", [viewControler as Any,relevantComments])
+    }
+}
+fileprivate class TopicDetailHeaderCell: UITableViewCell {
+    /// 头像
+    var avatarImageView: UIImageView = {
+        let imageview = UIImageView();
+        imageview.contentMode=UIViewContentMode.scaleAspectFit;
+        imageview.layer.cornerRadius = 3;
+        imageview.layer.masksToBounds = true;
+        return imageview
+    }()
+    /// 用户名
+    var userNameLabel: UILabel = {
+        let label = UILabel();
+        label.textColor = V2EXColor.colors.v2_TopicListUserNameColor;
+        label.font=v2Font(14);
+        return label
+    }()
+    /// 日期 和 最后发送人
+    var dateAndLastPostUserLabel: UILabel = {
+        let label = UILabel();
+        label.textColor=V2EXColor.colors.v2_TopicListDateColor;
+        label.font=v2Font(12);
+        return label
+    }()
+    
+    /// 节点
+    var nodeNameLabel: UILabel = {
+        let label = UILabel();
+        label.textColor = V2EXColor.colors.v2_TopicListDateColor
+        label.font = v2Font(11)
+        label.backgroundColor = V2EXColor.colors.v2_NodeBackgroundColor
+        label.layer.cornerRadius=2;
+        label.clipsToBounds = true
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
+    /// 帖子标题
+    //    var topicTitleLabel: UILabel = {
+    //        let label = V2SpacingLabel();
+    //        label.textColor = V2EXColor.colors.v2_TopicListTitleColor;
+    //        label.font = v2Font(17);
+    //        label.numberOfLines = 0;
+    //        label.preferredMaxLayoutWidth = SCREEN_WIDTH-24;
+    //        return label
+    //    }()
+    var topicTitleLabel: UILabel = TopicTitleLabel()
+    
+    
+    /// 装上面定义的那些元素的容器
+    var contentPanel:UIView = {
+        let view = UIView()
+        view.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        return view
+    }()
+    
+    weak var itemModel:TopicDetailModel?
+    var nodeClickHandler:(() -> Void)?
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        self.setup();
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    func setup()->Void{
+        self.selectionStyle = .none
+        self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
+        
+        self.contentView.addSubview(self.contentPanel);
+        self.contentPanel.addSubview(self.avatarImageView);
+        self.contentPanel.addSubview(self.userNameLabel);
+        self.contentPanel.addSubview(self.dateAndLastPostUserLabel);
+        self.contentPanel.addSubview(self.nodeNameLabel)
+        self.contentPanel.addSubview(self.topicTitleLabel);
+        
+        self.setupLayout()
+        
+        //点击用户头像，跳转到用户主页
+        self.avatarImageView.isUserInteractionEnabled = true
+        self.userNameLabel.isUserInteractionEnabled = true
+        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailHeaderCell.userNameTap(_:)))
+        self.avatarImageView.addGestureRecognizer(userNameTap)
+        userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailHeaderCell.userNameTap(_:)))
+        self.userNameLabel.addGestureRecognizer(userNameTap)
+        self.nodeNameLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(nodeClick)))
+        
+    }
+    
+    fileprivate func setupLayout(){
+        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
+            make.left.top.equalTo(self.contentPanel).offset(12);
+            make.width.height.equalTo(35);
+        }
+        self.userNameLabel.snp.makeConstraints{ (make) -> Void in
+            make.left.equalTo(self.avatarImageView.snp.right).offset(10);
+            make.top.equalTo(self.avatarImageView);
+        }
+        self.dateAndLastPostUserLabel.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self.avatarImageView);
+            make.left.equalTo(self.userNameLabel);
+        }
+        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(self.userNameLabel);
+            make.right.equalTo(self.contentPanel.snp.right).offset(-10)
+            make.bottom.equalTo(self.userNameLabel).offset(1);
+            make.top.equalTo(self.userNameLabel).offset(-1);
+        }
+        self.topicTitleLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(self.avatarImageView.snp.bottom).offset(12);
+            make.left.equalTo(self.avatarImageView);
+            make.right.equalTo(self.contentPanel).offset(-12);
+        }
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.top.left.right.equalTo(self.contentView);
+            make.bottom.equalTo(self.topicTitleLabel.snp.bottom).offset(12);
+            make.bottom.equalTo(self.contentView).offset(SEPARATOR_HEIGHT * -1);
+        }
+    }
+    func nodeClick() {
+        nodeClickHandler?()
+    }
+    func userNameTap(_ sender:UITapGestureRecognizer) {
+        if let _ = self.itemModel , let username = itemModel?.userName {
+            Msg.send("pushMemberViewController", [username])
+        }
+    }
+    
+    func bind(_ model:TopicDetailModel){
+        
+        self.itemModel = model
+        
+        self.userNameLabel.text = model.userName;
+        self.dateAndLastPostUserLabel.text = model.date
+        self.topicTitleLabel.text = model.topicTitle;
+        
+        if let avata = model.avata {
+            self.avatarImageView.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
+        }
+        
+        if let node = model.nodeName{
+            self.nodeNameLabel.text = "  " + node + "  "
+        }
+    }
 }

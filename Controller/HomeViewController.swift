@@ -1,17 +1,9 @@
-//
-//  HomeViewController.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 1/8/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
-
 import UIKit
+import Kingfisher
+import YYText
 import SnapKit
-
 import Alamofire
 import AlamofireObjectMapper
-
 import Ji
 import MJRefresh
 let kHomeTab = "me.fin.homeTab"
@@ -30,7 +22,6 @@ class HomeViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         Msg.send("PanningGestureDisable")
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title="V2EX";
@@ -126,7 +117,7 @@ class HomeViewController: UIViewController {
         HomeViewController.lastLeaveTime = Date()
     }
 }
-fileprivate class HomeData : TJTableDataSource{
+class HomeData : TJTableDataSource{
     var topicList:[TopicListModel]?
     override func sectionCount() -> Int {
         return 1
@@ -166,52 +157,25 @@ fileprivate class  TableHome : TJTable {
             return _tableView!;
         }
     }
-//    var topicList_:[TopicListModel]?
     var topicList:[TopicListModel]?{
         get{
             return homedata?.topicList
         }
         set{
-//            topicList_ = newValue
             homedata?.topicList = newValue
         }
     }
     var homedata :  HomeData?
     override init(frame: CGRect, style: UITableViewStyle) {
-        homedata = HomeData()
         super.init(frame:frame,style:style)
-        tableData = homedata
         separatorStyle = UITableViewCellSeparatorStyle.none;
-//        regClass(self, cell: HomeTopicListTableViewCell.self);
+        homedata =  HomeData()
+        tableData = homedata
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
     }
-//    override func sectionCount() -> Int {
-//        return 1
-//    }
-//    override func rowCount(_ section: Int) -> Int {
-//        if let list = self.topicList {
-//            return list.count;
-//        }
-//        return 0;
-//    }
-//    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-//        let item = self.topicList![indexPath.row]
-//        let titleHeight = item.topicTitleLayout?.textBoundingRect.size.height ?? 0
-//        let height = fixHeight ()  + titleHeight
-//        return height
-//    }
-//    func fixHeight()-> CGFloat{
-//        let height = 12    +  35     +  12    +  12      + 8
-//        return CGFloat(height)
-//        //          上间隔   头像高度  头像下间隔     标题下间隔 cell间隔
-//    }
-//    override  func cellAt(_ indexPath: IndexPath) -> UITableViewCell{
-//        let cell = getCell(self, cell: HomeTopicListTableViewCell.self, indexPath: indexPath);
-//        cell.bind(self.topicList![indexPath.row]);
-//        return cell;
-//    }
+    
     override func didSelectRowAt(_ indexPath: IndexPath) {
         let item = self.topicList![indexPath.row]
         if let id = item.topicId {
@@ -243,7 +207,6 @@ fileprivate class  TableHome : TJTable {
         deleteRows(at: [IndexPath(row: index!, section: 0)], with: .fade)
         endUpdates()
     }
-    
 }
 fileprivate class NotificationMenuButton: UIButton {
     var aPointImageView:UIImageView?
@@ -279,13 +242,8 @@ fileprivate class NotificationMenuButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 }
-import UIKit
-import Kingfisher
-import YYText
-
-class HomeTopicListTableViewCell: CellBase {
+class HomeTopicListTableViewCell: TJCell {
     override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
-        print(indexPath)
         let model = TopicListModel()
         model.fromDict(item)
         self.bind(model)
@@ -356,15 +314,6 @@ class HomeTopicListTableViewCell: CellBase {
     var contentPanel:UIView = UIView()
     
     var itemModel:TopicListModel?
-    
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
-//    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier);
-//        self.setup();
-//    }
-    
     override func setup()->Void{
         let selectedBackgroundView = UIView()
         self.selectedBackgroundView = selectedBackgroundView
