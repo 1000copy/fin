@@ -25,10 +25,10 @@ class TopicDetailViewController: UIViewController{
             _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
             
             _tableView.backgroundColor = V2EXColor.colors.v2_backgroundColor
-            regClass(_tableView, cell: TopicDetailHeaderCell.self)
-            regClass(_tableView, cell: TopicDetailWebViewContentCell.self)
-            regClass(_tableView, cell: TopicDetailCommentCell.self)
-            regClass(_tableView, cell: BaseDetailTableViewCell.self)
+//            regClass(_tableView, cell: TopicDetailHeaderCell.self)
+//            regClass(_tableView, cell: TopicDetailWebViewContentCell.self)
+//            regClass(_tableView, cell: TopicDetailCommentCell.self)
+//            regClass(_tableView, cell: BaseDetailTableViewCell.self)
             
             
             return _tableView!;
@@ -150,7 +150,7 @@ class TopicTitleLabel :V2SpacingLabel{
     }
 }
 
-fileprivate class Table1:  TableBase{
+fileprivate class Table1:  TJTable{
     var viewControler : UIViewController?
     var topicId = "0"
     var currentPage = 1
@@ -158,10 +158,22 @@ fileprivate class Table1:  TableBase{
     fileprivate var model:TopicDetailModel?
     fileprivate var commentsArray:[TopicCommentModel] = []
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?
+    override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame: frame,style:style)
+        registerCells()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     override func sectionCount() -> Int {
         return 2
     }
-   
+    fileprivate override func cellTypes() -> [UITableViewCell.Type] {
+        return [TopicDetailHeaderCell.self,TopicDetailWebViewContentCell.self,
+        TopicDetailCommentCell.self,
+        BaseDetailTableViewCell.self]
+    }
     override func rowCount(_ section: Int) -> Int {
         let _section = TopicDetailTableViewSection(rawValue: section)!
         switch _section {
@@ -178,14 +190,6 @@ fileprivate class Table1:  TableBase{
             return 0;
         }
     }
-    var topicTitleLabel: UILabel = {
-        let label = V2SpacingLabel();
-        label.textColor = V2EXColor.colors.v2_TopicListTitleColor;
-        label.font = v2Font(17);
-        label.numberOfLines = 0;
-        label.preferredMaxLayoutWidth = SCREEN_WIDTH-24;
-        return label
-    }()
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         let _section = TopicDetailTableViewSection(rawValue: indexPath.section)!
         var _headerComponent = TopicDetailHeaderComponent.other
@@ -196,9 +200,6 @@ fileprivate class Table1:  TableBase{
         case .header:
             switch _headerComponent {
             case .title:
-//                let  h = tableView!.fin_heightForCellWithIdentifier(TopicDetailHeaderCell.self, indexPath: indexPath) { (cell) -> Void in
-//                    cell.bind(self.model!)
-//                }
                 return TopicTitleLabel.heightFor(self.model!.topicTitle) + 12 + 48 + 12
             case .webViewContent:
                 if let height =  self.webViewContentCell?.contentHeight , height > 0 {
