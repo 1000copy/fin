@@ -27,6 +27,33 @@ class TopicListModel:NSObject {
     var date: String?
     var lastReplyUserName: String?
     var replies: String?
+    func toDict()->TableDataSourceItem{
+        var item :  TableDataSourceItem  = TableDataSourceItem()
+        item["topicId"] = topicId
+        item["avata"] = avata
+        item["nodeName"] = nodeName
+        item["userName"] = userName
+        item["topicTitle"] = topicTitle
+        item["topicTitleAttributedString"] = topicTitleAttributedString
+        item["topicTitleLayout"] = topicTitleLayout
+        item["date"] = date
+        item["lastReplyUserName"] = lastReplyUserName
+        item["replies"] = replies
+        return item
+    }
+    func fromDict(_ item:TableDataSourceItem){
+//        var item :  TableDataSourceItem  = TableDataSourceItem()
+        topicId = item["topicId"] as? String
+        avata = item["avata"] as? String
+        nodeName = item["nodeName"] as? String
+        userName = item["userName"] as? String
+        topicTitle = item["topicTitle"] as? String
+        topicTitleAttributedString = item["topicTitleAttributedString"] as? NSMutableAttributedString
+        topicTitleLayout = item["topicTitleLayout"] as? YYTextLayout
+        date = item["date"] as? String
+        lastReplyUserName = item["lastReplyUserName"] as? String
+        replies = item["replies"] as? String
+    }
 
     var hits: String?
 

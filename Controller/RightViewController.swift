@@ -12,7 +12,6 @@ import FXBlurView
 class RightViewController: UIViewController{
     var backgroundImageView:UIImageView?
     var frostedView = FXBlurView()
-    
     fileprivate var _tableView :RightTable!
     fileprivate var tableView: RightTable {
         get{
@@ -92,7 +91,7 @@ fileprivate class RightTableData : TJTableDataSource{
         }
     }
     override func rowCount(_ section: Int) -> Int {
-        return nodes.count;
+        return nodes.count
     }
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         return 48
@@ -145,11 +144,11 @@ fileprivate class RightTable : TJTable{
 }
 fileprivate class RightCell: TJCell {
     var data : TableDataSource?
-    fileprivate override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+    override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         self.data = data
         nodeNameLabel.text = item["nodeName"] as! String
     }
-    override fileprivate func action(_ indexPath: IndexPath) {
+    override func action(_ indexPath: IndexPath) {
         print(indexPath)
         let node = data?.getDataItem(indexPath)
         Msg.send("ChangeTab",[node?["nodeTab"] as! String])
@@ -163,7 +162,7 @@ fileprivate class RightCell: TJCell {
     }()
     
     var panel = UIView()
-    override func setup()->Void{
+    override func setup(){
         self.selectionStyle = .none
         self.backgroundColor = UIColor.clear
         
