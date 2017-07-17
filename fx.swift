@@ -146,7 +146,15 @@ class DataTableBase : TableBase{
     }
 }
 typealias  TableDataSourceItem = [String:Any]
-class TableDataSource : NSObject{
+protocol PCTableDataSource {
+    func sectionCount() -> Int
+    func rowCount(_ section: Int) -> Int
+    func rowHeight(_ indexPath: IndexPath) -> CGFloat
+    func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type
+    func cellTypes() ->[UITableViewCell.Type]
+    func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem
+}
+class TableDataSource : NSObject,PCTableDataSource{
     func sectionCount() -> Int {
         return 1
     }
@@ -185,14 +193,7 @@ class CellBase : UITableViewCell {
     }
     // imple
     func deselect(){
-        tableView?.deselectRow(at:(tableView?.indexPath(for: self))!,animated: true)
-    }
-    var tableView: UITableView? {
-        var view = self.superview
-        while (view != nil && view!.isKind(of: UITableView.self) == false) {
-            view = view!.superview
-        }
-        return view as? UITableView
+        ownerTableView?.deselectRow(at:(ownerTableView?.indexPath(for: self))!,animated: true)
     }
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
@@ -202,7 +203,20 @@ class CellBase : UITableViewCell {
         super.init(coder: aDecoder)
     }
 }
-
+extension UIResponder {
+    var ownerViewController : UIViewController? {
+        get{
+        if self.next is UIViewController {
+            return self.next as? UIViewController
+        } else {
+            if self.next != nil {
+                return (self.next!).ownerViewController
+            }
+            else {return nil}
+        }
+        }
+    }
+}
 class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     // 子类接口区
     func rowHeight(_ indexPath: IndexPath) -> CGFloat {

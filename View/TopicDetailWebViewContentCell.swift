@@ -26,7 +26,7 @@ let jsCode = try! String(contentsOf: URL(fileURLWithPath: Bundle.main.path(forRe
 class TopicDetailWebViewContentCell: TJCell ,UIWebViewDelegate {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style:style,reuseIdentifier:reuseIdentifier)
-        parentScrollView = self.tableView
+        parentScrollView = ownerTableView
         self.contentHeightChanged = webCellheightChanged
         
     }
@@ -36,9 +36,9 @@ class TopicDetailWebViewContentCell: TJCell ,UIWebViewDelegate {
     func webCellheightChanged(height:CGFloat) {
         //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
         //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
-        if (tableView?.visibleCells.contains(self))! {
-            tableView?.beginUpdates()
-            tableView?.endUpdates()
+        if (ownerTableView?.visibleCells.contains(self))! {
+            ownerTableView?.beginUpdates()
+            ownerTableView?.endUpdates()
         }
     }
 

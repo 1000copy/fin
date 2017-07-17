@@ -1,3 +1,4 @@
+import YYText
 import UIKit
 class TopicDetailViewController: UIViewController{
     fileprivate weak var _loadView:V2LoadingView?
@@ -11,26 +12,14 @@ class TopicDetailViewController: UIViewController{
     var topicId = "0"
     var currentPage = 1
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?
-    fileprivate var _tableView :Table1!
-    fileprivate var tableView: Table1 {
+    fileprivate var _tableView :TableTopicDetail!
+    fileprivate var tableView: TableTopicDetail {
         get{
             if(_tableView != nil){
                 return _tableView!;
             }
-            _tableView = Table1();
-            _tableView.viewControler = self
-//            _tableView.model = model
-//            _tableView.tableView = _tableView
-//            _tableView.commentsArray = commentsArray
-            _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
-            
-            _tableView.backgroundColor = V2EXColor.colors.v2_backgroundColor
-//            regClass(_tableView, cell: TopicDetailHeaderCell.self)
-//            regClass(_tableView, cell: TopicDetailWebViewContentCell.self)
-//            regClass(_tableView, cell: TopicDetailCommentCell.self)
-//            regClass(_tableView, cell: BaseDetailTableViewCell.self)
-            
-            
+            _tableView = TableTopicDetail();
+//            _tableView.viewControler = self
             return _tableView!;
             
         }
@@ -119,13 +108,6 @@ class TopicDetailViewController: UIViewController{
         }
     }
 }
-enum TopicDetailTableViewSection: Int {
-    case header = 0, comment, other
-}
-
-enum TopicDetailHeaderComponent: Int {
-    case title = 0,  webViewContent, other
-}
 class TopicTitleLabel :V2SpacingLabel{
     override init(frame:CGRect) {
         super.init(frame: frame)
@@ -150,8 +132,7 @@ class TopicTitleLabel :V2SpacingLabel{
     }
 }
 
-fileprivate class Table1:  TJTable{
-    var viewControler : UIViewController?
+fileprivate class TableTopicDetail:  TJTable{
     var topicId = "0"
     var currentPage = 1
     fileprivate var model:TopicDetailModel?
@@ -159,17 +140,14 @@ fileprivate class Table1:  TJTable{
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame: frame,style:style)
-        registerCells()
+        separatorStyle = .none;
+        backgroundColor = V2EXColor.colors.v2_backgroundColor
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     override func sectionCount() -> Int {
         return 2
-    }
-    fileprivate override func didSelectRowAt(_ indexPath: IndexPath) {
-        let sheet = Sheet()
-        sheet.ActionSheet(indexPath, viewControler!, self)
     }
     fileprivate override func cellTypes() -> [UITableViewCell.Type] {
         return [TopicDetailHeaderCell.self,TopicDetailWebViewContentCell.self,
@@ -184,100 +162,52 @@ fileprivate class Table1:  TJTable{
         if indexPath.section == 0 && indexPath.row == 1 {
             item = (model?.toDict())!
         }
+        if indexPath.section == 1 {
+            item = (commentsArray[indexPath.row].toDict())
+        }
         return item
     }
     override func rowCount(_ section: Int) -> Int {
-        let _section = TopicDetailTableViewSection(rawValue: section)!
-        switch _section {
-        case .header:
-            if self.model != nil{
-                return 3
-            }
-            else{
-                return 0
-            }
-        case .comment:
+        if section == 1 {
             return self.commentsArray.count;
-        case .other:
-            return 0;
         }
+        return self.model != nil ? 2 : 0
     }
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        let _section = TopicDetailTableViewSection(rawValue: indexPath.section)!
-        var _headerComponent = TopicDetailHeaderComponent.other
-        if let headerComponent = TopicDetailHeaderComponent(rawValue: indexPath.row) {
-            _headerComponent = headerComponent
+        if indexPath.section == 0 && indexPath.row == 0 {
+            return TopicTitleLabel.heightFor(self.model!.topicTitle) + 12 + 48 + 12
         }
-        switch _section {
-        case .header:
-            switch _headerComponent {
-            case .title:
-                return TopicTitleLabel.heightFor(self.model!.topicTitle) + 12 + 48 + 12
-            case .webViewContent:
-                if let height =  self.webViewContentCell?.contentHeight , height > 0 {
-                    return height
-                }
-                else {
-                    return 1
-                }
-            case .other:
-                return 45
+        if indexPath.section == 0 && indexPath.row == 1 {
+            if let height =  self.webViewContentCell?.contentHeight , height > 0 {
+                return height
             }
-        case .comment:
-            let layout = self.commentsArray[indexPath.row].textLayout!
-            return layout.textBoundingRect.size.height + 12 + 35 + 12 + 12 + 1
-        case .other:
-            return 200
+            else {
+                return 1
+            }
         }
+        return self.commentsArray[indexPath.row].getHeight()
     }
     override func cellTypeAt(_ indexPath:IndexPath) -> UITableViewCell.Type{
-        if indexPath.section == 0 && indexPath.row == 0 {
-            return TopicDetailHeaderCell.self
+        if indexPath.section == 0 {
+            let a :[UITableViewCell.Type] = [TopicDetailHeaderCell.self,TopicDetailWebViewContentCell.self]
+            return a[indexPath.row]
         }
-        if indexPath.section == 0 && indexPath.row == 1 {
-            return TopicDetailWebViewContentCell.self
-        }
-        if indexPath.section == 0 && indexPath.row == 2 {
-            return BaseDetailTableViewCell.self
-        }
-        if indexPath.section == 1 {
-            return TopicDetailCommentCell.self
-        }
-        return UITableViewCell.self
+        return TopicDetailCommentCell.self
     }
     override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 && indexPath.row == 0 {
-            let cell = super.cellAt(indexPath) as! TopicDetailHeaderCell
-//            if(cell.nodeClickHandler == nil){
-//                cell.nodeClickHandler = {[weak self] () -> Void in
-//                    self?.nodeClick()
-//                }
-//            }
-            return cell;
-        }
+        let cell = super.cellAt(indexPath)
         if indexPath.section == 0 && indexPath.row == 1 {
-            self.webViewContentCell = super.cellAt(indexPath) as! TopicDetailWebViewContentCell
-            return self.webViewContentCell!
+            // 此对象随后还有事件（cellHeightChanged）执行，因此必须保留引用，以免实例被释放，后面就执行不了。
+            webViewContentCell = cell as! TopicDetailWebViewContentCell
         }
-        if indexPath.section == 1 {
-            let cell = super.cellAt(indexPath)  as! TopicDetailCommentCell
-            //            let cell = getCell(tableView!, cell: TopicDetailCommentCell.self, indexPath: indexPath)
-            cell.bind(self.commentsArray[indexPath.row])
-            return cell
-        }
-        return UITableViewCell();
+        return cell
     }
-//    func nodeClick() {
-//        Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
-//    }
 }
 
 //MARK: - V2ActivityView
 enum V2ActivityViewTopicDetailAction : Int {
     case block = 0, favorite, grade, explore
 }
-//class ActivityViewDS : UIViewController,V2ActivityViewDataSource{
-
 extension TopicDetailViewController: V2ActivityViewDataSource {
     func V2ActivityView(_ activityView: V2ActivityViewController, numberOfCellsInSection section: Int) -> Int {
         return 4
@@ -374,10 +304,10 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
     
 }
 fileprivate class Sheet : UIView,UIActionSheetDelegate {
-    var table : Table1!
+    var table : TableTopicDetail!
     var viewControler : UIViewController?
-    fileprivate func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :Table1 ) {
-        self.table = table
+    fileprivate func ActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table :UITableView ) {
+        self.table = table as! TableTopicDetail
         self.viewControler = vc
         let sheet: UIAlertController = UIAlertController(title:nil, message:nil, preferredStyle:UIAlertControllerStyle.actionSheet)
         sheet.addAction(UIAlertAction(title:"回复", style:UIAlertActionStyle.default, handler:{ action in
@@ -392,7 +322,7 @@ fileprivate class Sheet : UIView,UIActionSheetDelegate {
         sheet.addAction(UIAlertAction(title:"取消", style:UIAlertActionStyle.cancel, handler:nil))
         vc.present(sheet, animated:true, completion:nil)
     }
-    func selectedRowWithActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table : Table1){
+    func selectedRowWithActionSheet(_ indexPath:IndexPath, _ vc : UIViewController,_ table : TableTopicDetail){
         ActionSheet(indexPath,vc,table)
     }
     func replyComment(_ row:Int){
@@ -437,6 +367,15 @@ fileprivate class Sheet : UIView,UIActionSheetDelegate {
             return;
         }
         Msg.send("relevantComment", [viewControler as Any,relevantComments])
+    }
+}
+extension TJCell {
+    var ownerTableView: UITableView? {
+        var view = self.superview
+        while (view != nil && view!.isKind(of: UITableView.self) == false) {
+            view = view!.superview
+        }
+        return view as? UITableView
     }
 }
 fileprivate class TopicDetailHeaderCell: TJCell {
@@ -598,5 +537,252 @@ fileprivate class TopicDetailHeaderCell: TJCell {
         if let node = model.nodeName{
             self.nodeNameLabel.text = "  " + node + "  "
         }
+    }
+}
+
+
+class TopicDetailCommentCell: TJCell{
+    override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+        let model = TopicCommentModel ()
+        model.fromDict(item)
+        bind(model)
+    }
+    override func action(_ indexPath: IndexPath) {
+        let sheet = Sheet()
+        sheet.ActionSheet(indexPath, ownerViewController!, ownerTableView!)
+    }
+    func bind(_ model:TopicCommentModel){
+        
+        if let avata = model.avata {
+            self.avatarImageView.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
+        }
+        
+        if self.itemModel?.number == model.number && self.itemModel?.userName == model.userName {
+            return;
+        }
+        
+        self.userNameLabel.text = model.userName;
+        self.dateLabel.text = String(format: "%i楼  %@", model.number, model.date ?? "")
+        
+        if let layout = model.getTextLayout() {
+            self.commentLabel.textLayout = layout
+        }
+        self.favoriteIconView.isHidden = model.favorites <= 0
+        self.favoriteLabel.text = model.favorites <= 0 ? "" : "\(model.favorites)"
+        self.itemModel = model
+    }
+    /// 头像
+    var avatarImageView: UIImageView = {
+        let avatarImageView = UIImageView()
+        avatarImageView.contentMode=UIViewContentMode.scaleAspectFit
+        avatarImageView.layer.cornerRadius = 3
+        avatarImageView.layer.masksToBounds = true
+        return avatarImageView
+    }()
+    /// 用户名
+    var userNameLabel: UILabel = {
+        let userNameLabel = UILabel()
+        userNameLabel.textColor = V2EXColor.colors.v2_TopicListUserNameColor
+        userNameLabel.font=v2Font(14)
+        return userNameLabel
+    }()
+    /// 日期 和 最后发送人
+    var dateLabel: UILabel = {
+        let dateLabel = UILabel()
+        dateLabel.textColor=V2EXColor.colors.v2_TopicListDateColor
+        dateLabel.font=v2Font(12)
+        return dateLabel
+    }()
+    
+    /// 回复正文
+    var commentLabel: YYLabel = {
+        let commentLabel = YYLabel();
+        commentLabel.textColor=V2EXColor.colors.v2_TopicListTitleColor;
+        commentLabel.font = v2Font(14);
+        commentLabel.numberOfLines = 0;
+        commentLabel.displaysAsynchronously = true
+        return commentLabel
+    }()
+    
+    /// 装上面定义的那些元素的容器
+    var contentPanel: UIView = {
+        let view = UIView()
+        view.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        return view
+    }()
+    
+    //评论喜欢数
+    var favoriteIconView:UIImageView = {
+        let favoriteIconView = UIImageView(image: UIImage.imageUsedTemplateMode("ic_favorite_18pt")!)
+        favoriteIconView.tintColor = V2EXColor.colors.v2_TopicListDateColor;
+        favoriteIconView.contentMode = .scaleAspectFit
+        favoriteIconView.isHidden = true
+        return favoriteIconView
+    }()
+    
+    var favoriteLabel:UILabel = {
+        let favoriteLabel = UILabel()
+        favoriteLabel.textColor = V2EXColor.colors.v2_TopicListDateColor;
+        favoriteLabel.font = v2Font(10)
+        return favoriteLabel
+    }()
+    var itemModel:TopicCommentModel?
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        //        self.setup();
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override func setup()->Void{
+        self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
+        
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        self.selectedBackgroundView = selectedBackgroundView
+        
+        self.contentView.addSubview(self.contentPanel);
+        self.contentPanel.addSubview(self.avatarImageView);
+        self.contentPanel .addSubview(self.userNameLabel);
+        self.contentPanel.addSubview(self.favoriteIconView)
+        self.contentPanel.addSubview(self.favoriteLabel)
+        self.contentPanel.addSubview(self.dateLabel);
+        self.contentPanel.addSubview(self.commentLabel);
+        
+        self.setupLayout()
+        
+        self.avatarImageView.backgroundColor = self.contentPanel.backgroundColor
+        self.userNameLabel.backgroundColor = self.contentPanel.backgroundColor
+        self.dateLabel.backgroundColor = self.contentPanel.backgroundColor
+        self.commentLabel.backgroundColor = self.contentPanel.backgroundColor
+        self.favoriteIconView.backgroundColor = self.contentPanel.backgroundColor
+        self.favoriteLabel.backgroundColor = self.contentPanel.backgroundColor
+        
+        //点击用户头像，跳转到用户主页
+        self.avatarImageView.isUserInteractionEnabled = true
+        self.userNameLabel.isUserInteractionEnabled = true
+        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailCommentCell.userNameTap(_:)))
+        self.avatarImageView.addGestureRecognizer(userNameTap)
+        userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailCommentCell.userNameTap(_:)))
+        self.userNameLabel.addGestureRecognizer(userNameTap)
+        
+        //长按手势
+        self.contentView .addGestureRecognizer(
+            UILongPressGestureRecognizer(target: self,
+                                         action: #selector(TopicDetailCommentCell.longPressHandle(_:))
+            )
+        )
+    }
+    func setupLayout(){
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.top.left.right.equalTo(self.contentView);
+        }
+        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
+            make.left.top.equalTo(self.contentView).offset(12);
+            make.width.height.equalTo(35);
+        }
+        self.userNameLabel.snp.makeConstraints{ (make) -> Void in
+            make.left.equalTo(self.avatarImageView.snp.right).offset(10);
+            make.top.equalTo(self.avatarImageView);
+        }
+        self.favoriteIconView.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(self.userNameLabel);
+            make.left.equalTo(self.userNameLabel.snp.right).offset(10)
+            make.width.height.equalTo(10)
+        }
+        self.favoriteLabel.snp.makeConstraints{ (make) -> Void in
+            make.left.equalTo(self.favoriteIconView.snp.right).offset(3)
+            make.centerY.equalTo(self.favoriteIconView)
+        }
+        self.dateLabel.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self.avatarImageView);
+            make.left.equalTo(self.userNameLabel);
+        }
+        self.commentLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.avatarImageView.snp.bottom).offset(12);
+            make.left.equalTo(self.avatarImageView);
+            make.right.equalTo(self.contentPanel).offset(-12);
+            make.bottom.equalTo(self.contentPanel.snp.bottom).offset(-12)
+        }
+        
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self.contentView.snp.bottom).offset(-SEPARATOR_HEIGHT);
+        }
+    }
+    func userNameTap(_ sender:UITapGestureRecognizer) {
+        if let _ = self.itemModel , let username = itemModel?.userName {
+            Msg.send("pushMemberViewController",[username])
+        }
+    }
+}
+
+//MARK: - 点击图片
+//extension TopicDetailCommentCell : V2CommentAttachmentImageTapDelegate ,V2PhotoBrowserDelegate {
+//    func V2CommentAttachmentImageSingleTap(_ imageView: V2CommentAttachmentImage) {
+//        Msg.send("presentV2PhotoBrowser",[self,imageView.index])
+////        let photoBrowser = V2PhotoBrowser(delegate: self)
+////        photoBrowser.currentPageIndex = imageView.index
+////        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
+//    }
+//
+//    //V2PhotoBrowser Delegate
+//    func numberOfPhotosInPhotoBrowser(_ photoBrowser: V2PhotoBrowser) -> Int {
+//        return self.itemModel!.images.count
+//    }
+//    func photoAtIndexInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> V2Photo {
+//        let photo = V2Photo(url: URL(string: self.itemModel!.images[index] as! String)!)
+//        return photo
+//    }
+//    func guideContentModeInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIViewContentMode {
+//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
+//            return image.contentMode
+//        }
+//        return .center
+//    }
+//    func guideFrameInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> CGRect {
+//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
+//            return image .convert(image.bounds, to: UIApplication.shared.keyWindow!)
+//        }
+//        return CGRect.zero
+//    }
+//    func guideImageInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIImage? {
+//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
+//            return image.image
+//        }
+//        return nil
+//    }
+//}
+
+//MARK: - 长按复制功能
+extension TopicDetailCommentCell {
+    func longPressHandle(_ longPress:UILongPressGestureRecognizer) -> Void {
+        if (longPress.state == .began) {
+            self.becomeFirstResponder()
+            
+            let item = UIMenuItem(title: "复制", action: #selector(TopicDetailCommentCell.copyText))
+            
+            let menuController = UIMenuController.shared
+            menuController.menuItems = [item]
+            menuController.arrowDirection = .down
+            menuController.setTargetRect(self.frame, in: self.superview!)
+            menuController.setMenuVisible(true, animated: true);
+        }
+        
+    }
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if (action == #selector(TopicDetailCommentCell.copyText)){
+            return true
+        }
+        return super.canPerformAction(action, withSender: sender);
+    }
+    override var canBecomeFirstResponder : Bool {
+        return true
+    }
+    
+    func copyText() -> Void {
+//        UIPasteboard.general.string = self.itemModel?.textLayout?.text.string
+        UIPasteboard.general.string = self.itemModel?.getText()
     }
 }

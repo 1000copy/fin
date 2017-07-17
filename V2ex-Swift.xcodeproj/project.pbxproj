@@ -27,7 +27,6 @@
 		06267CFB1CB38F1000756970 /* NodeCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06267CFA1CB38F1000756970 /* NodeCollectionReusableView.swift */; };
 		0648F4AC1C54FC3F00475567 /* V2EXSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0648F4AB1C54FC3F00475567 /* V2EXSettings.swift */; };
 		064BD2651C880ADB00B55558 /* RelevantCommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064BD2641C880ADB00B55558 /* RelevantCommentsViewController.swift */; };
-		06536F591C4F4B5000CE2CF8 /* TopicDetailCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06536F581C4F4B5000CE2CF8 /* TopicDetailCommentCell.swift */; };
 		0653CFA81C44E0B200E4FC05 /* UITableView+FINAutomaticHeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0653CFA71C44E0B200E4FC05 /* UITableView+FINAutomaticHeightCell.swift */; };
 		065B69111C75ABE1009AAC37 /* AnalyzeURLHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065B69101C75ABE1009AAC37 /* AnalyzeURLHelper.swift */; };
 		06662CA61C4A89520024452C /* TopicDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06662CA51C4A89520024452C /* TopicDetailViewController.swift */; };
@@ -113,7 +112,6 @@
 		06267CFA1CB38F1000756970 /* NodeCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeCollectionReusableView.swift; sourceTree = "<group>"; };
 		0648F4AB1C54FC3F00475567 /* V2EXSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2EXSettings.swift; sourceTree = "<group>"; };
 		064BD2641C880ADB00B55558 /* RelevantCommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelevantCommentsViewController.swift; sourceTree = "<group>"; };
-		06536F581C4F4B5000CE2CF8 /* TopicDetailCommentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopicDetailCommentCell.swift; sourceTree = "<group>"; };
 		0653CFA71C44E0B200E4FC05 /* UITableView+FINAutomaticHeightCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+FINAutomaticHeightCell.swift"; sourceTree = "<group>"; };
 		065B69101C75ABE1009AAC37 /* AnalyzeURLHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyzeURLHelper.swift; sourceTree = "<group>"; };
 		06662CA51C4A89520024452C /* TopicDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopicDetailViewController.swift; sourceTree = "<group>"; };
@@ -374,7 +372,6 @@
 			isa = PBXGroup;
 			children = (
 				06D33A5D1C4DF64B006CF3AE /* TopicDetailWebViewContentCell.swift */,
-				06536F581C4F4B5000CE2CF8 /* TopicDetailCommentCell.swift */,
 			);
 			name = Topic;
 			sourceTree = "<group>";
@@ -584,7 +581,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				06CE3D8F1DA8ACB000E16F23 /* INSImageView.swift in Sources */,
-				06536F591C4F4B5000CE2CF8 /* TopicDetailCommentCell.swift in Sources */,
 				6FE111B91F134F3100A43027 /* V2User.swift in Sources */,
 				06D0EE311C91787F003095FF /* FontSizeSliderTableViewCell.swift in Sources */,
 				06D0EE331C917E4C003095FF /* FontDisplayTableViewCell.swift in Sources */,

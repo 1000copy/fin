@@ -69,20 +69,76 @@ class V2CommentAttachmentImage:AnimatedImageView {
     }
 }
 
+class TopicCommentModel:TopicCommentModel_{
+//    fileprivate var textLayout:YYTextLayout?
+    var textLayout_:YYTextLayout?
+    fileprivate var textLayout:YYTextLayout?{
+        get{
+            if textLayout_ == nil {
+             textLayout_ = getTextLayout(textAttributedString)
+            }
+            return textLayout_
+        }
+        set {
+            textLayout_ = newValue
+        }
+    }
+    func getHeight()-> CGFloat{
+        let layout = textLayout!
+        return layout.textBoundingRect.size.height + 12 + 35 + 12 + 12 + 1
+    }
+    func getText()-> String?{
+        return textLayout?.text.string
+    }
+    func getTextLayout(_ str:NSMutableAttributedString?)->YYTextLayout?{
+        let textContainer = YYTextContainer(size: CGSize(width: SCREEN_WIDTH - 24, height: 9999))
+        return YYTextLayout(container: textContainer, text: str!)
+    }
+    func getTextLayout()->YYTextLayout?{
+        let str = textAttributedString
+        let textContainer = YYTextContainer(size: CGSize(width: SCREEN_WIDTH - 24, height: 9999))
+        return YYTextLayout(container: textContainer, text: str!)
+    }
+    func toDict()->TJTableDataSourceItem{
+        var item = TJTableDataSourceItem()
+        item["replyId"] = replyId
+        item["avata"] = avata
+        item["userName"] = userName
+        item["date"] = date
+        item["favorites"] = favorites
+        item["textLayout"] = textLayout
+        item["images"] = images
+        item["number"] = number
+        item["textAttributedString"] = textAttributedString
+        return item
+    }
+    func fromDict(_ item : TJTableDataSourceItem){
+        replyId = item["replyId"] as! String
+        avata = item["avata"]  as! String
+        userName =   item["userName"]  as! String
+        date =   item["date"]  as! String
+        favorites =   item["favorites"]  as! Int
+        textLayout =   item["textLayout"]  as! YYTextLayout
+        images =   item["images"]  as! NSMutableArray
+        number =   item["number"]  as! Int
+        textAttributedString =   item["textAttributedString"]  as! NSMutableAttributedString
+    }
+}
 
-class TopicCommentModel: NSObject,BaseHtmlModelProtocol {
-    var replyId:String?
+class TopicCommentModel_: NSObject,BaseHtmlModelProtocol {
+       var replyId:String?
     var avata: String?
     var userName: String?
     var date: String?
 //    var comment: String?
     var favorites: Int = 0
-    var textLayout:YYTextLayout?
     var images:NSMutableArray = NSMutableArray()
     //楼层
     var number:Int = 0
-    
     var textAttributedString:NSMutableAttributedString?
+        override init() {
+        super.init()
+    }
     required init(rootNode: JiNode) {
         super.init()
         
@@ -111,15 +167,18 @@ class TopicCommentModel: NSObject,BaseHtmlModelProtocol {
                 }
             }
         }
-        
-        //构造评论内容
-        let commentAttributedString:NSMutableAttributedString = NSMutableAttributedString(string: "")
+        self.textAttributedString  = NSMutableAttributedString(string: "")
         let nodes = rootNode.xPath("table/tr/td[3]/div[@class='reply_content']/node()")
-        self.preformAttributedString(commentAttributedString, nodes: nodes)
-        let textContainer = YYTextContainer(size: CGSize(width: SCREEN_WIDTH - 24, height: 9999))
-        self.textLayout = YYTextLayout(container: textContainer, text: commentAttributedString)
-        
-        self.textAttributedString = commentAttributedString
+        self.preformAttributedString(textAttributedString!, nodes: nodes)
+
+//        //构造评论内容
+//        let commentAttributedString:NSMutableAttributedString = NSMutableAttributedString(string: "")
+//        let nodes = rootNode.xPath("table/tr/td[3]/div[@class='reply_content']/node()")
+//        self.preformAttributedString(commentAttributedString, nodes: nodes)
+//        let textContainer = YYTextContainer(size: CGSize(width: SCREEN_WIDTH - 24, height: 9999))
+//        self.textLayout = YYTextLayout(container: textContainer, text: commentAttributedString)
+//        
+//        self.textAttributedString = commentAttributedString
     }
     func preformAttributedString(_ commentAttributedString:NSMutableAttributedString,nodes:[JiNode]) {
         for element in nodes {
