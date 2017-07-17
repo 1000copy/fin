@@ -267,30 +267,6 @@ fileprivate class Table1:  TJTable{
         }
         if indexPath.section == 0 && indexPath.row == 1 {
             self.webViewContentCell = super.cellAt(indexPath) as! TopicDetailWebViewContentCell
-//            self.webViewContentCell?.parentScrollView = self
-//            if self.webViewContentCell!.contentHeightChanged == nil {
-//                self.webViewContentCell!.contentHeightChanged = webCellheightChanged
-//            }
-//            if self.webViewContentCell == nil {
-//                self.webViewContentCell = super.cellAt(indexPath) as! TopicDetailWebViewContentCell
-//                self.webViewContentCell?.parentScrollView = self
-//            }
-//            else {
-//                return self.webViewContentCell!
-//            }
-//            if self.webViewContentCell!.contentHeightChanged == nil {
-//                self.webViewContentCell!.contentHeightChanged = webCellheightChanged
-////                self.webViewContentCell!.contentHeightChanged = { [weak self] (height:CGFloat) -> Void  in
-////                    if let weakSelf = self {
-////                        //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
-////                        //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
-////                        if let cell = weakSelf.webViewContentCell, weakSelf.visibleCells.contains(cell) {
-////                            self?.beginUpdates()
-////                            self?.endUpdates()
-////                        }
-////                    }
-////                }
-//            }
             return self.webViewContentCell!
         }
         if indexPath.section == 1 {
@@ -299,39 +275,6 @@ fileprivate class Table1:  TJTable{
             cell.bind(self.commentsArray[indexPath.row])
             return cell
         }
-//        let _section = TopicDetailTableViewSection(rawValue: indexPath.section)!
-//        var _headerComponent = TopicDetailHeaderComponent.other
-//        if let headerComponent = TopicDetailHeaderComponent(rawValue: indexPath.row) {
-//            _headerComponent = headerComponent
-//        }
-//
-//        switch _section {
-//        case .header:
-//            switch _headerComponent {
-//            case .title:
-//                //帖子标题
-//                
-//            case .webViewContent:
-//                //帖子内容
-//                          case .other:
-//                let cell = super.cellAt(indexPath) as! BaseDetailTableViewCell
-//                cell.detailMarkHidden = true
-//                cell.titleLabel.text = self.model?.topicCommentTotalCount
-//                cell.titleLabel.font = v2Font(12)
-//                cell.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-////                cell.backgroundColor = .blue
-//                cell.separator.image = createImageWithColor(self.backgroundColor!)
-//                return cell
-////            case .other:
-////                return UITableViewCell()
-//            }
-//        case .comment:
-//            let cell = super.cellAt(indexPath)  as! TopicDetailCommentCell
-////            let cell = getCell(tableView!, cell: TopicDetailCommentCell.self, indexPath: indexPath)
-//            cell.bind(self.commentsArray[indexPath.row])
-//            return cell
-//            
-//        }
         return UITableViewCell();
     }
     func nodeClick() {
