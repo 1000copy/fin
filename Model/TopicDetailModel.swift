@@ -18,6 +18,7 @@ class TopicDetailModel:NSObject,BaseHtmlModelProtocol {
         item["topicId"] = topicId
         item["avata"] = avata
         item["nodeName"] = nodeName
+        item["node"] = node
         item["topicTitle"] = topicTitle
         item["topicContent"] = topicContent
         item["date"] = date
@@ -31,6 +32,7 @@ class TopicDetailModel:NSObject,BaseHtmlModelProtocol {
         topicId = item["topicId"] as? String
         avata = item["avata"] as? String
         nodeName = item["nodeName"] as? String
+        node = item["node"] as? String
         topicTitle = item["topicTitle"] as? String
         topicContent = item["topicContent"] as? String
         date = item["date"] as? String

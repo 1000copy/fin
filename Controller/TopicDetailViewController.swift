@@ -154,7 +154,6 @@ fileprivate class Table1:  TJTable{
     var viewControler : UIViewController?
     var topicId = "0"
     var currentPage = 1
-//    var tableView : TableBase?
     fileprivate var model:TopicDetailModel?
     fileprivate var commentsArray:[TopicCommentModel] = []
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?
@@ -162,7 +161,6 @@ fileprivate class Table1:  TJTable{
         super.init(frame: frame,style:style)
         registerCells()
     }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -247,22 +245,14 @@ fileprivate class Table1:  TJTable{
         }
         return UITableViewCell.self
     }
-    func webCellheightChanged(height:CGFloat) {
-            //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
-            //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
-            if let cell = self.webViewContentCell, self.visibleCells.contains(cell) {
-                beginUpdates()
-                endUpdates()
-            }
-    }
     override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 && indexPath.row == 0 {
             let cell = super.cellAt(indexPath) as! TopicDetailHeaderCell
-            if(cell.nodeClickHandler == nil){
-                cell.nodeClickHandler = {[weak self] () -> Void in
-                    self?.nodeClick()
-                }
-            }
+//            if(cell.nodeClickHandler == nil){
+//                cell.nodeClickHandler = {[weak self] () -> Void in
+//                    self?.nodeClick()
+//                }
+//            }
             return cell;
         }
         if indexPath.section == 0 && indexPath.row == 1 {
@@ -277,9 +267,9 @@ fileprivate class Table1:  TJTable{
         }
         return UITableViewCell();
     }
-    func nodeClick() {
-        Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
-    }
+//    func nodeClick() {
+//        Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
+//    }
 }
 
 //MARK: - V2ActivityView
@@ -450,8 +440,16 @@ fileprivate class Sheet : UIView,UIActionSheetDelegate {
     }
 }
 fileprivate class TopicDetailHeaderCell: TJCell {
+    var model : TopicDetailModel!
+//    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier);
+//        //        self.setup();
+//    }
+//    required init?(coder aDecoder: NSCoder) {
+//        super.init(coder: aDecoder)
+//    }
     fileprivate override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
-        let model = TopicDetailModel()
+        model = TopicDetailModel()
         model.fromDict(item)
         self.userNameLabel.text = model.userName;
         self.dateAndLastPostUserLabel.text = model.date
@@ -522,14 +520,6 @@ fileprivate class TopicDetailHeaderCell: TJCell {
     
     weak var itemModel:TopicDetailModel?
     var nodeClickHandler:(() -> Void)?
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier);
-//        self.setup();
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
     override func setup()->Void{
         self.selectionStyle = .none
         self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
@@ -585,7 +575,7 @@ fileprivate class TopicDetailHeaderCell: TJCell {
         }
     }
     func nodeClick() {
-        nodeClickHandler?()
+        Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
     }
     func userNameTap(_ sender:UITapGestureRecognizer) {
         if let _ = self.itemModel , let username = itemModel?.userName {
