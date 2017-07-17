@@ -9,7 +9,7 @@
 import UIKit
 import YYText
 
-class TopicDetailCommentCell: UITableViewCell{
+class TopicDetailCommentCell: TJCell{
     /// 头像
     var avatarImageView: UIImageView = {
         let avatarImageView = UIImageView()
@@ -69,13 +69,13 @@ class TopicDetailCommentCell: UITableViewCell{
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
+//        self.setup();
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
-    func setup()->Void{
+    override func setup()->Void{
         self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
         
         let selectedBackgroundView = UIView()

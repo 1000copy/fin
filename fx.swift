@@ -84,7 +84,7 @@ class  Table : TableBase {
 }
 
 class DataTableBase : TableBase{
-    var tableData_ : TableDataSource!
+    var tableData_ : TableDataSource! = TableDataSource()
     var tableData : TableDataSource!{
         get{
             return tableData_
@@ -103,6 +103,9 @@ class DataTableBase : TableBase{
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         return tableData.rowHeight(indexPath)
     }
+    func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
+        return tableData.getDataItem(indexPath)
+    }
     var registed : Bool = false
     func registerCells(){
         if !registed {
@@ -114,7 +117,7 @@ class DataTableBase : TableBase{
         let ctype = cellTypeAt(indexPath)
         registerCells()
         let cell = dequeneCell(ctype, indexPath) as! CellBase
-        cell.load(tableData,tableData.getDataItem(indexPath), indexPath)
+        cell.load(tableData,getDataItem(indexPath), indexPath)
         return cell ;
     }
     func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type{
@@ -124,6 +127,10 @@ class DataTableBase : TableBase{
             return tableData.cellTypeAt(indexPath)
         }
         return UITableViewCell.self
+    }
+    func dequeneCell<T:UITableViewCell>(_ indexPath:IndexPath) -> T {
+        registerCells()
+        return super.dequeneCell(cellTypeAt(indexPath), indexPath) as! T ;
     }
     func cellTypes() ->[UITableViewCell.Type]{
         if tableData != nil{

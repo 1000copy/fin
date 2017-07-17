@@ -20,7 +20,7 @@ class TopicDetailViewController: UIViewController{
             _tableView = Table1();
             _tableView.viewControler = self
 //            _tableView.model = model
-            _tableView.tableView = _tableView
+//            _tableView.tableView = _tableView
 //            _tableView.commentsArray = commentsArray
             _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
             
@@ -154,7 +154,7 @@ fileprivate class Table1:  TJTable{
     var viewControler : UIViewController?
     var topicId = "0"
     var currentPage = 1
-    var tableView : TableBase?
+//    var tableView : TableBase?
     fileprivate var model:TopicDetailModel?
     fileprivate var commentsArray:[TopicCommentModel] = []
     fileprivate var webViewContentCell:TopicDetailWebViewContentCell?
@@ -169,10 +169,24 @@ fileprivate class Table1:  TJTable{
     override func sectionCount() -> Int {
         return 2
     }
+    fileprivate override func didSelectRowAt(_ indexPath: IndexPath) {
+        let sheet = Sheet()
+        sheet.ActionSheet(indexPath, viewControler!, self)
+    }
     fileprivate override func cellTypes() -> [UITableViewCell.Type] {
         return [TopicDetailHeaderCell.self,TopicDetailWebViewContentCell.self,
         TopicDetailCommentCell.self,
         BaseDetailTableViewCell.self]
+    }
+    override func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
+        var item = TableDataSourceItem()
+        if indexPath.section == 0 && indexPath.row == 0 {
+            item = (model?.toDict())!
+        }
+        if indexPath.section == 0 && indexPath.row == 1 {
+            item = (model?.toDict())!
+        }
+        return item
     }
     override func rowCount(_ section: Int) -> Int {
         let _section = TopicDetailTableViewSection(rawValue: section)!
@@ -218,76 +232,107 @@ fileprivate class Table1:  TJTable{
             return 200
         }
     }
-    override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
-        let _section = TopicDetailTableViewSection(rawValue: indexPath.section)!
-        var _headerComponent = TopicDetailHeaderComponent.other
-        if let headerComponent = TopicDetailHeaderComponent(rawValue: indexPath.row) {
-            _headerComponent = headerComponent
+    override func cellTypeAt(_ indexPath:IndexPath) -> UITableViewCell.Type{
+        if indexPath.section == 0 && indexPath.row == 0 {
+            return TopicDetailHeaderCell.self
         }
-
-        switch _section {
-        case .header:
-            switch _headerComponent {
-            case .title:
-                //帖子标题
-                let cell = getCell(tableView!, cell: TopicDetailHeaderCell.self, indexPath: indexPath);
-                if(cell.nodeClickHandler == nil){
-                    cell.nodeClickHandler = {[weak self] () -> Void in
-                        self?.nodeClick()
-                    }
-                }
-                cell.bind(self.model!);
-                return cell;
-            case .webViewContent:
-                //帖子内容
-                if self.webViewContentCell == nil {
-                    self.webViewContentCell = getCell(tableView!, cell: TopicDetailWebViewContentCell.self, indexPath: indexPath);
-                    self.webViewContentCell?.parentScrollView = self.tableView
-                }
-                else {
-                    return self.webViewContentCell!
-                }
-                self.webViewContentCell!.load(self.model!);
-                if self.webViewContentCell!.contentHeightChanged == nil {
-                    self.webViewContentCell!.contentHeightChanged = { [weak self] (height:CGFloat) -> Void  in
-                        if let weakSelf = self {
-                            //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
-                            //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
-                            if let cell = weakSelf.webViewContentCell, weakSelf.tableView!.visibleCells.contains(cell) {
-                                if let height = weakSelf.webViewContentCell?.contentHeight, height > 1.5 * SCREEN_HEIGHT{ //太长了就别动画了。。
-                                    UIView.animate(withDuration: 0, animations: { () -> Void in
-                                        self?.tableView!.beginUpdates()
-                                        self?.tableView!.endUpdates()
-                                    })
-                                }
-                                else {
-                                    self?.tableView!.beginUpdates()
-                                    self?.tableView!.endUpdates()
-                                }
-                            }
-                        }
-                    }
-                }
-                return self.webViewContentCell!
-            case .other:
-                let cell = getCell(tableView!, cell: BaseDetailTableViewCell.self, indexPath: indexPath)
-                cell.detailMarkHidden = true
-                cell.titleLabel.text = self.model?.topicCommentTotalCount
-                cell.titleLabel.font = v2Font(12)
-                cell.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-//                cell.backgroundColor = .blue
-                cell.separator.image = createImageWithColor(self.backgroundColor!)
-                return cell
-//            case .other:
-//                return UITableViewCell()
+        if indexPath.section == 0 && indexPath.row == 1 {
+            return TopicDetailWebViewContentCell.self
+        }
+        if indexPath.section == 0 && indexPath.row == 2 {
+            return BaseDetailTableViewCell.self
+        }
+        if indexPath.section == 1 {
+            return TopicDetailCommentCell.self
+        }
+        return UITableViewCell.self
+    }
+    func webCellheightChanged(height:CGFloat) {
+            //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
+            //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
+            if let cell = self.webViewContentCell, self.visibleCells.contains(cell) {
+                beginUpdates()
+                endUpdates()
             }
-        case .comment:
-            let cell = getCell(tableView!, cell: TopicDetailCommentCell.self, indexPath: indexPath)
+    }
+    override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 && indexPath.row == 0 {
+            let cell = super.cellAt(indexPath) as! TopicDetailHeaderCell
+            if(cell.nodeClickHandler == nil){
+                cell.nodeClickHandler = {[weak self] () -> Void in
+                    self?.nodeClick()
+                }
+            }
+            return cell;
+        }
+        if indexPath.section == 0 && indexPath.row == 1 {
+            self.webViewContentCell = super.cellAt(indexPath) as! TopicDetailWebViewContentCell
+//            self.webViewContentCell?.parentScrollView = self
+//            if self.webViewContentCell!.contentHeightChanged == nil {
+//                self.webViewContentCell!.contentHeightChanged = webCellheightChanged
+//            }
+//            if self.webViewContentCell == nil {
+//                self.webViewContentCell = super.cellAt(indexPath) as! TopicDetailWebViewContentCell
+//                self.webViewContentCell?.parentScrollView = self
+//            }
+//            else {
+//                return self.webViewContentCell!
+//            }
+//            if self.webViewContentCell!.contentHeightChanged == nil {
+//                self.webViewContentCell!.contentHeightChanged = webCellheightChanged
+////                self.webViewContentCell!.contentHeightChanged = { [weak self] (height:CGFloat) -> Void  in
+////                    if let weakSelf = self {
+////                        //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
+////                        //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
+////                        if let cell = weakSelf.webViewContentCell, weakSelf.visibleCells.contains(cell) {
+////                            self?.beginUpdates()
+////                            self?.endUpdates()
+////                        }
+////                    }
+////                }
+//            }
+            return self.webViewContentCell!
+        }
+        if indexPath.section == 1 {
+            let cell = super.cellAt(indexPath)  as! TopicDetailCommentCell
+            //            let cell = getCell(tableView!, cell: TopicDetailCommentCell.self, indexPath: indexPath)
             cell.bind(self.commentsArray[indexPath.row])
             return cell
-        case .other:
-            return UITableViewCell();
         }
+//        let _section = TopicDetailTableViewSection(rawValue: indexPath.section)!
+//        var _headerComponent = TopicDetailHeaderComponent.other
+//        if let headerComponent = TopicDetailHeaderComponent(rawValue: indexPath.row) {
+//            _headerComponent = headerComponent
+//        }
+//
+//        switch _section {
+//        case .header:
+//            switch _headerComponent {
+//            case .title:
+//                //帖子标题
+//                
+//            case .webViewContent:
+//                //帖子内容
+//                          case .other:
+//                let cell = super.cellAt(indexPath) as! BaseDetailTableViewCell
+//                cell.detailMarkHidden = true
+//                cell.titleLabel.text = self.model?.topicCommentTotalCount
+//                cell.titleLabel.font = v2Font(12)
+//                cell.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+////                cell.backgroundColor = .blue
+//                cell.separator.image = createImageWithColor(self.backgroundColor!)
+//                return cell
+////            case .other:
+////                return UITableViewCell()
+//            }
+//        case .comment:
+//            let cell = super.cellAt(indexPath)  as! TopicDetailCommentCell
+////            let cell = getCell(tableView!, cell: TopicDetailCommentCell.self, indexPath: indexPath)
+//            cell.bind(self.commentsArray[indexPath.row])
+//            return cell
+//            
+//        }
+        return UITableViewCell();
     }
     func nodeClick() {
         Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
@@ -461,7 +506,23 @@ fileprivate class Sheet : UIView,UIActionSheetDelegate {
         Msg.send("relevantComment", [viewControler as Any,relevantComments])
     }
 }
-fileprivate class TopicDetailHeaderCell: UITableViewCell {
+fileprivate class TopicDetailHeaderCell: TJCell {
+    fileprivate override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+        let model = TopicDetailModel()
+        model.fromDict(item)
+        self.userNameLabel.text = model.userName;
+        self.dateAndLastPostUserLabel.text = model.date
+        self.topicTitleLabel.text = model.topicTitle;
+        
+        if let avata = model.avata {
+            self.avatarImageView.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
+        }
+        
+        if let node = model.nodeName{
+            self.nodeNameLabel.text = "  " + node + "  "
+        }
+    }
+    //fileprivate class TopicDetailHeaderCell: UITableViewCell {
     /// 头像
     var avatarImageView: UIImageView = {
         let imageview = UIImageView();
@@ -521,12 +582,12 @@ fileprivate class TopicDetailHeaderCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
+//        self.setup();
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    func setup()->Void{
+    override func setup()->Void{
         self.selectionStyle = .none
         self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
         

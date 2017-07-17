@@ -75,7 +75,7 @@ class TopicCommentModel: NSObject,BaseHtmlModelProtocol {
     var avata: String?
     var userName: String?
     var date: String?
-    var comment: String?
+//    var comment: String?
     var favorites: Int = 0
     var textLayout:YYTextLayout?
     var images:NSMutableArray = NSMutableArray()

@@ -23,7 +23,56 @@ public typealias TopicDetailWebViewContentHeightChanged = (CGFloat) -> Void
 
 let HTMLHEADER  = "<html><head><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\">"
 let jsCode = try! String(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "JSTools", ofType: "js")!))
-class TopicDetailWebViewContentCell: UITableViewCell ,UIWebViewDelegate {
+class TopicDetailWebViewContentCell: TJCell ,UIWebViewDelegate {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style:style,reuseIdentifier:reuseIdentifier)
+        parentScrollView = self.tableView
+        self.contentHeightChanged = webCellheightChanged
+        
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    func webCellheightChanged(height:CGFloat) {
+        //在cell显示在屏幕时更新，否则会崩溃会崩溃会崩溃
+        //另外刷新清空旧cell,重新创建这个cell ,所以 contentHeightChanged 需要判断cell是否为nil
+        if (tableView?.visibleCells.contains(self))! {
+            tableView?.beginUpdates()
+            tableView?.endUpdates()
+        }
+    }
+
+    override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+        print(indexPath)
+        let model = TopicDetailModel()
+        model.fromDict(item)
+        load(model)
+    }
+    fileprivate func load(_ model:TopicDetailModel){
+        if self.model == model{
+            return;
+        }
+        self.model = model
+        
+        if var html = model.topicContent {
+            
+            let style = "<style>" + V2Style.sharedInstance.CSS + "</style></head>"
+            html =  HTMLHEADER + style  + html + "</html>"
+            
+            self.contentWebView.loadHTMLString(html, baseURL: URL(string: "https://"))
+            
+            //这里有一个问题，
+            
+            //如果baseURL 设置为nil，则可以直接引用本地css文件。
+            //但不能加载 地址 //:开头的 的图片。
+            
+            //如果将baseUrl 设为 http/https ，则可以加载图片。但是却不能直接引用本地css文件，
+            //因为WebView 有同源限制，http/https 与 我们本地css文件的 file:// 是不同源的
+            //所以就会导致 css 样式不能加载
+            
+            //所以这里做个了折中方案，baseUrl 使用https ,将css样式写进html。
+        }
+    }
     
     fileprivate var model:TopicDetailModel?
     
@@ -48,14 +97,7 @@ class TopicDetailWebViewContentCell: UITableViewCell ,UIWebViewDelegate {
     }
     var tapImageInfo:TapImageInfo?
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    func setup()->Void{
+    override func setup()->Void{
         self.clipsToBounds = true
         
         self.contentWebView.delegate = self
@@ -127,32 +169,6 @@ class TopicDetailWebViewContentCell: UITableViewCell ,UIWebViewDelegate {
     }
     override func layoutSubviews() {
         super.layoutSubviews()
-    }
-    
-    func load(_ model:TopicDetailModel){
-        if self.model == model{
-            return;
-        }
-        self.model = model
-        
-        if var html = model.topicContent {
-
-            let style = "<style>" + V2Style.sharedInstance.CSS + "</style></head>"
-            html =  HTMLHEADER + style  + html + "</html>"
-            
-            self.contentWebView.loadHTMLString(html, baseURL: URL(string: "https://"))
-
-            //这里有一个问题，
-            
-            //如果baseURL 设置为nil，则可以直接引用本地css文件。
-            //但不能加载 地址 //:开头的 的图片。
-            
-            //如果将baseUrl 设为 http/https ，则可以加载图片。但是却不能直接引用本地css文件，
-            //因为WebView 有同源限制，http/https 与 我们本地css文件的 file:// 是不同源的
-            //所以就会导致 css 样式不能加载
-            
-            //所以这里做个了折中方案，baseUrl 使用https ,将css样式写进html。
-        }
     }
     
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {

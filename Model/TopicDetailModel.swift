@@ -13,6 +13,33 @@ import Ji
 import YYText
 import Kingfisher
 class TopicDetailModel:NSObject,BaseHtmlModelProtocol {
+    func toDict()-> TJTableDataSourceItem{
+        var item = TJTableDataSourceItem()
+        item["topicId"] = topicId
+        item["avata"] = avata
+        item["nodeName"] = nodeName
+        item["topicTitle"] = topicTitle
+        item["topicContent"] = topicContent
+        item["date"] = date
+        item["favorites"] = favorites
+        item["topicCommentTotalCount"] = topicCommentTotalCount
+        item["token"] = token
+        item["commentTotalPages"] = commentTotalPages
+        return item 
+    }
+    func fromDict(_ item : TJTableDataSourceItem){
+        topicId = item["topicId"] as? String
+        avata = item["avata"] as? String
+        nodeName = item["nodeName"] as? String
+        topicTitle = item["topicTitle"] as? String
+        topicContent = item["topicContent"] as? String
+        date = item["date"] as? String
+        favorites = item["favorites"] as? String
+        topicCommentTotalCount = item["topicCommentTotalCount"] as? String
+        token = item["token"] as? String
+        commentTotalPages = (item["commentTotalPages"] as? Int)!
+    }
+    
     var topicId:String?
     
     var avata: String?

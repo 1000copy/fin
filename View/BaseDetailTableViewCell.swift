@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BaseDetailTableViewCell: UITableViewCell {
+class BaseDetailTableViewCell: TJCell {
     var titleLabel:UILabel = {
         let label = UILabel()
         label.font = v2Font(16)
@@ -60,13 +60,13 @@ class BaseDetailTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
+//        self.setup();
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    func setup()->Void{
+    override func setup()->Void{
         let selectedBackgroundView = UIView()
         self.selectedBackgroundView = selectedBackgroundView
 
