@@ -50,7 +50,7 @@ fileprivate class Table1 : TableBase{
             if user.username == User.shared.username {
                 return;
             }
-            alertView = AlertToggleUser(ownerViewController)
+            alertView = AlertToggleUser(ownerViewController,indexPath.row)
             alertView.done  = alertView2
             alertView.show(user.username!, indexPath)
         }
@@ -77,7 +77,7 @@ fileprivate class Table1 : TableBase{
         }
         User.shared.loginOut()
         self.reloadData()
-        let user = self.users[alertView.alertView.tag]
+        let user = self.users[alertView.row]
         if let username = user.username,let password = user.password {
             V2BeginLoadingWithStatus("正在登录")
             UserModel.Login(username, password: password){
@@ -161,6 +161,11 @@ class AlertLogout : AlertBase{
     }
 }
 class AlertToggleUser : AlertBase{
+    var row : Int = 0
+    init(_ owner : UIViewController?,_ row : Int) {
+        super.init(owner)
+        self.row = row
+    }
     func show(_ username : String,_ indexPath : IndexPath){
         title = "确定切换到账号 " + username + " 吗?"
         message =  "无论新账号是否登录成功，都会注销当前账号。"
@@ -176,7 +181,6 @@ class AlertPrivateDeclare: AlertBase{
         super.show()
     }
 }
-
 class AlertBase : NSObject,UIAlertViewDelegate{
     var owner : UIViewController?
     var done : ((_ buttonIndex: Int)->Void)?
@@ -185,21 +189,27 @@ class AlertBase : NSObject,UIAlertViewDelegate{
     var message : String!=""
     var cancelTitle : String!="取消"
     var otherTitle : String!="其他"
+    var alertView : UIAlertController!
     init(_ owner : UIViewController?) {
         self.owner = owner
     }
+    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: Int){
+        if let done =  done {
+            done(buttonIndex)
+        }
+    }
     func show() {
-        let sheet: UIAlertController = UIAlertController(title:self.title, message:self.message, preferredStyle:UIAlertControllerStyle.alert)
+        alertView = UIAlertController(title:self.title, message:self.message, preferredStyle:UIAlertControllerStyle.alert)
         var action = UIAlertAction(title:cancelTitle, style:UIAlertActionStyle.default){[weak self] action in
             self?.buttonTap?((self?.cancelTitle)!)
             self?.done?(0)
         }
-        sheet.addAction(action)
+        alertView.addAction(action)
         action = UIAlertAction(title:otherTitle, style:UIAlertActionStyle.default){[weak self] action in
             self?.buttonTap?((self?.cancelTitle)!)
             self?.done?(1)
         }
-        sheet.addAction(action)
-        owner?.present(sheet, animated:true, completion:nil)
+        alertView.addAction(action)
+        owner?.present(alertView, animated:true, completion:nil)
     }
 }
