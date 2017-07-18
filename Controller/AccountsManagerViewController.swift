@@ -67,7 +67,7 @@ fileprivate class Table1 : TableBase{
     func alertView1(_ buttonIndex: Int){
         if buttonIndex == 1 {
             User.shared.loginOut()
-            self.owner.navigationController?.popToRootViewController(animated: true)
+            let _ = self.ownerViewController?.navigationController?.popToRootViewController(animated: true)
         }
         
     }
@@ -192,11 +192,6 @@ class AlertBase : NSObject,UIAlertViewDelegate{
     var alertView : UIAlertController!
     init(_ owner : UIViewController?) {
         self.owner = owner
-    }
-    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: Int){
-        if let done =  done {
-            done(buttonIndex)
-        }
     }
     func show() {
         alertView = UIAlertController(title:self.title, message:self.message, preferredStyle:UIAlertControllerStyle.alert)

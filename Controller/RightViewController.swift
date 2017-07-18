@@ -146,7 +146,7 @@ fileprivate class RightCell: TJCell {
     var data : PCTableDataSource?
     override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         self.data = data
-        nodeNameLabel.text = item["nodeName"] as! String
+        nodeNameLabel.text = item["nodeName"] as? String
     }
     override func action(_ indexPath: IndexPath) {
         print(indexPath)
