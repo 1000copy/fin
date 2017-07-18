@@ -387,7 +387,7 @@ fileprivate class TopicDetailHeaderCell: TJCell {
 //    required init?(coder aDecoder: NSCoder) {
 //        super.init(coder: aDecoder)
 //    }
-    fileprivate override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+    fileprivate override func load(_ data: PCTableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
         model = TopicDetailModel()
         model.fromDict(item)
         self.userNameLabel.text = model.userName;
@@ -542,7 +542,7 @@ fileprivate class TopicDetailHeaderCell: TJCell {
 
 
 class TopicDetailCommentCell: TJCell{
-    override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+    override func load(_ data: PCTableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
         let model = TopicCommentModel ()
         model.fromDict(item)
         bind(model)

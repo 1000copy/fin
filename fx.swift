@@ -84,8 +84,8 @@ class  Table : TableBase {
 }
 
 class DataTableBase : TableBase{
-    var tableData_ : TableDataSource! = TableDataSource()
-    var tableData : TableDataSource!{
+    var tableData_ : PCTableDataSource! = TableDataSource()
+    var tableData : PCTableDataSource!{
         get{
             return tableData_
         }
@@ -124,7 +124,7 @@ class DataTableBase : TableBase{
         if cellTypes().count == 1 {
             return cellTypes()[0]
         }else if tableData != nil{
-            return tableData.cellTypeAt(indexPath)
+            return tableData.cellTypeAt!(indexPath)
         }
         return UITableViewCell.self
     }
@@ -146,11 +146,11 @@ class DataTableBase : TableBase{
     }
 }
 typealias  TableDataSourceItem = [String:Any]
-protocol PCTableDataSource {
+@objc  protocol PCTableDataSource {
     func sectionCount() -> Int
     func rowCount(_ section: Int) -> Int
     func rowHeight(_ indexPath: IndexPath) -> CGFloat
-    func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type
+    @objc optional func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type
     func cellTypes() ->[UITableViewCell.Type]
     func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem
 }
@@ -182,7 +182,7 @@ class CellBase : UITableViewCell {
     // interface
     func setup(){
     }
-    func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+    func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         
     }
     func loadCell(_ data : TableDataSourceItem){

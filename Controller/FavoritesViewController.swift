@@ -37,7 +37,7 @@ class FavData : HomeData{
     }
 }
 class FavCell : HomeTopicListTableViewCell{
-    var data: TableDataSource?
+    var data: PCTableDataSource?
     override func action(_ indexPath: IndexPath) {
         let item = self.data?.getDataItem(indexPath)
         if let id = item?["topicId"] as? String{
@@ -45,7 +45,7 @@ class FavCell : HomeTopicListTableViewCell{
         }
         deselect()
     }
-    override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+    override func load(_ data: PCTableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
         self.data = data
         super.load(data, item, indexPath)
     }

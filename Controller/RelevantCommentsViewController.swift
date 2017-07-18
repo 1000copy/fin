@@ -14,11 +14,11 @@ class RelevantCommentsViewController: UIViewController{
                 return _tableView!;
             }
             _tableView = TableRelevantComments();
-            _tableView.commentsArray = commentsArray
+//            _tableView.commentsArray = commentsArray
+            let ds = DataRelevantComments()
+            ds.commentsArray = commentsArray
+            _tableView.tableData = ds
             _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
-//            regClass(_tableView, cell: TopicDetailCommentCell.self)
-//            _tableView.delegate = self
-//            _tableView.dataSource = self
             return _tableView!;
             
         }
@@ -30,30 +30,38 @@ class RelevantCommentsViewController: UIViewController{
             make.left.right.top.bottom.equalTo(self.view);
         }
     }
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return self.commentsArray.count;
-//    }
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return self.commentsArray[indexPath.row].getHeight()
-//    }
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = getCell(tableView, cell: TopicDetailCommentCell.self, indexPath: indexPath)
-//        cell.bind(self.commentsArray[indexPath.row])
-//        return cell
-//    }
 }
 class TableRelevantComments: TJTable{
+//    var commentsArray:[TopicCommentModel] = []
+//    override func cellTypes() -> [UITableViewCell.Type] {
+//        return [TopicDetailCommentCell.self]
+//    }
+//    override func rowCount(_ section: Int) -> Int {
+//        return self.commentsArray.count;
+//    }
+//    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+//        return self.commentsArray[indexPath.row].getHeight()
+//    }
+//    override func getDataItem(_ indexPath: IndexPath) -> TableDataSourceItem {
+//        return commentsArray[indexPath.row].toDict()
+//    }
+}
+class DataRelevantComments: NSObject ,PCTableDataSource{
     var commentsArray:[TopicCommentModel] = []
-    override func cellTypes() -> [UITableViewCell.Type] {
-        return [TopicDetailCommentCell.self]
+    func sectionCount() -> Int{
+        return 1
     }
-    override func rowCount(_ section: Int) -> Int {
-        return self.commentsArray.count;
+    func rowCount(_ section: Int) -> Int{
+        return self.commentsArray.count
     }
-    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
+    func rowHeight(_ indexPath: IndexPath) -> CGFloat{
         return self.commentsArray[indexPath.row].getHeight()
     }
-    override func getDataItem(_ indexPath: IndexPath) -> TableDataSourceItem {
+    func cellTypes() ->[UITableViewCell.Type]{
+        return [TopicDetailCommentCell.self]
+    }
+    func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
         return commentsArray[indexPath.row].toDict()
     }
+
 }

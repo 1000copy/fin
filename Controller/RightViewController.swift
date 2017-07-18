@@ -143,8 +143,8 @@ fileprivate class RightTable : TJTable{
     var currentSelectedTabIndex = 0;
 }
 fileprivate class RightCell: TJCell {
-    var data : TableDataSource?
-    override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+    var data : PCTableDataSource?
+    override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         self.data = data
         nodeNameLabel.text = item["nodeName"] as! String
     }

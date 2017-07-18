@@ -243,7 +243,7 @@ fileprivate class NotificationMenuButton: UIButton {
     }
 }
 class HomeTopicListTableViewCell: TJCell {
-    override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+    override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         let model = TopicListModel()
         model.fromDict(item)
         self.bind(model)

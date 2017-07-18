@@ -42,7 +42,7 @@ class TopicDetailWebViewContentCell: TJCell ,UIWebViewDelegate {
         }
     }
 
-    override func load(_ data: TableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+    override func load(_ data: PCTableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
         print(indexPath)
         let model = TopicDetailModel()
         model.fromDict(item)

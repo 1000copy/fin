@@ -245,7 +245,7 @@ fileprivate class LeftNodeTableViewCell: TJCell {
     }()
     var panel = UIView()
     
-    fileprivate override func load(_ data : TableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
+    fileprivate override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         nodeNameLabel.text = item["title"] as! String
         nodeImageView.image = UIImage.imageUsedTemplateMode(item["icon"] as! String)
     }
