@@ -1,25 +1,24 @@
 import UIKit
 import FXBlurView
 import Shimmer
-class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
+
+class RelevantCommentsViewController: UIViewController{
+//class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
 
     var commentsArray:[TopicCommentModel] = []
     fileprivate var dismissing = false
-    fileprivate var _tableView :UITableView!
-    fileprivate var tableView: UITableView {
+    fileprivate var _tableView :TableRelevantComments!
+    fileprivate var tableView: TableRelevantComments {
         get{
             if(_tableView != nil){
                 return _tableView!;
             }
-            _tableView = UITableView();
+            _tableView = TableRelevantComments();
+            _tableView.commentsArray = commentsArray
             _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
-            
-//            _tableView.backgroundColor = UIColor.clear
-//            _tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
-            regClass(_tableView, cell: TopicDetailCommentCell.self)
-            
-            _tableView.delegate = self
-            _tableView.dataSource = self
+//            regClass(_tableView, cell: TopicDetailCommentCell.self)
+//            _tableView.delegate = self
+//            _tableView.dataSource = self
             return _tableView!;
             
         }
@@ -31,19 +30,30 @@ class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITa
             make.left.right.top.bottom.equalTo(self.view);
         }
     }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return self.commentsArray.count;
+//    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return self.commentsArray[indexPath.row].getHeight()
+//    }
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = getCell(tableView, cell: TopicDetailCommentCell.self, indexPath: indexPath)
+//        cell.bind(self.commentsArray[indexPath.row])
+//        return cell
+//    }
+}
+class TableRelevantComments: TJTable{
+    var commentsArray:[TopicCommentModel] = []
+    override func cellTypes() -> [UITableViewCell.Type] {
+        return [TopicDetailCommentCell.self]
+    }
+    override func rowCount(_ section: Int) -> Int {
         return self.commentsArray.count;
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        let layout = self.commentsArray[indexPath.row].textLayout!
-//        return layout.textBoundingRect.size.height + 12 + 35 + 12 + 12 + 1
+    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         return self.commentsArray[indexPath.row].getHeight()
     }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = getCell(tableView, cell: TopicDetailCommentCell.self, indexPath: indexPath)
-        cell.bind(self.commentsArray[indexPath.row])
-        return cell
+    override func getDataItem(_ indexPath: IndexPath) -> TableDataSourceItem {
+        return commentsArray[indexPath.row].toDict()
     }
-    
-    
 }
