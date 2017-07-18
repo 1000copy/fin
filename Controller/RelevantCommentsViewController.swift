@@ -1,48 +1,33 @@
 import UIKit
 import FXBlurView
 import Shimmer
-
 class RelevantCommentsViewController: UIViewController{
-    //class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
-    
     var commentsArray:[TopicCommentModel] = []
-    fileprivate var dismissing = false
-    fileprivate var _tableView :TableRelevantComments!
-    fileprivate var tableView: TableRelevantComments {
-        get{
-            if(_tableView != nil){
-                return _tableView!;
-            }
-            _tableView = TableRelevantComments();
-            let ds = DataRelevantComments()
-            ds.commentsArray = commentsArray
-            _tableView.tableData = ds
-        
-            return _tableView!;
-        }
-    }
+    fileprivate var _tableView :Table!
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(self.tableView);
-        self.tableView.snp.remakeConstraints{ (make) -> Void in
+        _tableView = Table(commentsArray);
+        self.view.addSubview(self._tableView);
+        self._tableView.snp.remakeConstraints{ (make) -> Void in
             make.left.right.top.bottom.equalTo(self.view);
         }
     }
 }
-class TableRelevantComments: TJTable{
-        override init(frame: CGRect, style: UITableViewStyle) {
-            super.init(frame:frame,style:style)
-            separatorStyle = .none;
-        }
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    // in the layoutSubviews function and know if the view loaded.
-    override func layoutSubviews() {
-        super.layoutSubviews()
+fileprivate class Table: TJTable{
+    init(_ commentsArray:[TopicCommentModel]){
+        super.init(frame: CGRect.zero,style:.plain)
+        let data = DataRelevantComments(commentsArray)
+        self.tableData = data
+        separatorStyle = .none;
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 class DataRelevantComments: NSObject ,PCTableDataSource{
+    init(_ commentsArray:[TopicCommentModel] ) {
+        self.commentsArray = commentsArray
+    }
     var commentsArray:[TopicCommentModel] = []
     func sectionCount() -> Int{
         return 1

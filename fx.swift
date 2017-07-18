@@ -14,7 +14,7 @@ import Ji
 import MJRefresh
 
 import Foundation
-class  Table : TableBase {
+fileprivate class  Table : TableBase {
     var topicList:Array<TopicListModel>?
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
