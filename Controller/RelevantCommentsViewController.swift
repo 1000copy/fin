@@ -16,8 +16,7 @@ class RelevantCommentsViewController: UIViewController{
 fileprivate class Table: TJTable{
     init(_ commentsArray:[TopicCommentModel]){
         super.init(frame: CGRect.zero,style:.plain)
-        let data = DataRelevantComments(commentsArray)
-        self.tableData = data
+        self.tableData = DataRelevantComments(commentsArray)
         separatorStyle = .none;
     }
     required init?(coder aDecoder: NSCoder) {

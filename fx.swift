@@ -6,83 +6,11 @@ typealias TJTableDataSourceItem = TableDataSourceItem
 // Button,TableView,CollectView
 import UIKit
 import SnapKit
-
 import Alamofire
 import AlamofireObjectMapper
-
 import Ji
 import MJRefresh
-
 import Foundation
-fileprivate class  Table : TableBase {
-    var topicList:Array<TopicListModel>?
-    override init(frame: CGRect, style: UITableViewStyle) {
-        super.init(frame:frame,style:style)
-        separatorStyle = UITableViewCellSeparatorStyle.none;
-        regClass(self, cell: HomeTopicListTableViewCell.self);
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-    }
-    override func sectionCount() -> Int {
-        return 1
-    }
-    override func rowCount(_ section: Int) -> Int {
-        if let list = self.topicList {
-            return list.count;
-        }
-        return 0;
-    }
-    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        let item = self.topicList![indexPath.row]
-        let titleHeight = item.topicTitleLayout?.textBoundingRect.size.height ?? 0
-        let height = fixHeight ()  + titleHeight
-        return height
-    }
-    override  func cellAt(_ indexPath: IndexPath) -> UITableViewCell{
-        let cell = getCell(self, cell: HomeTopicListTableViewCell.self, indexPath: indexPath);
-        cell.bind(self.topicList![indexPath.row]);
-        return cell;
-    }
-    override func didSelectRowAt(_ indexPath: IndexPath) {
-        let item = self.topicList![indexPath.row]
-        if let id = item.topicId {
-            let a = {[weak self] (topicId : String)->Void in
-                self?.perform(#selector(self?.ignoreTopicHandler(_:)), with: topicId, afterDelay: 0.6)
-            }
-            Msg.send("openTopicDetail",[id,a])
-            deselectRow(at: indexPath, animated: true);
-        }
-    }
-    func fixHeight()-> CGFloat{
-        let height = 12    +  35     +  12    +  12      + 8
-        return CGFloat(height)
-        //          上间隔   头像高度  头像下间隔     标题下间隔 cell间隔
-    }
-    // 当用户点击忽略按钮（在TopicDetailController内），执行它
-    func ignoreTopicHandler(_ topicId:String) {
-        let index = self.topicList?.index(where: {$0.topicId == topicId })
-        if index == nil {
-            return
-        }
-        //看当前忽略的cell 是否在可视列表里
-        let indexPaths = indexPathsForVisibleRows
-        let visibleIndex =  indexPaths?.index(where: {($0 as IndexPath).row == index})
-        
-        self.topicList?.remove(at: index!)
-        //如果不在可视列表，则直接reloadData 就可以
-        if visibleIndex == nil {
-            reloadData()
-            return
-        }
-        //如果在可视列表，则动画删除它
-        beginUpdates()
-        deleteRows(at: [IndexPath(row: index!, section: 0)], with: .fade)
-        endUpdates()
-    }
-    
-}
-
 class DataTableBase : TableBase{
     var tableData_ : PCTableDataSource! = TableDataSource()
     var tableData : PCTableDataSource!{
