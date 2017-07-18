@@ -3,8 +3,8 @@ import FXBlurView
 import Shimmer
 
 class RelevantCommentsViewController: UIViewController{
-//class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
-
+    //class RelevantCommentsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
+    
     var commentsArray:[TopicCommentModel] = []
     fileprivate var dismissing = false
     fileprivate var _tableView :TableRelevantComments!
@@ -14,13 +14,11 @@ class RelevantCommentsViewController: UIViewController{
                 return _tableView!;
             }
             _tableView = TableRelevantComments();
-//            _tableView.commentsArray = commentsArray
             let ds = DataRelevantComments()
             ds.commentsArray = commentsArray
             _tableView.tableData = ds
-            _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
+        
             return _tableView!;
-            
         }
     }
     override func viewDidLoad() {
@@ -32,19 +30,17 @@ class RelevantCommentsViewController: UIViewController{
     }
 }
 class TableRelevantComments: TJTable{
-//    var commentsArray:[TopicCommentModel] = []
-//    override func cellTypes() -> [UITableViewCell.Type] {
-//        return [TopicDetailCommentCell.self]
-//    }
-//    override func rowCount(_ section: Int) -> Int {
-//        return self.commentsArray.count;
-//    }
-//    override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-//        return self.commentsArray[indexPath.row].getHeight()
-//    }
-//    override func getDataItem(_ indexPath: IndexPath) -> TableDataSourceItem {
-//        return commentsArray[indexPath.row].toDict()
-//    }
+        override init(frame: CGRect, style: UITableViewStyle) {
+            super.init(frame:frame,style:style)
+            separatorStyle = .none;
+        }
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    // in the layoutSubviews function and know if the view loaded.
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
 }
 class DataRelevantComments: NSObject ,PCTableDataSource{
     var commentsArray:[TopicCommentModel] = []
@@ -63,5 +59,4 @@ class DataRelevantComments: NSObject ,PCTableDataSource{
     func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
         return commentsArray[indexPath.row].toDict()
     }
-
 }
