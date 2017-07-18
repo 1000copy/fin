@@ -41,7 +41,9 @@ class TopicDetailModel:NSObject,BaseHtmlModelProtocol {
         favorites = item["favorites"] as? String
         topicCommentTotalCount = item["topicCommentTotalCount"] as? String
         token = item["token"] as? String
-        commentTotalPages = (item["commentTotalPages"] as? Int)!
+        if let p = item["commentTotalPages"] as? Int {
+            commentTotalPages = p
+        }
     }
     
     var topicId:String?

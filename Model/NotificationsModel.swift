@@ -19,7 +19,27 @@ class NotificationsModel: NSObject,BaseHtmlModelProtocol {
     var reply: String?
 
     var topicId: String?
-    
+    func toDict()-> TJTableDataSourceItem{
+        var item = TJTableDataSourceItem()
+        item["avata"] = avata
+        item["userName"] = userName
+        item["title"] = title
+        item["date"] = date
+        item["reply"] = reply
+        item["topicId"] = topicId
+        return item 
+    }
+    func fromDict(_ item : TJTableDataSourceItem){
+        avata = item["avata"] as? String
+        userName = item["userName"] as? String
+        title = item["title"] as? String
+        date = item["date"] as? String
+        reply = item["reply"] as? String
+        topicId = item["topicId"] as? String
+    }
+    override init() {
+        super.init()
+    }
     required init(rootNode: JiNode) {
         self.avata = rootNode.xPath("./table/tr/td[1]/a/img[@class='avatar']").first?["src"]
         self.userName = rootNode.xPath("./table/tr/td[2]/span[1]/a[1]/strong").first?.content

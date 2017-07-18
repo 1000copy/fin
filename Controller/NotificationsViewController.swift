@@ -58,7 +58,6 @@ fileprivate class TableNotify : TJTable{
         self.backgroundColor = UIColor.clear
         self.estimatedRowHeight=100;
         self.separatorStyle = UITableViewCellSeparatorStyle.none;
-        regClass(self, cell: NotificationTableViewCell.self)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -69,23 +68,15 @@ fileprivate class TableNotify : TJTable{
         return self.notificationsArray.count
     }
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
-        return self.fin_heightForCellWithIdentifier(NotificationTableViewCell.self, indexPath: indexPath) { (cell) -> Void in
+        return self.fin_heightForCellWithIdentifier(Cell.self, indexPath: indexPath) { (cell) -> Void in
             cell.bind(self.notificationsArray[indexPath.row]);
         }
     }
     fileprivate override func cellTypes() -> [UITableViewCell.Type] {
-        return [NotificationTableViewCell.self]
+        return [Cell.self]
     }
-    override  func cellAt (_ indexPath: IndexPath) -> UITableViewCell {
-        let cell = dequeneCell(indexPath) as NotificationTableViewCell
-        cell.bind(self.notificationsArray[indexPath.row])
-        cell.replyButton.tag = indexPath.row
-        if cell.replyButtonClickHandler == nil {
-            cell.replyButtonClickHandler = { [weak self] (sender) in
-                self?.replyClick(sender)
-            }
-        }
-        return cell
+    fileprivate override func getDataItem(_ indexPath: IndexPath) -> TableDataSourceItem {
+        return notificationsArray[indexPath.row].toDict()
     }
     override func didSelectRowAt(_ indexPath: IndexPath) {
         let item = self.notificationsArray[indexPath.row]
@@ -94,15 +85,46 @@ fileprivate class TableNotify : TJTable{
             deselectRow(at: indexPath, animated: true);
         }
     }
-    func replyClick(_ sender:UIButton) {
-        let item = self.notificationsArray[sender.tag]
-        let tempTopicModel = TopicDetailModel()
-        tempTopicModel.topicId = item.topicId
-        Msg.send("replyComment", [ownerViewController as Any,item.userName!,tempTopicModel])
-    }
 }
-fileprivate class NotificationTableViewCell: UITableViewCell {
+fileprivate class Cell: TJCell {
+    var item: TableDataSourceItem?
+    fileprivate override func load(_ data: PCTableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
+        let model = NotificationsModel()
+        model.fromDict(item)
+        bind(model)
+        self.item = item
+    }
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style:style,reuseIdentifier:reuseIdentifier)
+        self.replyButtonClickHandler = { [weak self] (sender) in
+            self?.replyClick(sender)
+        }
+    }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func replyClick(_ sender:UIButton) {
+        let tempTopicModel = TopicDetailModel()
+        tempTopicModel.fromDict(self.item!)
+        Msg.send("replyComment", [ownerViewController as Any,item?["userName"]!,tempTopicModel])
+    }
+    func bind(_ model: NotificationsModel){
+        self.itemModel = model
+        self.userNameLabel.text = model.userName
+        self.dateLabel.text = model.date
+        self.detailLabel.text = model.title
+        if let text = model.reply {
+            self.commentLabel.text = text
+            self.setCommentPanelHidden(false)
+        }
+        else {
+            self.setCommentPanelHidden(true)
+        }
+        if let avata = model.avata {
+            self.avatarImageView.kf.setImage(with:  URL(string: "https:" + avata)!)
+        }
+    }
     /// 头像
     var avatarImageView: UIImageView = {
         let imageView =  UIImageView()
@@ -182,16 +204,7 @@ fileprivate class NotificationTableViewCell: UITableViewCell {
     
     /// 点击回复按钮，调用的事件
     var replyButtonClickHandler: ((UIButton) -> Void)?
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier);
-        self.setup();
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    func setup()->Void{
+    override func setup()->Void{
         self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = V2EXColor.colors.v2_backgroundColor
@@ -212,9 +225,9 @@ fileprivate class NotificationTableViewCell: UITableViewCell {
         //点击用户头像，跳转到用户主页
         self.avatarImageView.isUserInteractionEnabled = true
         self.userNameLabel.isUserInteractionEnabled = true
-        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(NotificationTableViewCell.userNameTap(_:)))
+        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(userNameTap(_:)))
         self.avatarImageView.addGestureRecognizer(userNameTap)
-        userNameTap = UITapGestureRecognizer(target: self, action: #selector(NotificationTableViewCell.userNameTap(_:)))
+        userNameTap = UITapGestureRecognizer(target: self, action: #selector(userNameTap(_:)))
         self.userNameLabel.addGestureRecognizer(userNameTap)
         
         //按钮点击事件
@@ -271,27 +284,6 @@ fileprivate class NotificationTableViewCell: UITableViewCell {
     func replyButtonClick(_ sender:UIButton){
         self.replyButtonClickHandler?(sender)
     }
-    
-    func bind(_ model: NotificationsModel){
-        
-        self.itemModel = model
-        
-        self.userNameLabel.text = model.userName
-        self.dateLabel.text = model.date
-        self.detailLabel.text = model.title
-        if let text = model.reply {
-            self.commentLabel.text = text
-            self.setCommentPanelHidden(false)
-        }
-        else {
-            self.setCommentPanelHidden(true)
-        }
-        
-        if let avata = model.avata {
-            self.avatarImageView.kf.setImage(with:  URL(string: "https:" + avata)!)
-        }
-    }
-    
     func setCommentPanelHidden(_ hidden:Bool) {
         if hidden {
             self.commentPanel.isHidden = true
