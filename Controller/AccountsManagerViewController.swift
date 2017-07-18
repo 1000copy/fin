@@ -50,13 +50,13 @@ fileprivate class Table1 : TableBase{
             if user.username == User.shared.username {
                 return;
             }
-            alertView = AlertToggleUser()
+            alertView = AlertToggleUser(ownerViewController)
             alertView.done  = alertView2
             alertView.show(user.username!, indexPath)
         }
         //最后一行，也就是退出登录按钮那行
         else if indexPath.row == totalNumOfRows - 1{
-            alert = AlertLogout()
+            alert = AlertLogout(ownerViewController)
             alert.done = alertView1
             alert.show()
         }
@@ -148,14 +148,14 @@ class AccountsManagerViewController: UIViewController {
         }
     }
     func warningClick(){
-         AlertPrivateDeclare().show()
+         AlertPrivateDeclare(ownerViewController).show()
     }
 }
 
 class AlertLogout : AlertBase{
     override func show(){
         title = "确定注销当前账号吗？"
-        message =  "注销只会退出登录，并不会删除保存在Keychain中的账户名与密码。如需删除，请左滑需要删除的账号，然后点击删除按钮"
+        message =  "注销会退出登录"
         otherTitle = "注销"
         super.show()
     }
@@ -170,26 +170,36 @@ class AlertToggleUser : AlertBase{
 }
 class AlertPrivateDeclare: AlertBase{
     override func show(){
-        title = "临时隐私声明"
-        message =   "当你登录时，软件会自动将你的账号与密码保存于系统的Keychain中（非常安全）。如果你不希望软件保存你的账号与密码，可以左滑账号并点击删除。\n后续会完善隐私声明页面，并添加 关闭保存账号密码机制 的选项。\n但我强烈推荐你不要关闭，因为这个会帮助你【登录过期自动重连】、或者【切换多账号】"
+        title = "推荐"
+        message =   "强烈推荐你不要关闭，因为这个会帮助你【登录过期自动重连】、或者【切换多账号】"
         cancelTitle = "我知道了"
         super.show()
     }
 }
+
 class AlertBase : NSObject,UIAlertViewDelegate{
+    var owner : UIViewController?
     var done : ((_ buttonIndex: Int)->Void)?
+    var buttonTap : ((_ title: String?)->Void)?
     var title : String!=""
     var message : String!=""
     var cancelTitle : String!="取消"
     var otherTitle : String!="其他"
-    var alertView : UIAlertView!
-    func show(){
-        alertView = UIAlertView(title: title, message: message, delegate: self, cancelButtonTitle: cancelTitle, otherButtonTitles: otherTitle)
-        alertView.show()
+    init(_ owner : UIViewController?) {
+        self.owner = owner
     }
-    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: Int){
-        if let done =  done {
-            done(buttonIndex)
+    func show() {
+        let sheet: UIAlertController = UIAlertController(title:self.title, message:self.message, preferredStyle:UIAlertControllerStyle.alert)
+        var action = UIAlertAction(title:cancelTitle, style:UIAlertActionStyle.default){[weak self] action in
+            self?.buttonTap?((self?.cancelTitle)!)
+            self?.done?(0)
         }
+        sheet.addAction(action)
+        action = UIAlertAction(title:otherTitle, style:UIAlertActionStyle.default){[weak self] action in
+            self?.buttonTap?((self?.cancelTitle)!)
+            self?.done?(1)
+        }
+        sheet.addAction(action)
+        owner?.present(sheet, animated:true, completion:nil)
     }
 }

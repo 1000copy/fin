@@ -198,7 +198,7 @@ fileprivate class TableTopicDetail:  TJTable{
         let cell = super.cellAt(indexPath)
         if indexPath.section == 0 && indexPath.row == 1 {
             // 此对象随后还有事件（cellHeightChanged）执行，因此必须保留引用，以免实例被释放，后面就执行不了。
-            webViewContentCell = cell as! TopicDetailWebViewContentCell
+            webViewContentCell = cell as? TopicDetailWebViewContentCell
         }
         return cell
     }

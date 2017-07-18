@@ -231,7 +231,7 @@ class BigBrotherWatchingYou : UIResponder{
     func relevantComment(_ obj : NSNotification){
         //UIViewController ,UIViewController, [TopicCommentModel]
         let arr = obj.object as! NSArray
-        let v1 = arr[0] as! UIViewController
+//        let v1 = arr[0] as! UIViewController
         let tc = arr[1] as! [TopicCommentModel]
         let v2 = RelevantCommentsViewController()
         v2.commentsArray = tc 
