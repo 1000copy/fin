@@ -14,10 +14,7 @@
 		0610F1B01C46136300481402 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0610F1AF1C46136300481402 /* BaseModel.swift */; };
 		0610F1B21C4613D800481402 /* TopicListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0610F1B11C4613D800481402 /* TopicListModel.swift */; };
 		0610F1B41C46491800481402 /* V2EXNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0610F1B31C46491800481402 /* V2EXNavigationController.swift */; };
-		0611DE591C5F385800933964 /* MemberHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0611DE581C5F385800933964 /* MemberHeaderCell.swift */; };
 		0611DE5B1C5F3ACA00933964 /* MemberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0611DE5A1C5F3ACA00933964 /* MemberModel.swift */; };
-		0611DE5D1C5F4C5C00933964 /* MemberTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0611DE5C1C5F4C5C00933964 /* MemberTopicCell.swift */; };
-		0611DE5F1C5F513B00933964 /* MemberReplyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0611DE5E1C5F513B00933964 /* MemberReplyCell.swift */; };
 		0614FDC91CB371A600C3740A /* V2LeftAlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0614FDC81CB371A600C3740A /* V2LeftAlignedCollectionViewFlowLayout.swift */; };
 		061876891C7C15BC002E9C33 /* PodsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061876881C7C15BC002E9C33 /* PodsTableViewController.swift */; };
 		0618768B1C7C19F0002E9C33 /* PodCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */; };
@@ -98,10 +95,7 @@
 		0610F1AF1C46136300481402 /* BaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
 		0610F1B11C4613D800481402 /* TopicListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopicListModel.swift; sourceTree = "<group>"; };
 		0610F1B31C46491800481402 /* V2EXNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2EXNavigationController.swift; sourceTree = "<group>"; };
-		0611DE581C5F385800933964 /* MemberHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberHeaderCell.swift; sourceTree = "<group>"; };
 		0611DE5A1C5F3ACA00933964 /* MemberModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModel.swift; sourceTree = "<group>"; };
-		0611DE5C1C5F4C5C00933964 /* MemberTopicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberTopicCell.swift; sourceTree = "<group>"; };
-		0611DE5E1C5F513B00933964 /* MemberReplyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberReplyCell.swift; sourceTree = "<group>"; };
 		0614FDC81CB371A600C3740A /* V2LeftAlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2LeftAlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		061876881C7C15BC002E9C33 /* PodsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PodsTableViewController.swift; sourceTree = "<group>"; };
 		0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PodCellTableViewCell.swift; sourceTree = "<group>"; };
@@ -195,9 +189,6 @@
 		0611DE571C5F383700933964 /* Member */ = {
 			isa = PBXGroup;
 			children = (
-				0611DE581C5F385800933964 /* MemberHeaderCell.swift */,
-				0611DE5C1C5F4C5C00933964 /* MemberTopicCell.swift */,
-				0611DE5E1C5F513B00933964 /* MemberReplyCell.swift */,
 				06D300251C6C222F00547CE6 /* AccountListTableViewCell.swift */,
 				06D300291C6D801100547CE6 /* LogoutTableViewCell.swift */,
 			);
@@ -598,12 +589,10 @@
 				0678D2051C61B423007FFCFD /* UIImage+Extension.swift in Sources */,
 				06D0EE1F1C915CAD003095FF /* V2Style.swift in Sources */,
 				06D300261C6C222F00547CE6 /* AccountListTableViewCell.swift in Sources */,
-				0611DE5D1C5F4C5C00933964 /* MemberTopicCell.swift in Sources */,
 				06267CFB1CB38F1000756970 /* NodeCollectionReusableView.swift in Sources */,
 				06D33A5E1C4DF64B006CF3AE /* TopicDetailWebViewContentCell.swift in Sources */,
 				0611DE5B1C5F3ACA00933964 /* MemberModel.swift in Sources */,
 				2D43B43D1CAA2CDD007B0007 /* V2ProgressHUD.swift in Sources */,
-				0611DE591C5F385800933964 /* MemberHeaderCell.swift in Sources */,
 				06C532B41C53485700258A55 /* UserModel.swift in Sources */,
 				06E4B74B1C5C76190056A673 /* MoreViewController.swift in Sources */,
 				06E145A41C60A86D00BDD63D /* NodeModel.swift in Sources */,
@@ -631,7 +620,6 @@
 				0623EB231C5F04630016E816 /* MemberViewController.swift in Sources */,
 				06E145A61C60A9F400BDD63D /* Request+Extension.swift in Sources */,
 				060C72571C8D6100000F4D2F /* V2ActivityViewController.swift in Sources */,
-				0611DE5F1C5F513B00933964 /* MemberReplyCell.swift in Sources */,
 				06E1BA371C70280D00867454 /* V2WebViewProgressView.swift in Sources */,
 				06662CA61C4A89520024452C /* TopicDetailViewController.swift in Sources */,
 				0648F4AC1C54FC3F00475567 /* V2EXSettings.swift in Sources */,

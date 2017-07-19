@@ -68,9 +68,9 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
             make.top.right.bottom.left.equalTo(self.view);
         }
         
-        self.titleView = UIView(frame: CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: 64))
-        titleView?.backgroundColor = .red
-        self.navigationItem.titleView = self.titleView!
+//        self.titleView = UIView(frame: CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: 64))
+//        titleView?.backgroundColor = .red
+//        self.navigationItem.titleView = self.titleView!
         
         
         let aloadView = UIActivityIndicatorView(activityIndicatorStyle: .white)
@@ -88,39 +88,40 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
             self.color = 100
         }
         
+        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 0
-        self.changeNavigationBarTintColor()
-        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = self.tableView.contentOffset.y / 100
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 1
-        self.navigationController?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
-    }
-    override func viewDidDisappear(_ animated: Bool) {
-        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 1
-        self.navigationController?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 0
+//        self.changeNavigationBarTintColor()
+//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = self.tableView.contentOffset.y / 100
+//    }
+//    override func viewWillDisappear(_ animated: Bool) {
+//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 1
+//        self.navigationController?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
+//    }
+//    override func viewDidDisappear(_ animated: Bool) {
+//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 1
+//        self.navigationController?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
+//    }
     
     override func viewDidAppear(_ animated: Bool) {
         
         if self.titleLabel == nil {
-            let frame = self.titleView!.frame
+//            let frame = self.titleView!.frame
 
-            let coverView = UIView(frame: CGRect(x: frame.origin.x * -1, y: frame.origin.y * -1 - 20, width: SCREEN_WIDTH, height: 64))
-            coverView.clipsToBounds = true
-            coverView.backgroundColor = .blue
-            self.titleView!.addSubview(coverView)
-            
-            self.titleLabel = UILabel(frame: CGRect(x: 0, y: 64, width: SCREEN_WIDTH, height: 64))
-            self.titleLabel!.text = self.model != nil ? self.model!.userName! : "Hello"
-            self.titleLabel!.font = v2Font(16)
-            self.titleLabel!.textAlignment = .center
-            self.titleLabel!.textColor = V2EXColor.colors.v2_TopicListTitleColor
-            self.titleLabel!.backgroundColor = .yellow
-            coverView.addSubview(self.titleLabel!)
+//            let coverView = UIView(frame: CGRect(x: frame.origin.x * -1, y: frame.origin.y * -1 - 20, width: SCREEN_WIDTH, height: 64))
+//            coverView.clipsToBounds = true
+//            coverView.backgroundColor = .blue
+//            self.titleView!.addSubview(coverView)
+//            
+//            self.titleLabel = UILabel(frame: CGRect(x: 0, y: 64, width: SCREEN_WIDTH, height: 64))
+//            self.titleLabel!.text = self.model != nil ? self.model!.userName! : "Hello"
+//            self.titleLabel!.font = v2Font(16)
+//            self.titleLabel!.textAlignment = .center
+//            self.titleLabel!.textColor = V2EXColor.colors.v2_TopicListTitleColor
+//            self.titleLabel!.backgroundColor = .yellow
+//            coverView.addSubview(self.titleLabel!)
         }
         
     }
@@ -157,44 +158,9 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
 // MARK: - UIScrollViewDelegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
-        
-        //navigationBar 的透明度
-        self.changeNavigationAlpha()
-        
-        //后退按钮颜色
-        self.changeNavigationBarTintColor()
-        
-        //navigationBar title 显示
-        var y:CGFloat = 0
-        if offsetY <= 92 {
-            y = 0
-        }
-        else if offsetY >= 122 {
-            y = 30
-        }
-        else {
-            y = offsetY - 92
-        }
-        self.titleLabel?.center = CGPoint(x: SCREEN_WIDTH/2, y: 64 - y + 6.5)
+        print(offsetY)
+        navigationItem.title = offsetY > 107  ? username : ""
     }
-    
-    func changeNavigationAlpha(){
-        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = self.tableView.contentOffset.y/100
-    }
-    
-    func changeNavigationBarTintColor(){
-        let offsetY = self.tableView.contentOffset.y
-        var y = 100 - offsetY
-        if offsetY < 0 {
-            y = 100-0
-        }
-        else if offsetY > 100 {
-            y = 100 - 100
-        }
-        //后退按钮颜色
-        self.navigationController?.navigationBar.tintColor = colorWith255RGB(y*2.4+self.color, g: y*2.4+self.color, b: y*2.4+self.color)
-    }
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
@@ -359,3 +325,298 @@ extension MemberViewController{
     }
 }
 
+fileprivate class MemberHeaderCell: UITableViewCell {
+    /// 头像
+    var avatarImageView: UIImageView = {
+        let avatarImageView = UIImageView()
+        avatarImageView.backgroundColor = UIColor(white: 0.9, alpha: 0.3)
+        avatarImageView.layer.borderWidth = 1.5
+        avatarImageView.layer.borderColor = UIColor(white: 1, alpha: 0.6).cgColor
+        avatarImageView.layer.masksToBounds = true
+        avatarImageView.layer.cornerRadius = 38
+        return avatarImageView
+    }()
+    /// 用户名
+    var userNameLabel: UILabel = {
+        let userNameLabel = UILabel()
+        userNameLabel.textColor = UIColor(white: 0.85, alpha: 1)
+        userNameLabel.font = v2Font(16)
+        userNameLabel.text = "Hello"
+        return userNameLabel
+    }()
+    /// 签名
+    var introduceLabel: UILabel = {
+        let introduceLabel = UILabel()
+        introduceLabel.textColor = UIColor(white: 0.75, alpha: 1)
+        introduceLabel.font = v2Font(16)
+        introduceLabel.numberOfLines = 2
+        introduceLabel.textAlignment = .center
+        return introduceLabel
+    }()
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        self.setup();
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    func setup()->Void{
+        self.backgroundColor = UIColor.clear
+        self.selectionStyle = .none
+        
+        self.contentView.addSubview(self.avatarImageView)
+        self.contentView.addSubview(self.userNameLabel)
+        self.contentView.addSubview(self.introduceLabel)
+        
+        self.setupLayout()
+    }
+    
+    func setupLayout(){
+        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
+            make.centerX.equalTo(self.contentView)
+            make.centerY.equalTo(self.contentView).offset(-15)
+            make.width.height.equalTo(self.avatarImageView.layer.cornerRadius * 2)
+        }
+        self.userNameLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.avatarImageView.snp.bottom).offset(10)
+            make.centerX.equalTo(self.avatarImageView)
+        }
+        self.introduceLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.userNameLabel.snp.bottom).offset(5)
+            make.centerX.equalTo(self.avatarImageView)
+            make.left.equalTo(self.contentView).offset(15)
+            make.right.equalTo(self.contentView).offset(-15)
+        }
+    }
+    
+    func bind(_ model:MemberModel?){
+        if let model = model {
+            if let avata = model.avata {
+                self.avatarImageView.kf.setImage(with: URL(string: "https:" + avata)!)
+            }
+            self.userNameLabel.text = model.userName;
+            self.introduceLabel.text = model.introduce;
+        }
+    }
+}
+fileprivate class MemberTopicCell: UITableViewCell {
+    /// 日期 和 最后发送人
+    var dateAndLastPostUserLabel: UILabel = {
+        let dateAndLastPostUserLabel = UILabel();
+        dateAndLastPostUserLabel.textColor=V2EXColor.colors.v2_TopicListDateColor;
+        dateAndLastPostUserLabel.font=v2Font(12);
+        return dateAndLastPostUserLabel
+    }()
+    /// 评论数量
+    var replyCountLabel: UILabel = {
+        let replyCountLabel = UILabel()
+        replyCountLabel.textColor = V2EXColor.colors.v2_TopicListDateColor
+        replyCountLabel.font = v2Font(12)
+        return replyCountLabel
+    }()
+    var replyCountIconImageView: UIImageView = {
+        let replyCountIconImageView = UIImageView(image: UIImage(named: "reply_n"))
+        replyCountIconImageView.contentMode = .scaleAspectFit
+        return replyCountIconImageView
+    }()
+    
+    /// 节点
+    var nodeNameLabel: UILabel = {
+        let nodeNameLabel = UILabel();
+        nodeNameLabel.textColor = V2EXColor.colors.v2_TopicListDateColor
+        nodeNameLabel.font = v2Font(11)
+        nodeNameLabel.backgroundColor = V2EXColor.colors.v2_NodeBackgroundColor
+        nodeNameLabel.layer.cornerRadius=2;
+        nodeNameLabel.clipsToBounds = true
+        return nodeNameLabel
+    }()
+    /// 帖子标题
+    var topicTitleLabel: UILabel = {
+        let topicTitleLabel=V2SpacingLabel();
+        topicTitleLabel.textColor=V2EXColor.colors.v2_TopicListTitleColor;
+        topicTitleLabel.font=v2Font(15);
+        topicTitleLabel.numberOfLines=0;
+        topicTitleLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24;
+        return topicTitleLabel
+    }()
+    
+    /// 装上面定义的那些元素的容器
+    var contentPanel:UIView = {
+        let contentPanel = UIView();
+        contentPanel.backgroundColor =  V2EXColor.colors.v2_CellWhiteBackgroundColor
+        return contentPanel
+    }()
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        self.setup();
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func setup()->Void{
+        self.selectionStyle = .none
+        self.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        
+        self.contentView .addSubview(self.contentPanel);
+        self.contentPanel.addSubview(self.dateAndLastPostUserLabel);
+        self.contentPanel.addSubview(self.replyCountLabel);
+        self.contentPanel.addSubview(self.replyCountIconImageView);
+        self.contentPanel.addSubview(self.nodeNameLabel)
+        self.contentPanel.addSubview(self.topicTitleLabel);
+        
+        self.setupLayout()
+        
+        self.dateAndLastPostUserLabel.backgroundColor = self.contentPanel.backgroundColor
+        self.replyCountLabel.backgroundColor = self.contentPanel.backgroundColor
+        self.replyCountIconImageView.backgroundColor = self.contentPanel.backgroundColor
+        self.topicTitleLabel.backgroundColor = self.contentPanel.backgroundColor
+    }
+    
+    func setupLayout(){
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.top.left.right.equalTo(self.contentView);
+        }
+        self.dateAndLastPostUserLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.contentPanel).offset(12);
+            make.left.equalTo(self.contentPanel).offset(12);
+        }
+        self.replyCountLabel.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(self.dateAndLastPostUserLabel);
+            make.right.equalTo(self.contentPanel).offset(-12);
+        }
+        self.replyCountIconImageView.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(self.replyCountLabel);
+            make.width.height.equalTo(18);
+            make.right.equalTo(self.replyCountLabel.snp.left).offset(-2);
+        }
+        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(self.replyCountLabel);
+            make.right.equalTo(self.replyCountIconImageView.snp.left).offset(-4)
+            make.bottom.equalTo(self.replyCountLabel).offset(1);
+            make.top.equalTo(self.replyCountLabel).offset(-1);
+        }
+        self.topicTitleLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.dateAndLastPostUserLabel.snp.bottom).offset(12);
+            make.left.equalTo(self.dateAndLastPostUserLabel);
+            make.right.equalTo(self.contentPanel).offset(-12);
+        }
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self.topicTitleLabel.snp.bottom).offset(12);
+            make.bottom.equalTo(self.contentView).offset(SEPARATOR_HEIGHT * -1);
+        }
+    }
+    
+    func bind(_ model:MemberTopicsModel){
+        self.dateAndLastPostUserLabel.text = model.date
+        self.topicTitleLabel.text = model.topicTitle;
+        
+        self.replyCountLabel.text = model.replies;
+        if let node = model.nodeName{
+            self.nodeNameLabel.text = "  " + node + "  "
+        }
+        
+    }
+    
+}
+fileprivate class MemberReplyCell: UITableViewCell {
+    
+    /// 操作描述
+    var detailLabel: UILabel = {
+        let detailLabel=V2SpacingLabel();
+        detailLabel.textColor=V2EXColor.colors.v2_TopicListTitleColor;
+        detailLabel.font=v2Font(14);
+        detailLabel.numberOfLines=0;
+        detailLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24;
+        return detailLabel
+    }()
+    
+    /// 回复正文
+    var commentLabel: UILabel = {
+        let commentLabel=V2SpacingLabel();
+        commentLabel.textColor=V2EXColor.colors.v2_TopicListTitleColor;
+        commentLabel.font=v2Font(14);
+        commentLabel.numberOfLines=0;
+        commentLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24;
+        return commentLabel
+    }()
+    
+    /// 回复正文的背景容器
+    var commentPanel: UIView = {
+        let commentPanel = UIView()
+        commentPanel.layer.cornerRadius = 3
+        commentPanel.layer.masksToBounds = true
+        commentPanel.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        return commentPanel
+    }()
+    
+    /// 整个cell元素的容器
+    var contentPanel:UIView = {
+        let contentPanel = UIView()
+        contentPanel.backgroundColor =  V2EXColor.colors.v2_CellWhiteBackgroundColor
+        return contentPanel
+    }()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier);
+        self.setup();
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setup()->Void{
+        self.selectionStyle = .none
+        self.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        
+        self.contentView.addSubview(self.contentPanel)
+        self.contentPanel.addSubview(self.detailLabel);
+        self.contentPanel.addSubview(self.commentPanel);
+        self.contentPanel.addSubview(self.commentLabel);
+        
+        self.setupLayout()
+        
+        let dropUpImageView = UIImageView()
+        dropUpImageView.image = UIImage.imageUsedTemplateMode("ic_arrow_drop_up")
+        dropUpImageView.contentMode = .scaleAspectFit
+        dropUpImageView.tintColor = self.commentPanel.backgroundColor
+        self.contentPanel.addSubview(dropUpImageView)
+        dropUpImageView.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self.commentPanel.snp.top)
+            make.left.equalTo(self.commentPanel).offset(25)
+            make.width.equalTo(10)
+            make.height.equalTo(5)
+        }
+    }
+    func setupLayout(){
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.top.left.right.equalTo(self.contentView);
+        }
+        self.detailLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.contentPanel).offset(12);
+            make.left.equalTo(self.contentPanel).offset(12);
+            make.right.equalTo(self.contentPanel).offset(-12);
+        }
+        self.commentLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(self.detailLabel.snp.bottom).offset(20);
+            make.left.equalTo(self.contentPanel).offset(22);
+            make.right.equalTo(self.contentPanel).offset(-22);
+        }
+        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self.commentPanel.snp.bottom).offset(12);
+            make.bottom.equalTo(self.contentView).offset(SEPARATOR_HEIGHT * -1);
+        }
+        self.commentPanel.snp.makeConstraints{ (make) -> Void in
+            make.top.left.equalTo(self.commentLabel).offset(-10)
+            make.right.bottom.equalTo(self.commentLabel).offset(10)
+        }
+    }
+    func bind(_ model: MemberRepliesModel){
+        if model.date != nil && model.title != nil {
+            self.detailLabel.text = model.date! + "回复 " + model.title!
+        }
+        self.commentLabel.text = model.reply
+    }
+    
+}
