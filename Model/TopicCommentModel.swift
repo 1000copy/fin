@@ -113,7 +113,9 @@ class TopicCommentModel:TopicCommentModel_{
         return item
     }
     func fromDict(_ item : TJTableDataSourceItem){
-        replyId = item["replyId"] as! String
+        if let r =  item["replyId"] as? String{
+            replyId = r
+        }
         avata = item["avata"]  as! String
         userName =   item["userName"]  as! String
         date =   item["date"]  as! String

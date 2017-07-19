@@ -9,41 +9,28 @@
 import UIKit
 import FXBlurView
 
-class MemberViewController: UIViewController,UITableViewDelegate,UITableViewDataSource ,UIScrollViewDelegate {
+class MemberViewController: UIViewController{
     var color:CGFloat = 0
     
     var username:String?
     var blockButton:UIButton?
     var followButton:UIButton?
-    var model:MemberModel?
-    
-//    var backgroundImageView:UIImageView?
-    fileprivate var _tableView :UITableView!
-    fileprivate var tableView: UITableView {
+    fileprivate var _tableView :Table!
+    fileprivate var tableView: Table {
         get{
             if(_tableView != nil){
                 return _tableView!;
             }
-            _tableView = UITableView();
+            _tableView = Table();
             _tableView.backgroundColor = UIColor.clear
             _tableView.estimatedRowHeight=200;
             _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
-            
-            regClass(_tableView, cell: MemberHeaderCell.self)
-            regClass(_tableView, cell: MemberTopicCell.self)
-            regClass(_tableView, cell: MemberReplyCell.self)
-            
-            _tableView.delegate = self
-            _tableView.dataSource = self
             return _tableView!;
             
         }
     }
     
     fileprivate weak var _loadView:UIActivityIndicatorView?
-    
-    var tableViewHeader:[UIView?] = []
-    
     var titleView:UIView?
     var titleLabel:UILabel?
     override func viewDidLoad() {
@@ -67,12 +54,6 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
         self.tableView.snp.makeConstraints{ (make) -> Void in
             make.top.right.bottom.left.equalTo(self.view);
         }
-        
-//        self.titleView = UIView(frame: CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: 64))
-//        titleView?.backgroundColor = .red
-//        self.navigationItem.titleView = self.titleView!
-        
-        
         let aloadView = UIActivityIndicatorView(activityIndicatorStyle: .white)
         self.view.addSubview(aloadView)
         aloadView.startAnimating()
@@ -81,54 +62,13 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
             make.right.equalTo(self.view).offset(-15)
         }
         self._loadView = aloadView
-        
         self.refreshData()
         
         if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDark {
             self.color = 100
         }
-        
-        
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 0
-//        self.changeNavigationBarTintColor()
-//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = self.tableView.contentOffset.y / 100
-//    }
-//    override func viewWillDisappear(_ animated: Bool) {
-//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 1
-//        self.navigationController?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
-//    }
-//    override func viewDidDisappear(_ animated: Bool) {
-//        (self.navigationController as? V2EXNavigationController)?.navigationBarAlpha = 1
-//        self.navigationController?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
-//    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        
-        if self.titleLabel == nil {
-//            let frame = self.titleView!.frame
-
-//            let coverView = UIView(frame: CGRect(x: frame.origin.x * -1, y: frame.origin.y * -1 - 20, width: SCREEN_WIDTH, height: 64))
-//            coverView.clipsToBounds = true
-//            coverView.backgroundColor = .blue
-//            self.titleView!.addSubview(coverView)
-//            
-//            self.titleLabel = UILabel(frame: CGRect(x: 0, y: 64, width: SCREEN_WIDTH, height: 64))
-//            self.titleLabel!.text = self.model != nil ? self.model!.userName! : "Hello"
-//            self.titleLabel!.font = v2Font(16)
-//            self.titleLabel!.textAlignment = .center
-//            self.titleLabel!.textColor = V2EXColor.colors.v2_TopicListTitleColor
-//            self.titleLabel!.backgroundColor = .yellow
-//            coverView.addSubview(self.titleLabel!)
-        }
-        
-    }
-    
     func refreshData(){
-        //根据 topicId 获取 帖子信息 、回复。
-//        MemberModel.getMemberInfo("1000copy", completionHandler: { (response) -> Void in
         MemberModel.getMemberInfo(self.username!, completionHandler: { (response) -> Void in
             if response.success {
                 if let aModel = response.value{
@@ -144,54 +84,26 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
         })
     }
     func getDataSuccessfully(_ aModel:MemberModel){
-        self.model = aModel
-        self.titleLabel?.text = self.model?.userName
-        if self.model?.userToken != nil {
+        
+        self.tableView.model = aModel
+        self.titleLabel?.text = self.tableView.model?.userName
+        if self.tableView.model?.userToken != nil {
             setupBlockAndFollowButtons()
         }
         self.tableView.fin_reloadData()
     }
-    
-
-
-   
-// MARK: - UIScrollViewDelegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         print(offsetY)
         navigationItem.title = offsetY > 107  ? username : ""
     }
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
-    }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let rows = [1,self.model?.topics.count,self.model?.replies.count][section] {
-            return rows
-        }
-        return 0
-    }
-    
-    
+}
+fileprivate class Table : TJTable{
+    var model:MemberModel?
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return [0,40,40][section]
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 240
-        }
-        else if indexPath.section == 1 {
-            return tableView.fin_heightForCellWithIdentifier(MemberTopicCell.self, indexPath: indexPath) { (cell) -> Void in
-                cell.bind(self.model!.topics[indexPath.row])
-            }
-        }
-        else {
-            return tableView.fin_heightForCellWithIdentifier(MemberReplyCell.self, indexPath: indexPath) { (cell) -> Void in
-                cell.bind(self.model!.replies[indexPath.row])
-            }
-        }
-    }
-    
+    var tableViewHeader:[UIView?] = []
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if tableViewHeader.count > section - 1 {
             return tableViewHeader[section-1]
@@ -208,41 +120,70 @@ class MemberViewController: UIViewController,UITableViewDelegate,UITableViewData
             make.centerY.equalTo(view)
             make.leading.equalTo(view).offset(12)
         }
-        
         tableViewHeader.append(view)
         return view
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            let cell = getCell(tableView, cell: MemberHeaderCell.self, indexPath: indexPath);
-            cell.bind(self.model)
-            return cell ;
-        }
-        else if indexPath.section == 1 {
-            let cell = getCell(tableView, cell: MemberTopicCell.self, indexPath: indexPath)
-            cell.bind(self.model!.topics[indexPath.row])
-            return cell
-        }
-        else {
-            let cell = getCell(tableView, cell: MemberReplyCell.self, indexPath: indexPath)
-            cell.bind(self.model!.replies[indexPath.row])
-            return cell
-        }
-    }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let id = indexPath.section == 1 ?
-                self.model?.topics[indexPath.row].topicId:
-                self.model?.replies[indexPath.row].topicId
+            self.model?.topics[indexPath.row].topicId:
+            self.model?.replies[indexPath.row].topicId
         if let id = id {
             Msg.send("openTopicDetail1", [id])
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
 
+    // table begin
+    override func sectionCount() -> Int {
+        return 3
+    }
+    override func rowCount(_ section: Int) -> Int {
+        if let rows = [1,self.model?.topics.count,self.model?.replies.count][section] {
+            return rows
+        }
+        return 0
+    }
+    override func rowHeight(_  indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 240
+        }
+        else if indexPath.section == 1 {
+            let str = self.model!.topics[indexPath.row].topicTitle
+            return TopicTitleLabel.textHeight(str!) + 1.0*(12    +  12     +  12    +  12  + 8)
+        }
+        else {
+            return self.fin_heightForCellWithIdentifier(MemberReplyCell.self, indexPath: indexPath) { (cell) -> Void in
+                cell.bind(self.model!.replies[indexPath.row])
+            }
+        }
+    }
+    fileprivate override func cellTypes() -> [UITableViewCell.Type] {
+        return [MemberHeaderCell.self,MemberTopicCell.self,MemberReplyCell.self]
+    }
+    fileprivate override func cellTypeAt(_ indexPath: IndexPath) -> UITableViewCell.Type {
+        return cellTypes()[indexPath.section]
+    }
+    override func cellAt(_ indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            let cell = dequeneCell(indexPath) as MemberHeaderCell
+            cell.bind(self.model)
+            return cell ;
+        }
+        else if indexPath.section == 1 {
+            let cell = dequeneCell(indexPath) as MemberTopicCell
+            cell.bind(self.model!.topics[indexPath.row])
+            return cell
+        }
+        else {
+            let cell = dequeneCell(indexPath) as MemberReplyCell
+            cell.bind(self.model!.replies[indexPath.row])
+            return cell
+        }
+    }
+    // table end
 }
-
 //MARK: - Block and Follow
 extension MemberViewController{
     func setupBlockAndFollowButtons(){
@@ -270,14 +211,14 @@ extension MemberViewController{
     }
     
     func refreshButtonImage() {
-        let blockImage = self.model?.blockState == .blocked ? UIImage(named: "ic_visibility_off")! : UIImage(named: "ic_visibility")!
-        let followImage = self.model?.followState == .followed ? UIImage(named: "ic_favorite")! : UIImage(named: "ic_favorite_border")!
+        let blockImage = self.tableView.model?.blockState == .blocked ? UIImage(named: "ic_visibility_off")! : UIImage(named: "ic_visibility")!
+        let followImage = self.tableView.model?.followState == .followed ? UIImage(named: "ic_favorite")! : UIImage(named: "ic_favorite_border")!
         self.blockButton?.setImage(blockImage.withRenderingMode(.alwaysTemplate), for: UIControlState())
         self.followButton?.setImage(followImage.withRenderingMode(.alwaysTemplate), for: UIControlState())
     }
     
     func toggleFollowState(){
-        if(self.model?.followState == .followed){
+        if(self.tableView.model?.followState == .followed){
             UnFollow()
         }
         else{
@@ -286,22 +227,22 @@ extension MemberViewController{
         refreshButtonImage()
     }
     func Follow() {
-        if let userId = self.model!.userId, let userToken = self.model!.userToken {
+        if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
             MemberModel.follow(userId, userToken: userToken, type: .followed, completionHandler: nil)
-            self.model?.followState = .followed
+            self.tableView.model?.followState = .followed
             V2Success("关注成功")
         }
     }
     func UnFollow() {
-        if let userId = self.model!.userId, let userToken = self.model!.userToken {
+        if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
             MemberModel.follow(userId, userToken: userToken, type: .unFollowed, completionHandler: nil)
-            self.model?.followState = .unFollowed
+            self.tableView.model?.followState = .unFollowed
             V2Success("取消关注了~")
         }
     }
     
     func toggleBlockState(){
-        if(self.model?.blockState == .blocked){
+        if(self.tableView.model?.blockState == .blocked){
             UnBlock()
         }
         else{
@@ -310,16 +251,16 @@ extension MemberViewController{
         refreshButtonImage()
     }
     func Block() {
-        if let userId = self.model!.userId, let userToken = self.model!.userToken {
+        if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
         MemberModel.block(userId, userToken: userToken, type: .blocked, completionHandler: nil)
-        self.model?.blockState = .blocked
+        self.tableView.model?.blockState = .blocked
         V2Success("屏蔽成功")
         }
     }
     func UnBlock() {
-        if let userId = self.model!.userId, let userToken = self.model!.userToken {
+        if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
             MemberModel.block(userId, userToken: userToken, type: .unBlocked, completionHandler: nil)
-            self.model?.blockState = .unBlocked
+            self.tableView.model?.blockState = .unBlocked
             V2Success("取消屏蔽了~")
         }
     }
@@ -399,6 +340,28 @@ fileprivate class MemberHeaderCell: UITableViewCell {
         }
     }
 }
+fileprivate class TopicTitleLabel : UILabel{
+    override init(frame: CGRect) {
+        super.init(frame:frame)
+        let topicTitleLabel = self
+        topicTitleLabel.textColor=V2EXColor.colors.v2_TopicListTitleColor;
+        topicTitleLabel.font=v2Font(15);
+        topicTitleLabel.numberOfLines=0;
+        topicTitleLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func textHeight() -> CGFloat{
+        let size = sizeThatFits(CGSize(width: self.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        return size.height
+    }
+    class func textHeight(_ str : String) -> CGFloat{
+        let t = TopicTitleLabel()
+        t.text = str
+        return t.textHeight()
+    }
+}
 fileprivate class MemberTopicCell: UITableViewCell {
     /// 日期 和 最后发送人
     var dateAndLastPostUserLabel: UILabel = {
@@ -421,16 +384,7 @@ fileprivate class MemberTopicCell: UITableViewCell {
     }()
     
     /// 节点
-    var nodeNameLabel: UILabel = {
-        let nodeNameLabel = UILabel();
-        nodeNameLabel.textColor = V2EXColor.colors.v2_TopicListDateColor
-        nodeNameLabel.font = v2Font(11)
-        nodeNameLabel.backgroundColor = V2EXColor.colors.v2_NodeBackgroundColor
-        nodeNameLabel.layer.cornerRadius=2;
-        nodeNameLabel.clipsToBounds = true
-        return nodeNameLabel
-    }()
-    /// 帖子标题
+    var nodeNameLabel = TopicTitleLabel()    /// 帖子标题
     var topicTitleLabel: UILabel = {
         let topicTitleLabel=V2SpacingLabel();
         topicTitleLabel.textColor=V2EXColor.colors.v2_TopicListTitleColor;

@@ -57,7 +57,6 @@ class TopicDetailViewController: UIViewController{
         TopicDetailModel.getTopicDetailById(self.topicId){
             (response:V2ValueResponse<(TopicDetailModel?,[TopicCommentModel])>) -> Void in
             if response.success {
-                
                 if let aModel = response.value!.0{
                     self.tableView.model = aModel
                 }
@@ -108,7 +107,7 @@ class TopicDetailViewController: UIViewController{
         }
     }
 }
-class TopicTitleLabel :V2SpacingLabel{
+fileprivate class TopicTitleLabel :V2SpacingLabel{
     override init(frame:CGRect) {
         super.init(frame: frame)
         let label = self
