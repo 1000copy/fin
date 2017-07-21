@@ -1,3 +1,4 @@
+typealias TJCollectionView = CollectionViewBase
 typealias TJCell = CellBase
 typealias TJTable = DataTableBase
 typealias TJTableDataSource = TableDataSource
@@ -313,6 +314,22 @@ class CollectionViewBase : UICollectionView,UICollectionViewDataSource,UICollect
     }
     
     // implements
+    func registerCell(_ cellClass: Swift.AnyClass?){
+        let id = "\(cellClass)"
+        register(cellClass, forCellWithReuseIdentifier: id)
+    }
+    func dequeueCell(_ cellClass: Swift.AnyClass?,_ indexPath: IndexPath)-> UICollectionViewCell{
+        let id = "\(cellClass)"
+        return dequeueReusableCell(withReuseIdentifier: id, for: indexPath)
+    }
+    func registerHeaderView(_ cellClass: Swift.AnyClass?){
+        let id = "\(cellClass)"
+        register(cellClass, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: id)
+    }
+    func dequeueHeaderView(_ cellClass: Swift.AnyClass?,_ indexPath: IndexPath)-> UICollectionReusableView{
+        let id = "\(cellClass)"
+        return dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: id, for: indexPath)
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath){
         didSelectItemAt(indexPath)
     }

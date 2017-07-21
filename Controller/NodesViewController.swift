@@ -18,6 +18,7 @@ class NodesViewController: UIViewController {
         NodeGroupModel.getNodes { (response) -> Void in
             if response.success {
                 self.collectionView.nodeGroupArray = response.value
+//                print(self.collectionView.nodeGroupArray)
                 self.collectionView?.reloadData()
             }
             self.hideLoadingView()
@@ -26,23 +27,16 @@ class NodesViewController: UIViewController {
     }
 }
 
-fileprivate class CollectionView : CollectionViewBase {
+fileprivate class CollectionView : TJCollectionView {
     convenience init(frame: CGRect){
-        let layout = V2LeftAlignedCollectionViewFlowLayout();
+        let layout = UICollectionViewFlowLayout();
         layout.sectionInset = UIEdgeInsetsMake(10, 15, 10, 15);
         self.init(frame:frame,collectionViewLayout:layout)
-        register(NodeTableViewCell.self, forCellWithReuseIdentifier: "cell")
-        register(NodeCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "nodeGroupNameView")
+        registerCell(NodeCell.self)
+        registerHeaderView(NodeView.self)
         backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
         dataSource = self
         delegate = self
-    }
-    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
-        super.init(frame: frame, collectionViewLayout: layout)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     var nodeGroupArray:[NodeGroupModel]?
     override func sectionCount() -> Int {
@@ -56,14 +50,14 @@ fileprivate class CollectionView : CollectionViewBase {
     }
     override func cellForItemAt(_ indexPath: IndexPath) -> UICollectionViewCell {
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
-        let cell = self.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! NodeTableViewCell;
+        let cell = dequeueCell(NodeCell.self,indexPath) as! NodeCell
         cell.textLabel.text = nodeModel.nodeName
         return cell;
     }
     override func viewForSupplementaryElement(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
-        let nodeGroupNameView = self.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "nodeGroupNameView", for: indexPath)
-        (nodeGroupNameView as! NodeCollectionReusableView).label.text = self.nodeGroupArray![indexPath.section].groupName
-        return nodeGroupNameView
+        let view =  dequeueHeaderView(NodeView.self,indexPath) as! NodeView
+        view.label.text = self.nodeGroupArray![indexPath.section].groupName
+        return view
     }
     override func didSelectItemAt(_ indexPath: IndexPath){
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
@@ -77,7 +71,40 @@ fileprivate class CollectionView : CollectionViewBase {
         return 15
     }
     override   func referenceSizeForHeaderIn(_  collectionViewLayout: UICollectionViewLayout, _ section: Int) -> CGSize{
-        return CGSize(width: self.bounds.size.width, height: 35);
-
+        return CGSize(width: self.bounds.size.width, height: 35)
+    }
+}
+fileprivate class NodeCell: UICollectionViewCell {
+    var textLabel:UILabel = {
+        let label = UILabel()
+        label.font = v2Font(15)
+        label.textColor = V2EXColor.colors.v2_TopicListUserNameColor
+        label.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        return label
+    }()
+    fileprivate override func layoutSubviews() {
+        self.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        self.contentView.addSubview(textLabel)
+        textLabel.snp.remakeConstraints({ (make) -> Void in
+            make.center.equalTo(self.contentView)
+        })
+    }
+}
+fileprivate class NodeView: UICollectionReusableView {
+    var label : UILabel = {
+        let _label = UILabel()
+        _label.font = v2Font(16)
+        _label.textColor = V2EXColor.colors.v2_TopicListTitleColor
+        _label.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        return _label
+    }()
+    fileprivate override func layoutSubviews() {
+        super.layoutSubviews()
+        self.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        self.addSubview(label);
+        label.snp.makeConstraints{
+            $0.centerY.equalTo(self)
+            $0.left.equalTo(self).offset(15)
+        }
     }
 }

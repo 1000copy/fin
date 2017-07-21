@@ -59,7 +59,7 @@ class TopicDetailWebViewContentCell: TJCell ,UIWebViewDelegate {
             let style = "<style>" + V2Style.sharedInstance.CSS + "</style></head>"
             html =  HTMLHEADER + style  + html + "</html>"
             
-            self.contentWebView.loadHTMLString(html, baseURL: URL(string: "https://"))
+            self.contentWebView.loadHTMLString(html, baseURL: URL(string: "https://t.cn"))
             
             //这里有一个问题，
             

@@ -328,7 +328,7 @@ extension TopicListModel {
     ){
         User.shared.getOnce { (response) in
             if(response.success){
-                let action = type == 0 ? "favorite/node/" : "unfavorite/node/"
+                let action = type == 1 ? "favorite/node/" : "unfavorite/node/"
                 let url = V2EXURL + action + nodeId + "?once=" + User.shared.once!
                 Alamofire.request(url , headers: MOBILE_CLIENT_HEADERS).responseJiHtml { (response) in
                     

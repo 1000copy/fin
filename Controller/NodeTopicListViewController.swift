@@ -12,14 +12,26 @@ class NodeTopicListViewController: UIViewController   {
     var favorited:Bool = false
     var favoriteUrl:String? {
         didSet{
-            let startIndex = favoriteUrl?.range(of: "/", options: .backwards, range: nil, locale: nil)
-            let endIndex = favoriteUrl?.range(of: "?")
-            let nodeId = favoriteUrl?.substring(with: Range<String.Index>( startIndex!.upperBound ..< endIndex!.lowerBound ))
-            if let _ = nodeId , let favoriteUrl = favoriteUrl {
-                favorited =  !favoriteUrl.hasPrefix("/favorite")
-                followButton.refreshButtonImage()
-            }
+//            print(favoriteUrl)
+//            let startIndex = favoriteUrl?.range(of: "/", options: .backwards, range: nil, locale: nil)
+//            let endIndex = favoriteUrl?.range(of: "?")
+//            let nodeId = favoriteUrl?.substring(with: Range<String.Index>( startIndex!.upperBound ..< endIndex!.lowerBound ))
+//            if let _ = nodeId , let favoriteUrl = favoriteUrl {
+//                favorited =  !favoriteUrl.hasPrefix("/favorite")
+//                followButton.refreshButtonImage()
+//            }
+            favorited =  isFavorite(favoriteUrl)
+            followButton.refreshButtonImage()
         }
+    }
+    func isFavorite(_ favoriteUrl:String?) -> Bool{
+        let startIndex = favoriteUrl?.range(of: "/", options: .backwards, range: nil, locale: nil)
+        let endIndex = favoriteUrl?.range(of: "?")
+        let nodeId = favoriteUrl?.substring(with: Range<String.Index>( startIndex!.upperBound ..< endIndex!.lowerBound ))
+        if let _ = nodeId , let favoriteUrl = favoriteUrl {
+            return   !favoriteUrl.hasPrefix("/favorite")
+        }
+        return false
     }
     var followButton:FollowButton!
     fileprivate var _tableView :NodeTable!
