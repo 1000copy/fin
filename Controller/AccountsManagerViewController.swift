@@ -38,7 +38,7 @@ fileprivate class Table1 : TableBase{
     override func commitDelete(_ indexPath: IndexPath){
         if let username = self.users[indexPath.row].username {
             self.users.remove(at: indexPath.row)
-            V2UsersKeychain.sharedInstance.removeUser(username)
+            UserListKeychain.shared.removeUser(username)
             deleteRows(at: [indexPath], with: .none)
         }
     }
@@ -143,7 +143,7 @@ class AccountsManagerViewController: UIViewController {
             make.width.equalTo(SCREEN_WIDTH)
         }
 
-        for (_,user) in V2UsersKeychain.sharedInstance.users {
+        for (_,user) in UserListKeychain.shared.users {
             self._tableView.users.append(user)
         }
     }

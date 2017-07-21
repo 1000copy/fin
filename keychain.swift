@@ -1,7 +1,7 @@
 import UIKit
 import Security
 class Keychain {
-    class func save(key: String, data: Data) -> Bool {
+    class func save(_ key: String, _ data: Data) -> Bool {
         let query = [
             kSecClass as String       : kSecClassGenericPassword as String,
             kSecAttrAccount as String : key,
@@ -10,7 +10,7 @@ class Keychain {
         let status: OSStatus = SecItemAdd(query as CFDictionary, nil)
         return status == noErr
     }
-    class func load(key: String) -> Data? {
+    class func load(_ key: String) -> Data? {
         let query = [
             kSecClass as String       : kSecClassGenericPassword,
             kSecAttrAccount as String : key,
@@ -26,7 +26,7 @@ class Keychain {
         }
         return nil
     }
-    class func delete(key: String) -> Bool {
+    class func delete(_ key: String) -> Bool {
         let query = [
             kSecClass as String       : kSecClassGenericPassword,
             kSecAttrAccount as String : key ] as [String : Any]

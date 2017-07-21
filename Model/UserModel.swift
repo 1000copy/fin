@@ -171,7 +171,7 @@ extension UserModel{
                 
                 //将头像更新进 keychain保存的users中
                 if let avatar = model.avatar_large {
-                    V2UsersKeychain.sharedInstance.update(username, password: nil, avatar: "https:" + avatar )
+                    UserListKeychain.shared.update(username, password: nil, avatar: "https:" + avatar )
                 }
                 
                 completionHandler?(V2ValueResponse(value: model, success: true))

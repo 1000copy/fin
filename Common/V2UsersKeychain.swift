@@ -7,12 +7,10 @@
 //
 
 import UIKit
-import KeychainSwift
-let USERKEY = "me.fin.testDict"
-class V2UsersKeychain {
-    static let sharedInstance = V2UsersKeychain()
-    fileprivate let keychain = KeychainSwift()
-    
+
+let USERKEY = "USERKEY"
+class UserListKeychain {
+    static let shared = UserListKeychain()
     fileprivate(set) var users:[String:LoginUser] = [:]
     
     fileprivate init() {
@@ -42,11 +40,11 @@ class V2UsersKeychain {
         let archiver = NSKeyedArchiver(forWritingWith: data)
         archiver.encode(self.users)
         archiver.finishEncoding()
-        keychain.set(data as Data, forKey: USERKEY);
+        let _ = Keychain.save(USERKEY,data as Data)
     }
     func loadUsersDict() -> [String:LoginUser]{
         if users.count <= 0 {
-            let data = keychain.getData(USERKEY)
+            let data = Keychain.load(USERKEY)
             if let data = data{
                 let archiver = NSKeyedUnarchiver(forReadingWith: data)
                 let usersDict = archiver.decodeObject()
