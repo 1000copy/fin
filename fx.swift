@@ -3,7 +3,7 @@ typealias TJCell = CellBase
 typealias TJTable = DataTableBase
 typealias TJTableDataSource = TableDataSource
 typealias TJTableDataSourceItem = TableDataSourceItem
-
+typealias TJButton = ButtonBase
 // Button,TableView,CollectView
 import UIKit
 import SnapKit
@@ -292,18 +292,18 @@ class CollectionViewBase : UICollectionView,UICollectionViewDataSource,UICollect
     func sectionCount() -> Int {
         return 0
     }
-    func numberOfItemsIn(_ section: Int) -> Int {
+    func itemCount(_ section: Int) -> Int {
         return 0
     }
-    func cellForItemAt(_ indexPath: IndexPath) -> UICollectionViewCell {
+    func cellAt(_ indexPath: IndexPath) -> UICollectionViewCell {
         return UICollectionViewCell()
     }
-    func viewForSupplementaryElement(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
+    func viewFor(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
         return UICollectionReusableView()
     }
     func didSelectItemAt(_ indexPath: IndexPath){
     }
-    func sizeForItemAt(_ collectionViewLayout: UICollectionViewLayout, _ indexPath: IndexPath) -> CGSize {
+    func sizeFor(_ collectionViewLayout: UICollectionViewLayout, _ indexPath: IndexPath) -> CGSize {
         return CGSize(width: 0, height: 0);
     }
     func minimumInteritemSpacingForSectionAt(_ collectionViewLayout: UICollectionViewLayout, section: Int) -> CGFloat{
@@ -314,6 +314,14 @@ class CollectionViewBase : UICollectionView,UICollectionViewDataSource,UICollect
     }
     
     // implements
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+        dataSource = self
+        delegate = self
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     func registerCell(_ cellClass: Swift.AnyClass?){
         let id = "\(cellClass)"
         register(cellClass, forCellWithReuseIdentifier: id)
@@ -337,18 +345,19 @@ class CollectionViewBase : UICollectionView,UICollectionViewDataSource,UICollect
         return sectionCount()
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return numberOfItemsIn(section)
+        return itemCount(section)
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return cellForItemAt(indexPath)
+        return cellAt(indexPath)
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        return viewForSupplementaryElement(kind, indexPath)
+        return viewFor(kind, indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return sizeForItemAt(collectionViewLayout,indexPath)
+        return sizeFor(collectionViewLayout,indexPath)
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat{
         return minimumInteritemSpacingForSectionAt(collectionViewLayout, section: section)
     }

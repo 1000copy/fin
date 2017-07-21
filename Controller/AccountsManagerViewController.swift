@@ -1,6 +1,6 @@
 import UIKit
 fileprivate class Table1 : TableBase{
-    fileprivate var users:[LocalSecurityAccountModel] = []
+    fileprivate var users:[LoginUser] = []
     var owner : UIViewController!
     override func rowCount(_ section: Int) -> Int {
         //     账户数量            分割线   退出登录按钮

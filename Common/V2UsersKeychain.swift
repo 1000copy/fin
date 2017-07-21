@@ -8,18 +8,18 @@
 
 import UIKit
 import KeychainSwift
-
+let USERKEY = "me.fin.testDict"
 class V2UsersKeychain {
     static let sharedInstance = V2UsersKeychain()
     fileprivate let keychain = KeychainSwift()
     
-    fileprivate(set) var users:[String:LocalSecurityAccountModel] = [:]
+    fileprivate(set) var users:[String:LoginUser] = [:]
     
     fileprivate init() {
         let _ = loadUsersDict()
     }
     
-    func addUser(_ user:LocalSecurityAccountModel){
+    func addUser(_ user:LoginUser){
         if let username = user.username , let _ = user.password {
             self.users[username] = user
             self.saveUsersDict()
@@ -29,29 +29,29 @@ class V2UsersKeychain {
         }
     }
     func addUser(_ username:String,password:String,avata:String? = nil) {
-        let user = LocalSecurityAccountModel()
+        let user = LoginUser()
         user.username = username
         user.password = password
         user.avatar = avata
         self.addUser(user)
     }
     
-    static let usersKey = "me.fin.testDict"
+    
     func saveUsersDict(){
         let data = NSMutableData()
         let archiver = NSKeyedArchiver(forWritingWith: data)
         archiver.encode(self.users)
         archiver.finishEncoding()
-        keychain.set(data as Data, forKey: V2UsersKeychain.usersKey);
+        keychain.set(data as Data, forKey: USERKEY);
     }
-    func loadUsersDict() -> [String:LocalSecurityAccountModel]{
+    func loadUsersDict() -> [String:LoginUser]{
         if users.count <= 0 {
-            let data = keychain.getData(V2UsersKeychain.usersKey)
+            let data = keychain.getData(USERKEY)
             if let data = data{
                 let archiver = NSKeyedUnarchiver(forReadingWith: data)
                 let usersDict = archiver.decodeObject()
                 archiver.finishDecoding()
-                if let usersDict = usersDict as? [String : LocalSecurityAccountModel] {
+                if let usersDict = usersDict as? [String : LoginUser] {
                     self.users = usersDict
                 }
             }
@@ -84,7 +84,7 @@ class V2UsersKeychain {
 
 
 /// 将会序列化后保存进keychain中的 账户model
-class LocalSecurityAccountModel :NSObject, NSCoding {
+class LoginUser :NSObject, NSCoding {
     var username:String?
     var password:String?
     var avatar:String?

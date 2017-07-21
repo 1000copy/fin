@@ -4,7 +4,6 @@ class NodesViewController: UIViewController {
     func showLoadingView (){
         self._loadView = V2LoadingView(view)
     }
-    
     func hideLoadingView() {
         self._loadView?.hideLoadingView()
     }
@@ -18,7 +17,6 @@ class NodesViewController: UIViewController {
         NodeGroupModel.getNodes { (response) -> Void in
             if response.success {
                 self.collectionView.nodeGroupArray = response.value
-//                print(self.collectionView.nodeGroupArray)
                 self.collectionView?.reloadData()
             }
             self.hideLoadingView()
@@ -26,7 +24,6 @@ class NodesViewController: UIViewController {
         self.showLoadingView()
     }
 }
-
 fileprivate class CollectionView : TJCollectionView {
     convenience init(frame: CGRect){
         let layout = UICollectionViewFlowLayout();
@@ -35,8 +32,6 @@ fileprivate class CollectionView : TJCollectionView {
         registerCell(NodeCell.self)
         registerHeaderView(NodeView.self)
         backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-        dataSource = self
-        delegate = self
     }
     var nodeGroupArray:[NodeGroupModel]?
     override func sectionCount() -> Int {
@@ -45,16 +40,16 @@ fileprivate class CollectionView : TJCollectionView {
         }
         return 0
     }
-    override func numberOfItemsIn(_ section: Int) -> Int {
+    override func itemCount(_ section: Int) -> Int {
         return self.nodeGroupArray![section].children.count
     }
-    override func cellForItemAt(_ indexPath: IndexPath) -> UICollectionViewCell {
+    override func cellAt(_ indexPath: IndexPath) -> UICollectionViewCell {
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
         let cell = dequeueCell(NodeCell.self,indexPath) as! NodeCell
         cell.textLabel.text = nodeModel.nodeName
         return cell;
     }
-    override func viewForSupplementaryElement(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
+    override func viewFor(_ kind: String, _ indexPath: IndexPath) -> UICollectionReusableView {
         let view =  dequeueHeaderView(NodeView.self,indexPath) as! NodeView
         view.label.text = self.nodeGroupArray![indexPath.section].groupName
         return view
@@ -63,7 +58,7 @@ fileprivate class CollectionView : TJCollectionView {
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
         Msg.send("openNodeTopicList",[nodeModel.nodeId ,nodeModel.nodeName])
     }
-    override func sizeForItemAt(_ collectionViewLayout: UICollectionViewLayout, _ indexPath: IndexPath) -> CGSize {
+    override func sizeFor(_ collectionViewLayout: UICollectionViewLayout, _ indexPath: IndexPath) -> CGSize {
         let nodeModel = self.nodeGroupArray![indexPath.section].children[indexPath.row]
         return CGSize(width: nodeModel.width, height: 25);
     }
@@ -78,8 +73,8 @@ fileprivate class NodeCell: UICollectionViewCell {
     var textLabel:UILabel = {
         let label = UILabel()
         label.font = v2Font(15)
-        label.textColor = V2EXColor.colors.v2_TopicListUserNameColor
-        label.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+//        label.textColor = V2EXColor.colors.v2_TopicListUserNameColor
+//        label.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
         return label
     }()
     fileprivate override func layoutSubviews() {
@@ -94,8 +89,8 @@ fileprivate class NodeView: UICollectionReusableView {
     var label : UILabel = {
         let _label = UILabel()
         _label.font = v2Font(16)
-        _label.textColor = V2EXColor.colors.v2_TopicListTitleColor
-        _label.backgroundColor = V2EXColor.colors.v2_backgroundColor
+//        _label.textColor = V2EXColor.colors.v2_TopicListTitleColor
+//        _label.backgroundColor = V2EXColor.colors.v2_backgroundColor
         return _label
     }()
     fileprivate override func layoutSubviews() {

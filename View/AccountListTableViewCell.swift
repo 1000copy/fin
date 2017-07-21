@@ -69,7 +69,7 @@ class AccountListTableViewCell: UITableViewCell {
         }
     }
     
-    func bind(_ model:LocalSecurityAccountModel) {
+    func bind(_ model:LoginUser) {
         self.userNameLabel.text = model.username
         if let avatar = model.avatar , let url = URL(string: avatar) {
             self.avatarImageView.fin_setImageWithUrl(url)
