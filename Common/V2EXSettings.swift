@@ -25,3 +25,10 @@ class V2EXSettings: NSObject {
         }
     }
 }
+// print(self.className()) ,用来替代手写的keyPrefix等字符串。
+extension NSObject{
+    func className()->String{
+        return "\(Mirror(reflecting: self).subjectType)"
+    }
+}
+    
