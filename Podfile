@@ -23,6 +23,7 @@ def pods
     pod 'Fabric'
     pod 'Crashlytics'
     pod 'SKPhotoBrowser'
+    pod 'Cartography'
 end
 
 target 'V2ex-Swift' do

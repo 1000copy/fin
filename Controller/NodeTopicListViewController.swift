@@ -124,7 +124,7 @@ fileprivate class NodeTable  : TableBase{
     }
     override fileprivate func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         let item = self.topicList![indexPath.row]
-        let titleHeight = item.topicTitleLayout?.textBoundingRect.size.height ?? 0
+        let titleHeight = item.getHeight() ?? 0
         //          上间隔   头像高度  头像下间隔       标题高度    标题下间隔 cell间隔
         let height = 12    +  35     +  12      + titleHeight   + 12      + 8
         return height

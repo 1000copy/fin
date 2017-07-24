@@ -561,3 +561,29 @@ class Msg {
         observe(owner, responser, msg,nil)
     }
 }
+enum CenterOption {
+    case X
+    case Y
+    case None
+}
+
+func layout(_ superview : UIView,_ views : [String:UIView],_ contraints : [String],_ options:[CenterOption]){
+    for view in views{
+        view.value.translatesAutoresizingMaskIntoConstraints = false
+        if  !view.value.isDescendant(of: superview){
+            superview.addSubview(view.value)
+        }
+    }
+    
+    var i = 0
+    for contraint in contraints{
+        var option = NSLayoutFormatOptions.init(rawValue: 0)
+        if options[i] == .Y {
+            option = .alignAllCenterY
+        }else if options[i] == .X {
+            option = .alignAllCenterX
+        }
+        superview.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:contraint , options: option, metrics: nil, views: views))
+        i += 1
+    }
+}

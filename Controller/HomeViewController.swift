@@ -6,6 +6,7 @@ import Alamofire
 import AlamofireObjectMapper
 import Ji
 import MJRefresh
+import Cartography
 let kHomeTab = "me.fin.homeTab"
 class HomeViewController: UIViewController {
     var tab:String? = nil
@@ -29,8 +30,8 @@ class HomeViewController: UIViewController {
         self.setupNavigationItem()
         
         //监听程序即将进入前台运行、进入后台休眠 事件
-        NotificationCenter.default.addObserver(self, selector: #selector(HomeViewController.applicationWillEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(HomeViewController.applicationDidEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         
         self.view.addSubview(self.tableView);
         self.tableView.snp.makeConstraints{ (make) -> Void in
@@ -69,14 +70,10 @@ class HomeViewController: UIViewController {
         Msg.send("openRightDrawer")
     }
     func refresh(_ cb : @escaping  Callback){
-        //根据 tab name 获取帖子列表
-        TopicListModel.getTopicList(tab){
-            (response) -> Void in
-            if response.success {
-                self.tableView.topicList = response.value
-                self.tableView.reloadData()
-                self.currentPage = 0
-            }
+        TopicListModel.get(tab){
+            self.tableView.topicList = $0
+            self.tableView.reloadData()
+            self.currentPage = 0
             cb()
         }
     }
@@ -85,22 +82,15 @@ class HomeViewController: UIViewController {
             self.tableView.mj_footer.endRefreshing()
             return;
         }
-        //根据 tab name 获取帖子列表
         self.currentPage += 1
-        TopicListModel.getTopicList(tab,page: self.currentPage){
-            (response:V2ValueResponse<[TopicListModel]>) -> Void in
-            
-            if response.success {
-                if let count = response.value?.count, count > 0 {
-                    self.tableView.topicList? += response.value!
-                    self.tableView.reloadData()
-                }
-            }
-            else{
-                //加载失败，重置page
+        TopicListModel.get(tab,self.currentPage){
+            self.tableView.topicList = $0
+            self.tableView.reloadData()
+            self.currentPage = 0
+            cb(true)
+            if $0?.count == 0 {
                 self.currentPage -= 1
             }
-            cb(true)
         }
     }
     
@@ -130,7 +120,7 @@ class HomeData : TJTableDataSource{
     }
     override func rowHeight(_ indexPath: IndexPath) -> CGFloat {
         let item = self.topicList![indexPath.row]
-        let titleHeight = item.topicTitleLayout?.textBoundingRect.size.height ?? 0
+        let titleHeight = item.getHeight() ?? 0
         let height = fixHeight ()  + titleHeight
         return height
     }
@@ -262,54 +252,50 @@ class HomeTopicListTableViewCell: TJCell {
             .roundedCornerImageWithCornerRadius(2)
             .stretchableImage(withLeftCapWidth: 3, topCapHeight: 3)
     
-    /// 头像
-    var avatarImageView: UIImageView = {
-        let imageview = UIImageView()
-        imageview.contentMode=UIViewContentMode.scaleAspectFit
-        return imageview
-    }()
-    
+    /// class
+    class Avatar : UIImageView{
+        override func layoutSubviews() {
+            contentMode = .scaleAspectFit
+        }
+    }
+    class SizeLabel : UILabel{
+        init(_ fontSize : CGFloat){
+            super.init(frame: CGRect.zero)
+            font = v2Font(fontSize)
+        }
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    class ReplyIcon : UIImageView{
+        init() {
+            super.init(image: UIImage(named: "reply_n"))
+            contentMode = .scaleAspectFit
+        }
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    // property
+    var avatarImageView =  Avatar()
     /// 用户名
-    var userNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = v2Font(14)
-        return label;
-    }()
-    /// 日期 和 最后发送人
-    var dateAndLastPostUserLabel: UILabel = {
-        let label = UILabel()
-        label.font=v2Font(12)
-        return label
-    }()
-    /// 评论数量
-    var replyCountLabel: UILabel = {
-        let label = UILabel()
-        label.font = v2Font(12)
-        return label
-    }()
-    var replyCountIconImageView: UIImageView = {
-        let imageview = UIImageView(image: UIImage(named: "reply_n"))
-        imageview.contentMode = .scaleAspectFit
-        return imageview
-    }()
-    
+    var userNameLabel = SizeLabel(14)
+    var dateAndLastPostUserLabel = SizeLabel(12)
+    var replyCountLabel = SizeLabel(12)
+    var replyCountIconImageView = ReplyIcon()
     /// 节点
-    var nodeNameLabel: UILabel = {
-        let label = UILabel();
-        label.font = v2Font(11)
-        return label
-    }()
-    var nodeBackgroundImageView:UIImageView = UIImageView()
+    var nodeNameLabel = SizeLabel(11)
+    var nodeBackgroundImageView  = UIImageView()
     /// 帖子标题
-    var topicTitleLabel: YYLabel = {
-        let label = YYLabel()
-        label.textVerticalAlignment = .top
-        label.font=v2Font(18)
-        label.displaysAsynchronously = true
-        label.numberOfLines=0
-        return label
-    }()
-    
+//    var topicTitleLabel: YYLabel = {
+//        let label = YYLabel()
+//        label.textVerticalAlignment = .top
+//        label.font=v2Font(18)
+//        label.displaysAsynchronously = true
+//        label.numberOfLines=0
+//        return label
+//    }()
+    var topicTitleLabel = SizeLabel(18)
     /// 装上面定义的那些元素的容器
     var contentPanel:UIView = UIView()
     
@@ -366,24 +352,34 @@ class HomeTopicListTableViewCell: TJCell {
     }
     
     fileprivate func setupLayout(){
-        self.contentPanel.snp.makeConstraints{ (make) -> Void in
-            make.top.left.right.equalTo(self.contentView);
+        constrain(self.contentPanel,self.avatarImageView) { contentPanel,avatarImageView in
+            contentPanel.top == (contentPanel.superview!.top)
+            contentPanel.left == contentPanel.superview!.left
+            contentPanel.right == contentPanel.superview!.right
+            //
+            avatarImageView.left == contentPanel.left + 12
+            avatarImageView.top == contentPanel.top + 12
+            avatarImageView.width == 35
+            avatarImageView.height == 35
         }
-        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
-            make.left.top.equalTo(self.contentView).offset(12);
-            make.width.height.equalTo(35);
-        }
+//        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+//            make.top.left.right.equalTo(self.contentView);
+//        }
+//        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
+//            make.left.top.equalTo(self.contentView).offset(12)
+//            make.width.height.equalTo(35)
+//        }
         self.userNameLabel.snp.makeConstraints{ (make) -> Void in
-            make.left.equalTo(self.avatarImageView.snp.right).offset(10);
-            make.top.equalTo(self.avatarImageView);
+            make.left.equalTo(self.avatarImageView.snp.right).offset(10)
+            make.top.equalTo(self.avatarImageView)
         }
         self.dateAndLastPostUserLabel.snp.makeConstraints{ (make) -> Void in
-            make.bottom.equalTo(self.avatarImageView);
-            make.left.equalTo(self.userNameLabel);
+            make.bottom.equalTo(self.avatarImageView)
+            make.left.equalTo(self.userNameLabel)
         }
         self.replyCountLabel.snp.makeConstraints{ (make) -> Void in
             make.centerY.equalTo(self.userNameLabel);
-            make.right.equalTo(self.contentPanel).offset(-12);
+            make.right.equalTo(self.contentPanel).offset(-12)
         }
         self.replyCountIconImageView.snp.makeConstraints{ (make) -> Void in
             make.centerY.equalTo(self.replyCountLabel);
@@ -412,6 +408,69 @@ class HomeTopicListTableViewCell: TJCell {
         }
     }
     
+//    fileprivate func setupLayout(){
+//        layout(contentView,
+//               ["panel":contentPanel],
+//               ["H:|-0-[panel]-0-|","V:|-0-[panel]-0-|"],
+//               [.None,.None])
+////        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+////            make.top.left.right.equalTo(self.contentView);
+////        }
+//        layout(contentView,
+//               ["avatar":avatarImageView],
+//               ["H:|-12-[avatar(35)]","V:|-12-[avatar(35)]"],
+//               [.None,.None])
+////        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
+////            make.left.top.equalTo(self.contentView).offset(12);
+////            make.width.height.equalTo(35);
+////        }
+//        layout(contentView,
+//               ["avatar":avatarImageView,"username":userNameLabel],
+//               ["H:[avatar]-10-[username]","V:|-12-[username]"],
+//               [.None,.None])
+////        self.userNameLabel.snp.makeConstraints{ (make) -> Void in
+////            make.left.equalTo(self.avatarImageView.snp.right).offset(10);
+////            make.top.equalTo(self.avatarImageView);
+////        }
+////        layout(contentView,
+////               ["avatar":avatarImageView,"dateand":dateAndLastPostUserLabel],
+////               ["H:[avatar]-10-[username]","V:|-12-[username]"],
+////               [.None,.None])
+//        self.dateAndLastPostUserLabel.snp.makeConstraints{ (make) -> Void in
+//            make.bottom.equalTo(self.avatarImageView);
+//            make.left.equalTo(self.userNameLabel);
+//        }
+//        self.replyCountLabel.snp.makeConstraints{ (make) -> Void in
+//            make.centerY.equalTo(self.userNameLabel);
+//            make.right.equalTo(self.contentPanel).offset(-12);
+//        }
+//        self.replyCountIconImageView.snp.makeConstraints{ (make) -> Void in
+//            make.centerY.equalTo(self.replyCountLabel);
+//            make.width.height.equalTo(18);
+//            make.right.equalTo(self.replyCountLabel.snp.left).offset(-2);
+//        }
+//        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
+//            make.centerY.equalTo(self.replyCountLabel);
+//            make.right.equalTo(self.replyCountIconImageView.snp.left).offset(-9)
+//            make.bottom.equalTo(self.replyCountLabel).offset(1);
+//            make.top.equalTo(self.replyCountLabel).offset(-1);
+//        }
+//        self.nodeBackgroundImageView.snp.makeConstraints{ (make) -> Void in
+//            make.top.bottom.equalTo(self.nodeNameLabel)
+//            make.left.equalTo(self.nodeNameLabel).offset(-5)
+//            make.right.equalTo(self.nodeNameLabel).offset(5)
+//        }
+//        self.topicTitleLabel.snp.makeConstraints{ (make) -> Void in
+//            make.top.equalTo(self.avatarImageView.snp.bottom).offset(12);
+//            make.left.equalTo(self.avatarImageView);
+//            make.right.equalTo(self.contentPanel).offset(-12);
+//            make.bottom.equalTo(self.contentView).offset(-8)
+//        }
+//        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+//            make.bottom.equalTo(self.contentView.snp.bottom).offset(-8);
+//        }
+//    }
+    
     func userNameTap(_ sender:UITapGestureRecognizer) {
         if let _ = self.itemModel , let username = itemModel?.userName {
             Msg.send("pushMemberViewController",[username])
@@ -426,14 +485,15 @@ class HomeTopicListTableViewCell: TJCell {
     
     func superBind(_ model:TopicListModel){
         self.userNameLabel.text = model.userName;
-        if let layout = model.topicTitleLayout {
-            //如果新旧model标题相同,则不需要赋值
-            //不然layout需要重新绘制，会造成刷新闪烁
-            if layout.text.string == self.itemModel?.topicTitleLayout?.text.string {
+        if let layout = model.topicTitle {
+            // avoid flash
+            if layout  == self.itemModel?.topicTitle {
                 return
             }
             else{
-                self.topicTitleLabel.textLayout = layout
+                self.topicTitleLabel.text =  model.topicTitle
+                topicTitleLabel.numberOfLines = 0
+                topicTitleLabel.lineBreakMode = .byWordWrapping
             }
         }
         if let avata = model.avata {

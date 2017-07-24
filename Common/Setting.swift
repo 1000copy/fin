@@ -1,17 +1,6 @@
-//
-//  V2EXSettings.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 1/24/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
-
 import UIKit
-
 let keyPrefix =  "me.fin.V2EXSettings."
-
 class Setting: NSObject {
-//    let sharedInstance = V2EXSettings()
     static let shared = Setting()
     fileprivate override init(){
         super.init()
@@ -67,4 +56,3 @@ extension NSObject{
         return "\(Mirror(reflecting: self).subjectType)"
     }
 }
-

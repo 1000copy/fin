@@ -255,10 +255,10 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         case .block:
             V2BeginLoading()
             if let topicId = topicDetailViewController._tableView.model?.topicId  {
-                TopicDetailModel.ignoreTopicWithTopicId(topicId, completionHandler: {[weak self] (response) -> Void in
+                TopicDetailModel.ignoreTopicWithTopicId(topicId, completionHandler: {(response) -> Void in
                     if response.success {
                         V2Success("忽略成功")
-                        topicDetailViewController.navigationController?.popViewController(animated: true)
+                        let _ = topicDetailViewController.navigationController?.popViewController(animated: true)
                         topicDetailViewController.ignoreTopicHandler?(topicId)
                     }
                     else{

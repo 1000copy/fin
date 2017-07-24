@@ -10,7 +10,6 @@ import UIKit
 import Alamofire
 import Ji
 
-let kUserName = "me.fin.username"
 
 class User: NSObject {
     static let shared = User()

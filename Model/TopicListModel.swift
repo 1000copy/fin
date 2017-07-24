@@ -22,8 +22,10 @@ class TopicListModel:NSObject {
     var userName: String?
     var topicTitle: String?
     var topicTitleAttributedString: NSMutableAttributedString?
-    var topicTitleLayout: YYTextLayout?
-
+    private var topicTitleLayout: YYTextLayout?
+    func getHeight()-> CGFloat?{
+        return (self.topicTitleLayout?.textBoundingRect.size.height)
+    }
     var date: String?
     var lastReplyUserName: String?
     var replies: String?
@@ -200,6 +202,15 @@ extension TopicListModel {
 
      - parameter tab:               tab名
      */
+    class func get(_ tab: String? = nil ,_ page:Int = 0 ,_ completionHandler: @escaping ([TopicListModel]?) -> Void){
+        getTopicList(tab,page:page){(respone:V2ValueResponse<[TopicListModel]>) in
+            if respone.success {
+                completionHandler(respone.value)
+            }else{
+                completionHandler([])
+            }
+        }
+    }
     class func getTopicList(
         _ tab: String? = nil ,
         page:Int = 0 ,

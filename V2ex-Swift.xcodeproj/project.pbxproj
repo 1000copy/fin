@@ -44,7 +44,6 @@
 		06A490681C67018E00F6A063 /* MyCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A490671C67018E00F6A063 /* MyCenterViewController.swift */; };
 		06A4907C1C67058800F6A063 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06A4907B1C67058800F6A063 /* Media.xcassets */; };
 		06BA47CB1C59C95500CE2A0D /* V2LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BA47CA1C59C95500CE2A0D /* V2LoadingView.swift */; };
-		06BB48EE1C56096000A4A909 /* V2EXMentionedBindingParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BB48ED1C56096000A4A909 /* V2EXMentionedBindingParser.swift */; };
 		06BB48F01C56153A00A4A909 /* WritingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BB48EF1C56153A00A4A909 /* WritingViewController.swift */; };
 		06C49B6D1C43BFAB00684CA6 /* V2ex+Define.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C49B6C1C43BFAB00684CA6 /* V2ex+Define.swift */; };
 		06C49B701C43C11700684CA6 /* V2SpacingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C49B6F1C43C11700684CA6 /* V2SpacingLabel.swift */; };
@@ -125,7 +124,6 @@
 		06A490671C67018E00F6A063 /* MyCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyCenterViewController.swift; sourceTree = "<group>"; };
 		06A4907B1C67058800F6A063 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		06BA47CA1C59C95500CE2A0D /* V2LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2LoadingView.swift; sourceTree = "<group>"; };
-		06BB48ED1C56096000A4A909 /* V2EXMentionedBindingParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2EXMentionedBindingParser.swift; sourceTree = "<group>"; };
 		06BB48EF1C56153A00A4A909 /* WritingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WritingViewController.swift; sourceTree = "<group>"; };
 		06C49B6C1C43BFAB00684CA6 /* V2ex+Define.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "V2ex+Define.swift"; sourceTree = "<group>"; };
 		06C49B6F1C43C11700684CA6 /* V2SpacingLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2SpacingLabel.swift; sourceTree = "<group>"; };
@@ -258,7 +256,6 @@
 				06C49B6C1C43BFAB00684CA6 /* V2ex+Define.swift */,
 				06C532B51C534D3F00258A55 /* V2Response.swift */,
 				0648F4AB1C54FC3F00475567 /* Setting.swift */,
-				06BB48ED1C56096000A4A909 /* V2EXMentionedBindingParser.swift */,
 				06D300271C6C720800547CE6 /* V2UsersKeychain.swift */,
 				065B69101C75ABE1009AAC37 /* AnalyzeURLHelper.swift */,
 				2D43B43C1CAA2CDD007B0007 /* V2ProgressHUD.swift */,
@@ -606,7 +603,6 @@
 				06D3002A1C6D801100547CE6 /* LogoutTableViewCell.swift in Sources */,
 				069806931CA3AA7700388DB6 /* TopicCommentModel.swift in Sources */,
 				06662CA81C4A8A370024452C /* TopicDetailModel.swift in Sources */,
-				06BB48EE1C56096000A4A909 /* V2EXMentionedBindingParser.swift in Sources */,
 				0653CFA81C44E0B200E4FC05 /* UITableView+FINAutomaticHeightCell.swift in Sources */,
 				6F0E813F1F0CBF8500452CAC /* fx.swift in Sources */,
 				06C582AC1C50C8DC00F24DBC /* BaseDetailTableViewCell.swift in Sources */,

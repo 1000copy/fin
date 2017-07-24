@@ -4,6 +4,7 @@ PODS:
   - AlamofireObjectMapper (4.0.2):
     - Alamofire (~> 4.1)
     - ObjectMapper (~> 2.0)
+  - Cartography (1.1.0)
   - Crashlytics (3.8.4):
     - Fabric (~> 1.6.3)
   - CXSwipeGestureRecognizer (1.0.2)
@@ -35,6 +36,7 @@ DEPENDENCIES:
   - 1PasswordExtension (~> 1.8.4)
   - Alamofire (~> 4.4.0)
   - AlamofireObjectMapper (~> 4.0.1)
+  - Cartography
   - Crashlytics
   - CXSwipeGestureRecognizer (~> 1.0.2)
   - DrawerController (~> 3.1.0)
@@ -56,6 +58,7 @@ SPEC CHECKSUMS:
   1PasswordExtension: e775a29310c65851e5a6cec1afc349ab4e334e47
   Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
   AlamofireObjectMapper: 94923a4320bbe52c1d0d462093277a9d6a755a78
+  Cartography: 0538ccb4044acbbda2266335fc58cb4228794d90
   Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
   CXSwipeGestureRecognizer: 2f340869fd75f46bb23f69f5f56b7dd1e607170b
   DrawerController: 2a5aa099e61a921359857bfe580f655055b0444c
@@ -73,6 +76,6 @@ SPEC CHECKSUMS:
   SVProgressHUD: 748080e4f36e603f6c02aec292664239df5279c1
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 8518709492a20274370b5ebae048777f96407d80
+PODFILE CHECKSUM: cfde21d06b691008fcef2e8508616a3a4070aac6
 
 COCOAPODS: 1.2.1

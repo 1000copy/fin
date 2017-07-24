@@ -243,40 +243,89 @@ fileprivate class LeftNodeTableViewCell: TJCell {
         label.font = v2Font(16)
         return label
     }()
-    var panel = UIView()
     
     fileprivate override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
-        nodeNameLabel.text = item["title"] as! String
+        nodeNameLabel.text = item["title"] as? String
         nodeImageView.image = UIImage.imageUsedTemplateMode(item["icon"] as! String)
     }
+
+//    override func setup(){
+//        self.selectionStyle = .none
+//        self.backgroundColor = UIColor.clear
+//
+//        
+//        contentView.addSubview(self.nodeImageView)
+//        contentView.addSubview(self.nodeNameLabel)
+//        self.nodeImageView.snp.makeConstraints{ (make) -> Void in
+//            make.centerY.equalTo(contentView)
+//            make.left.equalTo(contentView).offset(20)
+//            make.width.height.equalTo(25)
+//        }
+//        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
+//            make.left.equalTo(self.nodeImageView.snp.right).offset(20)
+//            make.centerY.equalTo(self.nodeImageView)
+//        }
+//        
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//            self?.configureColor()
+//        }
+//    }
+//    override func setup(){
+//        self.selectionStyle = .none
+//        self.backgroundColor = UIColor.clear
+//        nodeImageView.translatesAutoresizingMaskIntoConstraints = false
+//        nodeNameLabel.translatesAutoresizingMaskIntoConstraints = false
+//        contentView.addSubview(self.nodeImageView)
+//        contentView.addSubview(self.nodeNameLabel)
+//        let views = ["super":contentView,"icon":nodeImageView,"title":nodeNameLabel] as [String : Any]
+//        let hConstraint=NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[icon(25)]-20-[title]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
+//        contentView.addConstraints(hConstraint)
+//        let vConstraint1=NSLayoutConstraint.constraints(withVisualFormat: "V:|-(<=1)-[icon(25)]", options: NSLayoutFormatOptions.alignAllCenterY, metrics: nil, views: views)
+//        let vConstraint2=NSLayoutConstraint.constraints(withVisualFormat: "V:|-(<=1)-[title(25)]", options:  NSLayoutFormatOptions.alignAllCenterY, metrics: nil, views: views)
+//        contentView.addConstraints(hConstraint+vConstraint1+vConstraint2)
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//            self?.configureColor()
+//        }
+//    }
+    
     override func setup(){
         self.selectionStyle = .none
         self.backgroundColor = UIColor.clear
-        
-        self.contentView.addSubview(panel)
-        panel.addSubview(self.nodeImageView)
-        panel.addSubview(self.nodeNameLabel)
-        
-        panel.snp.makeConstraints{ (make) -> Void in
-            make.left.top.right.equalTo(self.contentView)
-            make.height.equalTo(55)
-        }
-        self.nodeImageView.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(panel)
-            make.left.equalTo(panel).offset(20)
-            make.width.height.equalTo(25)
-        }
-        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
-            make.left.equalTo(self.nodeImageView.snp.right).offset(20)
-            make.centerY.equalTo(self.nodeImageView)
-        }
-        
+        let views = ["icon":nodeImageView,"title":nodeNameLabel] as [String : UIView]
+        layout(contentView,views,["H:|-20-[icon(25)]-20-[title]","V:|-(<=1)-[icon(25)]","V:|-(<=1)-[title(25)]"],[.None,.Y,.Y])
         self.thmemChangedHandler = {[weak self] (style) -> Void in
             self?.configureColor()
         }
-    }
+    }    
+//    var panel = UIView()
+//    override func setup(){
+//        self.selectionStyle = .none
+//        self.backgroundColor = UIColor.clear
+//        
+//        self.contentView.addSubview(panel)
+//        panel.addSubview(self.nodeImageView)
+//        panel.addSubview(self.nodeNameLabel)
+//        
+//        panel.snp.makeConstraints{ (make) -> Void in
+//            make.left.top.right.equalTo(self.contentView)
+//            make.height.equalTo(55)
+//        }
+//        self.nodeImageView.snp.makeConstraints{ (make) -> Void in
+//            make.centerY.equalTo(panel)
+//            make.left.equalTo(panel).offset(20)
+//            make.width.height.equalTo(25)
+//        }
+//        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
+//            make.left.equalTo(self.nodeImageView.snp.right).offset(20)
+//            make.centerY.equalTo(self.nodeImageView)
+//        }
+//        
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//            self?.configureColor()
+//        }
+//    }
     func configureColor(){
-        self.panel.backgroundColor = V2EXColor.colors.v2_LeftNodeBackgroundColor
+        self.backgroundColor = V2EXColor.colors.v2_LeftNodeBackgroundColor
         self.nodeImageView.tintColor =  V2EXColor.colors.v2_LeftNodeTintColor
         self.nodeNameLabel.textColor = V2EXColor.colors.v2_LeftNodeTintColor
     }
@@ -299,18 +348,32 @@ fileprivate class NotifyCell : LeftNodeTableViewCell{
         label.backgroundColor = V2EXColor.colors.v2_NoticePointColor
         return label
     }()
+//    override func setup() {
+//        super.setup()
+//        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_notifications_none")
+//        self.nodeNameLabel.text = NSLocalizedString("notifications")
+//        
+//        self.contentView.addSubview(self.notifictionCountLabel)
+//        self.notifictionCountLabel.snp.makeConstraints{ (make) -> Void in
+//            make.centerY.equalTo(self.nodeNameLabel)
+//            make.left.equalTo(self.nodeNameLabel.snp.right).offset(5)
+//            make.height.equalTo(14)
+//        }
+//        
+//        self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
+//            if User.shared.notificationCount > 0 {
+//                self?.notifictionCountLabel.text = "   \(User.shared.notificationCount)   "
+//            }
+//            else{
+//                self?.notifictionCountLabel.text = ""
+//            }
+//        }
+//    }
     override func setup() {
         super.setup()
         nodeImageView.image = UIImage.imageUsedTemplateMode("ic_notifications_none")
         self.nodeNameLabel.text = NSLocalizedString("notifications")
-        
-        self.contentView.addSubview(self.notifictionCountLabel)
-        self.notifictionCountLabel.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(self.nodeNameLabel)
-            make.left.equalTo(self.nodeNameLabel.snp.right).offset(5)
-            make.height.equalTo(14)
-        }
-        
+        layout(contentView,["label":notifictionCountLabel,"title":nodeNameLabel],["H:[title]-5-[label]","V:|-(<=1)-[label(14)]"],[.None,.Y])
         self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
             if User.shared.notificationCount > 0 {
                 self?.notifictionCountLabel.text = "   \(User.shared.notificationCount)   "
