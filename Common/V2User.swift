@@ -69,7 +69,7 @@ class User: NSObject {
         }
     }
     func setup(){
-        self.username = V2EXSettings.sharedInstance[kUserName]
+        self.username = Setting.shared.kUserName
     }
 
 
@@ -102,7 +102,7 @@ class User: NSObject {
         self.once = nil
         self.notificationCount = 0
         //清空settings中的username
-        V2EXSettings.sharedInstance[kUserName] = nil
+        Setting.shared.kUserName = nil
     }
 
     /**

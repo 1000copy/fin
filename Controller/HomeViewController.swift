@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title="V2EX";
-        self.tab = V2EXSettings.sharedInstance[kHomeTab]
+        self.tab = Setting.shared.kHomeTab
         self.setupNavigationItem()
         
         //监听程序即将进入前台运行、进入后台休眠 事件
@@ -44,7 +44,7 @@ class HomeViewController: UIViewController {
         }
     }
     func refreshPage(){
-        V2EXSettings.sharedInstance[kHomeTab] = tab
+        Setting.shared.kHomeTab = tab
         self.tableView.beginScrollUp()
     }
     func setupNavigationItem(){

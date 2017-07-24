@@ -94,7 +94,7 @@ class LoginViewController: UIViewController {
                 V2Success("登录成功")
                 let username = response.value!
                 //保存下用户名
-                V2EXSettings.sharedInstance[kUserName] = username
+                Setting.shared.kUserName = username
 
                 //将用户名密码保存进keychain （安全保存)
                 UserListKeychain.shared.addUser(username, password: password)

@@ -87,7 +87,7 @@ fileprivate class Table1 : TableBase{
                     let username = response.value!
                     NSLog("登录成功 %@",username)
                     //保存下用户名
-                    V2EXSettings.sharedInstance[kUserName] = username
+                    Setting.shared.kUserName = username
                     //获取用户信息
                     UserModel.getUserInfoByUsername(username, completionHandler: { (response) -> Void in
                         self.reloadData()

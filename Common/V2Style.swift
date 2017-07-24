@@ -32,7 +32,7 @@ class V2Style: NSObject {
             if _fontScale != newValue {
                 _fontScale = newValue
                 self.remakeCSS()
-                V2EXSettings.sharedInstance[kFONTSCALE] = "\(_fontScale)"
+                Setting.shared.kFONTSCALE = "\(_fontScale)"
             }
         }
     }
@@ -41,7 +41,7 @@ class V2Style: NSObject {
     fileprivate override init() {
         super.init()
         //加载字体大小设置
-        if let fontScaleString = V2EXSettings.sharedInstance[kFONTSCALE] , let scale = Float(fontScaleString){
+        if let fontScaleString = Setting.shared.kFONTSCALE , let scale = Float(fontScaleString){
             self._fontScale = scale
         }
         //监听主题配色，切换相应的配色

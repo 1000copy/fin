@@ -133,7 +133,7 @@ fileprivate class RightTable : TJTable{
         super.didSelectRowAt(indexPath)
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        var currentTab = V2EXSettings.sharedInstance[kHomeTab]
+        var currentTab = Setting.shared.kHomeTab
         if currentTab == nil {
             currentTab = "all"
         }
