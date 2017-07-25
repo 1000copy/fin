@@ -211,6 +211,16 @@ extension TopicListModel {
             }
         }
     }
+    class func dododo (){
+        var params:[String:String] = [:]
+        params["tab"] = "all"
+        var url = V2EXURL
+        
+        Alamofire.request(url,parameters: params,headers: MOBILE_CLIENT_HEADERS)
+            .responseString { response in
+                print(response.result.value!)
+        }
+    }
     class func getTopicList(
         _ tab: String? = nil ,
         page:Int = 0 ,

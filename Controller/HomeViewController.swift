@@ -8,7 +8,43 @@ import Ji
 import MJRefresh
 import Cartography
 let kHomeTab = "me.fin.homeTab"
-class HomeViewController: UIViewController {
+class TJPage : UIViewController{
+    // interface
+    func onLoad (){
+        
+    }
+    func onLayout(){
+        
+    }
+    func getNavItems ()->[UIButton]{
+        return []
+    }
+    func getSubviews()->[UIView]?{
+        return []
+    }
+    // imple
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavigationItem()
+        if let views = getSubviews() , views.count > 0 {
+            for view in views{
+                self.view.addSubview(view)
+            }
+        }
+        onLayout()
+        onLoad()
+    }
+    func setupNavigationItem(){
+        let buttons = getNavItems()
+        if buttons.count  >=  1   {
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: buttons[0])
+        }
+        if buttons.count  >=  2   {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: buttons[1])
+        }
+    }
+}
+class HomeViewController: TJPage {
     var tab:String? = nil
     var currentPage = 0
     fileprivate var tableView: TableHome {
@@ -22,47 +58,33 @@ class HomeViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         Msg.send("PanningGestureDisable")
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func onLoad() {
         self.navigationItem.title="V2EX";
         self.tab = Setting.shared.kHomeTab
-        self.setupNavigationItem()
-        //监听程序即将进入前台运行、进入后台休眠 事件
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        self.view.addSubview(self.tableView);
-        self.tableView.snp.makeConstraints{ (make) -> Void in
-            make.top.right.bottom.left.equalTo(self.view);
-        }
-        tableView.scrollUp = refresh
-        tableView.scrollDown = getNextPage
         refreshPage()
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.tableView.backgroundColor = V2EXColor.colors.v2_backgroundColor
-        }
+        
     }
     func refreshPage(){
         Setting.shared.kHomeTab = tab
         self.tableView.beginScrollUp()
     }
-    func setupNavigationItem(){
-        let leftButton = NotificationMenuButton()
-        leftButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
-        leftButton.addTarget(self, action: #selector(leftClick), for: .touchUpInside)
-        let rightButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        rightButton.contentMode = .center
-        rightButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -15)
-        rightButton.setImage(UIImage.imageUsedTemplateMode("ic_more_horiz_36pt")!.withRenderingMode(.alwaysTemplate), for: UIControlState())
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
-        rightButton.addTarget(self, action: #selector(rightClick), for: .touchUpInside)
+    override func onLayout() {
+        self.tableView.snp.makeConstraints{ (make) -> Void in
+            make.top.right.bottom.left.equalTo(self.view);
+        }
     }
-    func leftClick(){
-        Msg.send("openLeftDrawer")
+    override func getSubviews()->[UIView]?{
+        tableView.scrollUp = refresh
+        tableView.scrollDown = getNextPage
+        self.tableView.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        return [tableView]
     }
-    func rightClick(){
-        Msg.send("openRightDrawer")
+    override func getNavItems ()->[UIButton]{
+        return [NotificationMenuButton(), RightButton()]
     }
+    
     func refresh(_ cb : @escaping  Callback){
         TopicListModel.get(tab){
             self.tableView.topicList = $0
@@ -77,6 +99,7 @@ class HomeViewController: UIViewController {
             return;
         }
         self.currentPage += 1
+        
         TopicListModel.get(tab,self.currentPage){
             self.tableView.topicList = $0
             self.tableView.reloadData()
@@ -189,13 +212,27 @@ fileprivate class  TableHome : TJTable {
         endUpdates()
     }
 }
-fileprivate class NotificationMenuButton: UIButton {
+fileprivate class RightButton : TJButton{
+    override func onLoad() {
+        frame = TJSquare(0,0,40)
+        contentMode = .center
+        imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -15)
+        icon = "ic_more_horiz_36pt"
+        tap = rightClick
+    }
+    func rightClick(){
+        Msg.send("openRightDrawer")
+    }
+}
+//fileprivate class NotificationMenuButton: UIButton {
+fileprivate class NotificationMenuButton: TJButton {
     var aPointImageView:UIImageView?
-    required init(){
-        super.init(frame: CGRect.zero)
+     override func onLoad() {
+        let rect = TJSquare(0,0,40)
+        self.frame = rect
         self.contentMode = .center
         self.imageEdgeInsets = UIEdgeInsetsMake(0, -15, 0, 0)
-        self.setImage(UIImage.imageUsedTemplateMode("ic_menu_36pt")!, for: UIControlState())
+        self.setImage(UIImage.imageUsedTemplateMode("ic_menu_36pt")!, for: .normal)
         self.aPointImageView = UIImageView()
         self.aPointImageView!.backgroundColor = V2EXColor.colors.v2_NoticePointColor
         self.aPointImageView!.layer.cornerRadius = 4
@@ -206,6 +243,7 @@ fileprivate class NotificationMenuButton: UIButton {
             make.top.equalTo(self).offset(3)
             make.right.equalTo(self).offset(-6)
         }
+        tap = leftClick
         self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
             if User.shared.notificationCount > 0 {
                 self?.aPointImageView!.isHidden = false
@@ -215,8 +253,8 @@ fileprivate class NotificationMenuButton: UIButton {
             }
         }
     }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func leftClick(){
+        Msg.send("openLeftDrawer")
     }
 }
 class HomeTopicListTableViewCell: TJCell {
@@ -225,35 +263,7 @@ class HomeTopicListTableViewCell: TJCell {
         model.fromDict(item)
         self.bind(model)
     }
-    //? 为什么用这个圆角图片，而不用layer.cornerRadius
-    // 因为 设置 layer.cornerRadius 太耗系统资源，每次滑动 都需要渲染很多次，所以滑动掉帧
-    // iOS中可以缓存渲染，但效果还是不如直接 用圆角图片
-    /// 节点信息label的圆角背景图
-    fileprivate static var nodeBackgroundImage_Default =
-        createImageWithColor( V2EXDefaultColor.sharedInstance.v2_NodeBackgroundColor ,size: CGSize(width: 10, height: 20))
-            .roundedCornerImageWithCornerRadius(2)
-            .stretchableImage(withLeftCapWidth: 3, topCapHeight: 3)
-    fileprivate static var nodeBackgroundImage_Dark =
-        createImageWithColor( V2EXDarkColor.sharedInstance.v2_NodeBackgroundColor ,size: CGSize(width: 10, height: 20))
-            .roundedCornerImageWithCornerRadius(2)
-            .stretchableImage(withLeftCapWidth: 3, topCapHeight: 3)
     /// class
-    class Avatar : UIImageView{
-        override func layoutSubviews() {
-            contentMode = .scaleAspectFit
-            //            frame.size.height = 35
-            //            frame.size.width = 35
-        }
-    }
-    class SizeLabel : UILabel{
-        init(_ fontSize : CGFloat){
-            super.init(frame: CGRect.zero)
-            font = v2Font(fontSize)
-        }
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
     class ReplyIcon : UIImageView{
         init() {
             super.init(image: UIImage(named: "reply_n"))
@@ -265,22 +275,17 @@ class HomeTopicListTableViewCell: TJCell {
     }
     // property
     var _avatar =  Avatar()
-    /// 用户名
     var _user = SizeLabel(14)
     var _date = SizeLabel(12)
     var _reply = SizeLabel(12)
     var _replyIcon = ReplyIcon()
-    /// 节点
     var _node = SizeLabel(11)
     var _nodeback  = UIImageView()
-    var _title = SizeLabel(18)
-    /// 装上面定义的那些元素的容器
+    var _title = LinesLabel(18)
     var _panel:UIView = UIView()
     var itemModel:TopicListModel?
     var Labels : [String:UILabel]?
     override func setup()->Void{
-        let selectedBackgroundView = UIView()
-        self.selectedBackgroundView = selectedBackgroundView
         self.contentView .addSubview(self._panel);
         self._panel.addSubview(self._avatar);
         self._panel.addSubview(self._user);
@@ -291,35 +296,15 @@ class HomeTopicListTableViewCell: TJCell {
         self._panel.addSubview(self._node)
         self._panel.addSubview(self._title);
         self.setupLayout()
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            if style == V2EXColor.V2EXColorStyleDefault {
-                self?._nodeback.image = HomeTopicListTableViewCell.nodeBackgroundImage_Default
-            }
-            else{
-                self?._nodeback.image = HomeTopicListTableViewCell.nodeBackgroundImage_Dark
-            }
-            self?.backgroundColor=V2EXColor.colors.v2_backgroundColor;
-            self?.selectedBackgroundView!.backgroundColor = V2EXColor.colors.v2_backgroundColor
-            self?._panel.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-            self?._user.textColor = V2EXColor.colors.v2_TopicListUserNameColor;
-            self?._date.textColor=V2EXColor.colors.v2_TopicListDateColor;
-            self?._reply.textColor = V2EXColor.colors.v2_TopicListDateColor
-            self?._node.textColor = V2EXColor.colors.v2_TopicListDateColor
-            self?._title.textColor=V2EXColor.colors.v2_TopicListTitleColor;
-            self?._avatar.backgroundColor = self?._panel.backgroundColor
-            self?._user.backgroundColor = self?._panel.backgroundColor
-            self?._date.backgroundColor = self?._panel.backgroundColor
-            self?._reply.backgroundColor = self?._panel.backgroundColor
-            self?._replyIcon.backgroundColor = self?._panel.backgroundColor
-            self?._title.backgroundColor = self?._panel.backgroundColor
+        self.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        self._panel.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        self._avatar.tapped = userNameTap
+        self._user.tapped = userNameTap
+    }
+    func userNameTap() {
+        if let _ = self.itemModel , let username = itemModel?.userName {
+            Msg.send("pushMemberViewController",[username])
         }
-        //点击用户头像，跳转到用户主页
-        self._avatar.isUserInteractionEnabled = true
-        self._user.isUserInteractionEnabled = true
-        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(HomeTopicListTableViewCell.userNameTap(_:)))
-        self._avatar.addGestureRecognizer(userNameTap)
-        userNameTap = UITapGestureRecognizer(target: self, action: #selector(HomeTopicListTableViewCell.userNameTap(_:)))
-        self._user.addGestureRecognizer(userNameTap)
     }
     fileprivate func setupLayout(){
         constrain(_panel,_avatar,_user,_date,_reply)
@@ -366,11 +351,6 @@ class HomeTopicListTableViewCell: TJCell {
             title.bottom == content.bottom - 8
         }
     }
-    func userNameTap(_ sender:UITapGestureRecognizer) {
-        if let _ = self.itemModel , let username = itemModel?.userName {
-            Msg.send("pushMemberViewController",[username])
-        }
-    }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
@@ -384,8 +364,6 @@ class HomeTopicListTableViewCell: TJCell {
             }
             else{
                 self._title.text =  model.topicTitle
-                _title.numberOfLines = 0
-                _title.lineBreakMode = .byWordWrapping
             }
         }
         if let avata = model.avata {

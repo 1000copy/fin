@@ -146,7 +146,7 @@ fileprivate class NodeTable  : TableBase{
 class FollowButton : ButtonBase{
     override init(frame: CGRect) {
         super.init(frame: frame)
-        touchUp = toggleFavoriteState
+        tap = toggleFavoriteState
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

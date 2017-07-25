@@ -365,30 +365,6 @@ class CollectionViewBase : UICollectionView,UICollectionViewDataSource,UICollect
         return referenceSizeForHeaderIn(collectionViewLayout, section)
     }
 }
-class ButtonBase : UIButton{
-    var touchUp_ : Callback?
-    var touchUp : Callback?{
-        get{
-            return touchUp_
-        }
-        set{
-            touchUp_ = newValue
-        }
-    }
-    func doTouchUp(){
-        if let t = touchUp {
-            t()
-        }
-    }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.addTarget(self, action: #selector(doTouchUp), for: .touchUpInside)
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
 fileprivate  class V2RefreshHeader: MJRefreshHeader {
     var loadingView:UIActivityIndicatorView?
     var arrowImage:UIImageView?
@@ -586,4 +562,131 @@ func layout(_ superview : UIView,_ views : [String:UIView],_ contraints : [Strin
         superview.addConstraints(NSLayoutConstraint.constraints(withVisualFormat:contraint , options: option, metrics: nil, views: views))
         i += 1
     }
+}
+class ButtonBase : UIButton{
+    var touchUp_ : Callback?
+    var tap : Callback?{
+        get{
+            return touchUp_
+        }
+        set{
+            touchUp_ = newValue
+        }
+    }
+    func doTouchUp(){
+        if let t = tap {
+            t()
+        }
+    }
+    func onLoad(){
+        
+    }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.addTarget(self, action: #selector(doTouchUp), for: .touchUpInside)
+        onLoad()
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    var icon : String?{
+        didSet {
+            let icon_ = icon
+            if icon_ != nil && icon_ != ""{
+                let image = UIImage.imageUsedTemplateMode(icon_!)!
+                setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+            }
+        }
+    }
+}
+
+class TJLabel : UILabel{
+    override init(frame: CGRect) {
+        super.init(frame:CGRect.zero)
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func tap(_ sender:UITapGestureRecognizer) {
+        tapped?()
+    }
+    var tapped_ : Callback?
+    var tapped : Callback?{
+        get {
+            return tapped_
+        }
+        set{
+            tapped_ = newValue
+            if tapped_ != nil {
+                isUserInteractionEnabled = true
+                addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
+            }
+        }
+    }
+}
+class TJImage : UIImageView{
+    convenience init(){
+        self.init("")
+    }
+    init(_ name : String) {
+        super.init(image: UIImage(named: name))
+        isUserInteractionEnabled = true
+        addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func tap(_ sender:UITapGestureRecognizer) {
+        tapped?()
+    }
+    var tapped_ : Callback?
+    var tapped : Callback?{
+        get {
+            return tapped_
+        }
+        set{
+            tapped_ = newValue
+            if tapped_ != nil {
+                isUserInteractionEnabled = true
+                addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
+            }
+        }
+    }
+}
+class SizeLabel : TJLabel{
+    init(_ fontSize : CGFloat){
+        super.init(frame: CGRect.zero)
+        font = v2Font(fontSize)
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+class LinesLabel : SizeLabel{
+    override init(_ fontSize : CGFloat){
+        super.init(fontSize)
+        numberOfLines = 0
+        lineBreakMode = .byWordWrapping
+        
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+class Avatar : TJImage{
+//    init(_ size : CGFloat){
+//        super.init("")
+//        contentMode = .scaleAspectFit
+//        frame.size.height = size
+//        frame.size.width = size
+//    }
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+}
+func TJRect (_ x : CGFloat,_ y : CGFloat,_ width : CGFloat,_ height : CGFloat)-> CGRect{
+    return CGRect(x: x, y: y, width: width, height: height)
+}
+func TJSquare (_ x : CGFloat,_ y : CGFloat,_ size : CGFloat)-> CGRect{
+    return CGRect(x: x, y: y, width: size, height: size)
 }

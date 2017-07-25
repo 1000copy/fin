@@ -10,6 +10,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var centerNav : V2EXNavigationController!
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+//        TopicListModel.dododo()
         URLProtocol.registerClass(WebViewImageProtocol.self)
         self.window = UIWindow();
         self.window?.frame=UIScreen.main.bounds;
