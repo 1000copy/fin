@@ -60,7 +60,7 @@
 		06D0EE331C917E4C003095FF /* FontDisplayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D0EE321C917E4C003095FF /* FontDisplayTableViewCell.swift */; };
 		06D300241C6C21B600547CE6 /* AccountsManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300231C6C21B600547CE6 /* AccountsManagerViewController.swift */; };
 		06D300261C6C222F00547CE6 /* AccountListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300251C6C222F00547CE6 /* AccountListTableViewCell.swift */; };
-		06D300281C6C720800547CE6 /* V2UsersKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300271C6C720800547CE6 /* V2UsersKeychain.swift */; };
+		06D300281C6C720800547CE6 /* UserListKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300271C6C720800547CE6 /* UserListKeychain.swift */; };
 		06D3002A1C6D801100547CE6 /* LogoutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300291C6D801100547CE6 /* LogoutTableViewCell.swift */; };
 		06D33A5E1C4DF64B006CF3AE /* TopicDetailWebViewContentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D33A5D1C4DF64B006CF3AE /* TopicDetailWebViewContentCell.swift */; };
 		06DD400B1C43726600CE293D /* V2EXColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06DD400A1C43726600CE293D /* V2EXColor.swift */; };
@@ -139,7 +139,7 @@
 		06D0EE321C917E4C003095FF /* FontDisplayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontDisplayTableViewCell.swift; sourceTree = "<group>"; };
 		06D300231C6C21B600547CE6 /* AccountsManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsManagerViewController.swift; sourceTree = "<group>"; };
 		06D300251C6C222F00547CE6 /* AccountListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountListTableViewCell.swift; sourceTree = "<group>"; };
-		06D300271C6C720800547CE6 /* V2UsersKeychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2UsersKeychain.swift; sourceTree = "<group>"; };
+		06D300271C6C720800547CE6 /* UserListKeychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListKeychain.swift; sourceTree = "<group>"; };
 		06D300291C6D801100547CE6 /* LogoutTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoutTableViewCell.swift; sourceTree = "<group>"; };
 		06D33A5D1C4DF64B006CF3AE /* TopicDetailWebViewContentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopicDetailWebViewContentCell.swift; sourceTree = "<group>"; };
 		06DD400A1C43726600CE293D /* V2EXColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2EXColor.swift; sourceTree = "<group>"; };
@@ -254,7 +254,7 @@
 				06C49B6C1C43BFAB00684CA6 /* V2ex+Define.swift */,
 				06C532B51C534D3F00258A55 /* V2Response.swift */,
 				0648F4AB1C54FC3F00475567 /* Setting.swift */,
-				06D300271C6C720800547CE6 /* V2UsersKeychain.swift */,
+				06D300271C6C720800547CE6 /* UserListKeychain.swift */,
 				065B69101C75ABE1009AAC37 /* AnalyzeURLHelper.swift */,
 				2D43B43C1CAA2CDD007B0007 /* V2ProgressHUD.swift */,
 				06E52F791E01326900E69084 /* JSTools.js */,
@@ -570,7 +570,7 @@
 				06E52F781E012A8000E69084 /* UIView+Extension.swift in Sources */,
 				064BD2651C880ADB00B55558 /* RelevantCommentsViewController.swift in Sources */,
 				068910D11C61A44D00D22B4F /* NodeTopicListViewController.swift in Sources */,
-				06D300281C6C720800547CE6 /* V2UsersKeychain.swift in Sources */,
+				06D300281C6C720800547CE6 /* UserListKeychain.swift in Sources */,
 				0610F1B01C46136300481402 /* BaseModel.swift in Sources */,
 				069508E41C3F74FF0088D031 /* AppDelegate.swift in Sources */,
 				069839831C478ECC00FF7163 /* RightViewController.swift in Sources */,
