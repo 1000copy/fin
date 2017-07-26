@@ -2,54 +2,33 @@ import UIKit
 import FXBlurView
 import KVOController
 import Kingfisher
-class LeftViewController: UIViewController{
-    override func viewDidLoad() {
-        super.viewDidLoad()
+class LeftViewController: TJPage{
+    override func onLoad() {
         self.view.backgroundColor = V2EXColor.colors.v2_backgroundColor;
         let _ = FrostedView(self.view)
-        self.view.addSubview(LeftTable.shared);
-        LeftTable.shared.snp.makeConstraints{ (make) -> Void in
+        self.view.addSubview(Table.shared);
+        Table.shared.snp.makeConstraints{ (make) -> Void in
             make.top.right.bottom.left.equalTo(self.view);
         }
         if User.shared.isLogin {
-           UserModel.refresh(User.shared.username!)
+            UserModel.refresh(User.shared.username!)
         }
-        
     }
 }
-fileprivate class FrostedView : FXBlurView{
-    init(_ owner : UIView) {
-        super.init(frame: CGRect.zero)
+fileprivate class FrostedView : TJBlur{
+    override func onLoad() {
         isDynamic = false
         tintColor = UIColor.black
-        frame = owner.frame
-        underlyingView = BackImage(owner)
-        owner.addSubview(self)
-        Msg.observe(self, #selector(themeChanged), "ThemeChanged")
+        frame = (owner?.frame)!
+        underlyingView = BackImage(owner!)
+        owner?.addSubview(self)
     }
-    func themeChanged(){
-        self.updateAsynchronously(true, completion: nil)
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    class BackImage :UIImageView{
-        init(_ owner : UIView) {
-            super.init(frame: CGRect.zero)
+    class BackImage :TJImage{
+        override func onLoad() {
             self.frame = owner.frame
             self.contentMode = .scaleToFill
             owner.addSubview(self)
-            self.thmemChangedHandler = {[weak self] (style) -> Void in
-                if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-                    self?.image = UIImage(named: "32.jpg")
-                }else{
-                    self?.image = UIImage(named: "12.jpg")
-                }
-                Msg.send("ThemeChanged")
-            }
-        }
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
+            icon = "32.jpg"
         }
     }
 }
@@ -85,13 +64,13 @@ class LeftTableData : TJTableDataSource{
         return a
     }
 }
-fileprivate class LeftTable : TJTable{
+fileprivate class Table : TJTable{
     
-    static var shared_ : LeftTable!
-    static var shared : LeftTable{
+    static var shared_ : Table!
+    static var shared : Table{
         get{
             if shared_ == nil{
-                shared_ = LeftTable()
+                shared_ = Table()
             }
             return shared_
         }
@@ -154,11 +133,11 @@ fileprivate class AvatarImageView : ImageBase{
     
     func userChanged(){
         if let avatar = User.shared.user?.avatar_large{
-                kfImage("https:"+avatar){
-                    if !User.shared.isLogin {
-                        self.image = nil
-                    }
+            kfImage("https:"+avatar){
+                if !User.shared.isLogin {
+                    self.image = nil
                 }
+            }
         }
         else { //没有登录
             self.image = nil
@@ -188,20 +167,15 @@ fileprivate class HeadCell: CellBase {
             make.top.equalTo(self.avatarImageView.snp.bottom).offset(10)
             make.centerX.equalTo(self.avatarImageView)
         }
-        self.kvoController.observe(User.shared, keyPath: "username", options: [.initial , .new]){
-            [weak self] (observe, observer, change) -> Void in
-            if let weakSelf = self {
-                weakSelf.avatarImageView.userChanged()
-                weakSelf.userNameLabel.text = "请先登录"
-                if let user = User.shared.user {
-                    weakSelf.userNameLabel.text = user.username
-                }
-            }
+        Msg.observe(self, #selector(userNameChanged), "UserNameChanged")
+    }
+    func userNameChanged(){
+        avatarImageView.userChanged()
+        userNameLabel.text = "请先登录"
+        if let user = User.shared.user {
+            userNameLabel.text = user.username
         }
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.userNameLabel.textColor = V2EXColor.colors.v2_TopicListUserNameColor
-        }
-    }    
+    }
 }
 fileprivate class NodeCell:LeftNodeTableViewCell{
     override func action(_ indexPath : IndexPath){
@@ -223,7 +197,7 @@ fileprivate class MeCell:LeftNodeTableViewCell{
         }
         Msg.send("pushMyCenterViewController",[User.shared.username])
         Msg.send("closeDrawer")
-
+        
     }
 }
 fileprivate class FavoriteCell:LeftNodeTableViewCell{
@@ -233,101 +207,28 @@ fileprivate class FavoriteCell:LeftNodeTableViewCell{
             return
         }
         Msg.send("pushFavoritesViewController")
-         Msg.send("closeDrawer")
+        Msg.send("closeDrawer")
     }
 }
 fileprivate class LeftNodeTableViewCell: TJCell {
-    var nodeImageView: UIImageView = UIImageView()
-    var nodeNameLabel: UILabel = {
-        let label =  UILabel()
-        label.font = v2Font(16)
-        return label
-    }()
+    var _icon = UIImageView()
+    var _title = SizeLabel(16)
     
     fileprivate override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
-        nodeNameLabel.text = item["title"] as? String
-        nodeImageView.image = UIImage.imageUsedTemplateMode(item["icon"] as! String)
+        _title.text = item["title"] as? String
+        _icon.image = UIImage.templatedIcon(item["icon"] as! String)
     }
-
-//    override func setup(){
-//        self.selectionStyle = .none
-//        self.backgroundColor = UIColor.clear
-//
-//        
-//        contentView.addSubview(self.nodeImageView)
-//        contentView.addSubview(self.nodeNameLabel)
-//        self.nodeImageView.snp.makeConstraints{ (make) -> Void in
-//            make.centerY.equalTo(contentView)
-//            make.left.equalTo(contentView).offset(20)
-//            make.width.height.equalTo(25)
-//        }
-//        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
-//            make.left.equalTo(self.nodeImageView.snp.right).offset(20)
-//            make.centerY.equalTo(self.nodeImageView)
-//        }
-//        
-//        self.thmemChangedHandler = {[weak self] (style) -> Void in
-//            self?.configureColor()
-//        }
-//    }
-//    override func setup(){
-//        self.selectionStyle = .none
-//        self.backgroundColor = UIColor.clear
-//        nodeImageView.translatesAutoresizingMaskIntoConstraints = false
-//        nodeNameLabel.translatesAutoresizingMaskIntoConstraints = false
-//        contentView.addSubview(self.nodeImageView)
-//        contentView.addSubview(self.nodeNameLabel)
-//        let views = ["super":contentView,"icon":nodeImageView,"title":nodeNameLabel] as [String : Any]
-//        let hConstraint=NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[icon(25)]-20-[title]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
-//        contentView.addConstraints(hConstraint)
-//        let vConstraint1=NSLayoutConstraint.constraints(withVisualFormat: "V:|-(<=1)-[icon(25)]", options: NSLayoutFormatOptions.alignAllCenterY, metrics: nil, views: views)
-//        let vConstraint2=NSLayoutConstraint.constraints(withVisualFormat: "V:|-(<=1)-[title(25)]", options:  NSLayoutFormatOptions.alignAllCenterY, metrics: nil, views: views)
-//        contentView.addConstraints(hConstraint+vConstraint1+vConstraint2)
-//        self.thmemChangedHandler = {[weak self] (style) -> Void in
-//            self?.configureColor()
-//        }
-//    }
-    
     override func setup(){
         self.selectionStyle = .none
         self.backgroundColor = UIColor.clear
-        let views = ["icon":nodeImageView,"title":nodeNameLabel] as [String : UIView]
+        let views = ["icon":_icon,"title":_title] as [String : UIView]
         layout(contentView,views,["H:|-20-[icon(25)]-20-[title]","V:|-(<=1)-[icon(25)]","V:|-(<=1)-[title(25)]"],[.None,.Y,.Y])
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.configureColor()
-        }
-    }    
-//    var panel = UIView()
-//    override func setup(){
-//        self.selectionStyle = .none
-//        self.backgroundColor = UIColor.clear
-//        
-//        self.contentView.addSubview(panel)
-//        panel.addSubview(self.nodeImageView)
-//        panel.addSubview(self.nodeNameLabel)
-//        
-//        panel.snp.makeConstraints{ (make) -> Void in
-//            make.left.top.right.equalTo(self.contentView)
-//            make.height.equalTo(55)
-//        }
-//        self.nodeImageView.snp.makeConstraints{ (make) -> Void in
-//            make.centerY.equalTo(panel)
-//            make.left.equalTo(panel).offset(20)
-//            make.width.height.equalTo(25)
-//        }
-//        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
-//            make.left.equalTo(self.nodeImageView.snp.right).offset(20)
-//            make.centerY.equalTo(self.nodeImageView)
-//        }
-//        
-//        self.thmemChangedHandler = {[weak self] (style) -> Void in
-//            self?.configureColor()
-//        }
-//    }
+        configureColor()
+    }
     func configureColor(){
         self.backgroundColor = V2EXColor.colors.v2_LeftNodeBackgroundColor
-        self.nodeImageView.tintColor =  V2EXColor.colors.v2_LeftNodeTintColor
-        self.nodeNameLabel.textColor = V2EXColor.colors.v2_LeftNodeTintColor
+        self._icon.tintColor =  V2EXColor.colors.v2_LeftNodeTintColor
+        self._title.textColor = V2EXColor.colors.v2_LeftNodeTintColor
     }
 }
 fileprivate class NotifyCell : LeftNodeTableViewCell{
@@ -348,39 +249,20 @@ fileprivate class NotifyCell : LeftNodeTableViewCell{
         label.backgroundColor = V2EXColor.colors.v2_NoticePointColor
         return label
     }()
-//    override func setup() {
-//        super.setup()
-//        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_notifications_none")
-//        self.nodeNameLabel.text = NSLocalizedString("notifications")
-//        
-//        self.contentView.addSubview(self.notifictionCountLabel)
-//        self.notifictionCountLabel.snp.makeConstraints{ (make) -> Void in
-//            make.centerY.equalTo(self.nodeNameLabel)
-//            make.left.equalTo(self.nodeNameLabel.snp.right).offset(5)
-//            make.height.equalTo(14)
-//        }
-//        
-//        self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
-//            if User.shared.notificationCount > 0 {
-//                self?.notifictionCountLabel.text = "   \(User.shared.notificationCount)   "
-//            }
-//            else{
-//                self?.notifictionCountLabel.text = ""
-//            }
-//        }
-//    }
+    
     override func setup() {
         super.setup()
-        nodeImageView.image = UIImage.imageUsedTemplateMode("ic_notifications_none")
-        self.nodeNameLabel.text = NSLocalizedString("notifications")
-        layout(contentView,["label":notifictionCountLabel,"title":nodeNameLabel],["H:[title]-5-[label]","V:|-(<=1)-[label(14)]"],[.None,.Y])
-        self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
-            if User.shared.notificationCount > 0 {
-                self?.notifictionCountLabel.text = "   \(User.shared.notificationCount)   "
-            }
-            else{
-                self?.notifictionCountLabel.text = ""
-            }
+        _icon.image = UIImage.templatedIcon("ic_notifications_none")
+        self._title.text = NSLocalizedString("notifications")
+        layout(contentView,["label":notifictionCountLabel,"title":_title],["H:[title]-5-[label]","V:|-(<=1)-[label(14)]"],[.None,.Y])
+        Msg.observe(self, #selector(doNotify), "notificationCount")
+    }
+    func doNotify(){
+        if User.shared.notificationCount > 0 {
+            self.notifictionCountLabel.text = "   \(User.shared.notificationCount)   "
+        }
+        else{
+            self.notifictionCountLabel.text = ""
         }
     }
 }

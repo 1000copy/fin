@@ -31,9 +31,9 @@ class V2Style: NSObject {
             self._fontScale = scale
         }
         //监听主题配色，切换相应的配色
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.remakeCSS()
-        }
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+            self.remakeCSS()
+//        }
     }
     //重新拼接CSS字符串
     fileprivate func remakeCSS(){

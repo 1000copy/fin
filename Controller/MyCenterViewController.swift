@@ -22,8 +22,8 @@ class MyCenterViewController: MemberViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingsButton!)
     }
     
-    override func getDataSuccessfully(_ aModel: MemberModel) {
-        super.getDataSuccessfully(aModel)
+    override func getSuccess(_ aModel: MemberModel) {
+        super.getSuccess(aModel)
         self.settingsButton!.isHidden = false
     }
     

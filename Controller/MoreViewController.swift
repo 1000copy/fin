@@ -5,10 +5,12 @@ class MoreViewController: UITableViewController {
         self.title = NSLocalizedString("more")
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
         regClass(self.tableView, cell: BaseDetailTableViewCell.self)
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
-            self?.tableView.reloadData()
-        }
+        view.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        tableView.reloadData()
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//            self?.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
+//            self?.tableView.reloadData()
+//        }
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return 9

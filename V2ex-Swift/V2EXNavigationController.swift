@@ -65,16 +65,16 @@ class V2EXNavigationController: UINavigationController {
             make.top.bottom.left.right.equalTo(maskingView);
         }
 
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+            self.navigationBar.tintColor = V2EXColor.colors.v2_navigationBarTintColor
             
-            self?.navigationBar.titleTextAttributes = [
+            self.navigationBar.titleTextAttributes = [
                 NSFontAttributeName : v2Font(18),
                 NSForegroundColorAttributeName : V2EXColor.colors.v2_TopicListTitleColor
             ]
             
             if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-                self?.frostedView.barStyle = .default
+                self.frostedView.barStyle = .default
                 UIApplication.shared.setStatusBarStyle(.default, animated: true);
                 
                 //全局键盘颜色
@@ -84,13 +84,13 @@ class V2EXNavigationController: UINavigationController {
                 
             }
             else{
-                self?.frostedView.barStyle = .black
+                self.frostedView.barStyle = .black
                 UIApplication.shared.setStatusBarStyle(.lightContent, animated: true);
                 
                 UITextView.appearance().keyboardAppearance = .dark
                 UITextField.appearance().keyboardAppearance = .dark
                 YYTextView.appearance().keyboardAppearance = .dark
             }
-        }
+//        }
     }
 }

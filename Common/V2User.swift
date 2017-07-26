@@ -29,7 +29,11 @@ class User: NSObject {
         }
     }
 
-    dynamic var username:String?
+    dynamic var username:String?{
+        didSet{
+            Msg.send("UserNameChanged")
+        }
+    }
 
     fileprivate var _once:String?
     //全局once字符串，用于用户各种操作，例如回帖 登录 。这些操作都需要用的once ，而且这个once是全局统一的
@@ -53,7 +57,11 @@ class User: NSObject {
     }
 
     /// 通知数量
-    dynamic var notificationCount:Int = 0
+    dynamic var notificationCount:Int = 0{
+        didSet{
+            Msg.send("notificationCount")
+        }
+    }
 
 
 

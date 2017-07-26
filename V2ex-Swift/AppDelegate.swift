@@ -27,10 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         star.drawerController = drawerController
         star.centerViewController = home
         self.window?.rootViewController = drawerController;
-        self.window?.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.window?.backgroundColor = V2EXColor.colors.v2_backgroundColor;
+//        self.window?.thmemChangedHandler = {[weak self] (style) -> Void in
+            window?.backgroundColor = V2EXColor.colors.v2_backgroundColor;
             drawerController.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
-        }
+//        }
         #if DEBUG
             let fpsLabel = V2FPSLabel(frame: CGRect(x: 15, y: SCREEN_HEIGHT-40,width: 55,height: 20));
             self.window?.addSubview(fpsLabel);
@@ -57,7 +57,7 @@ class Drawer : DrawerController{
         super.init(centerViewController: centerViewController, leftDrawerViewController: leftDrawerViewController, rightDrawerViewController: rightDrawerViewController)
         let drawerController = self
         drawerController.maximumLeftDrawerWidth=230;
-        drawerController.maximumRightDrawerWidth = (rightDrawerViewController as! RightViewController).maximumRightDrawerWidth()
+        drawerController.maximumRightDrawerWidth = (rightDrawerViewController as! RightViewController).maxWidth()
         drawerController.openDrawerGestureModeMask=OpenDrawerGestureMode.panningCenterView
         drawerController.closeDrawerGestureModeMask=CloseDrawerGestureMode.all;
 

@@ -9,9 +9,7 @@
 import UIKit
 import FXBlurView
 
-class RightViewController: UIViewController{
-    var backgroundImageView:UIImageView?
-    var frostedView = FXBlurView()
+class RightViewController: TJPage{
     fileprivate var _tableView :RightTable!
     fileprivate var tableView: RightTable {
         get{
@@ -22,41 +20,31 @@ class RightViewController: UIViewController{
             return _tableView!;
         }
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    class BlurView : TJBlur{
+        var backgroundImageView:UIImageView?
+        override func onLoad() {
+            self.backgroundImageView = UIImageView()
+            self.backgroundImageView!.frame = (self.owner?.frame)!
+            self.backgroundImageView!.contentMode = .left
+            backgroundImageView?.image = UIImage(named: "32.jpg")
+            self.underlyingView = self.backgroundImageView!
+            self.isDynamic = false
+            self.frame = (owner?.frame)!
+            self.tintColor = UIColor.black
+            owner?.addSubview(underlyingView!)
+            owner?.addSubview(self)
+        }
+    }
+    override func onLoad() {
         self.view.backgroundColor = V2EXColor.colors.v2_backgroundColor;
-        
-        self.backgroundImageView = UIImageView()
-        self.backgroundImageView!.frame = self.view.frame
-        self.backgroundImageView!.contentMode = .left
-        view.addSubview(self.backgroundImageView!)
-
-        frostedView.underlyingView = self.backgroundImageView!
-        frostedView.isDynamic = false
-        frostedView.frame = self.view.frame
-        frostedView.tintColor = UIColor.black
-        self.view.addSubview(frostedView)
-        
-        self.view.addSubview(self.tableView);
+        let _  = BlurView(view)
+        self.view.addSubview(self.tableView)
         self.tableView.snp.makeConstraints{ (make) -> Void in
             make.top.right.bottom.left.equalTo(self.view)
         }
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-                self?.backgroundImageView?.image = UIImage(named: "32.jpg")
-            }
-            else{
-                self?.backgroundImageView?.image = UIImage(named: "12.jpg")
-            }
-            self?.frostedView.updateAsynchronously(true, completion: nil)
-        }
         
-        let rowHeight = self._tableView.tableView(self.tableView, heightForRowAt: IndexPath(row: 0, section: 0))
-        let rowCount = self._tableView.tableView(self.tableView, numberOfRowsInSection: 0)
-        let paddingTop = (SCREEN_HEIGHT - CGFloat(rowCount) * rowHeight) / 2
-        self.tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: SCREEN_WIDTH, height: paddingTop))
     }
-    func maximumRightDrawerWidth() -> CGFloat{
+    func maxWidth() -> CGFloat{
         // 调整RightView宽度
         let cell = RightCell()
         let cellFont = UIFont(name: cell.nodeNameLabel.font.familyName, size: cell.nodeNameLabel.font.pointSize)
@@ -109,18 +97,15 @@ fileprivate class RightTableData : TJTableDataSource{
 }
 
 fileprivate class RightTable : TJTable{
-    override init(frame: CGRect, style: UITableViewStyle) {
-        super.init(frame:frame,style:style)
+    override func onLoad() {
         tableData = RightTableData()
         backgroundColor = UIColor.clear
         estimatedRowHeight=100;
         separatorStyle = .none;
-//        registerCells()
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+        tableHeaderView = UIView()
+        tableHeaderView?.frame = TJRect(0,0,SCREEN_WIDTH,20)
 
+    }
     fileprivate override func didSelectRowAt(_ indexPath: IndexPath) {
         if(indexPath.row != self.currentSelectedTabIndex){
             let ip = IndexPath(row: currentSelectedTabIndex, section: 0)
@@ -178,10 +163,10 @@ fileprivate class RightCell: TJCell {
             make.centerY.equalTo(panel)
         }
         
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.refreshBackgroundColor()
-            self?.nodeNameLabel.textColor = V2EXColor.colors.v2_LeftNodeTintColor
-        }
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+            self.refreshBackgroundColor()
+            self.nodeNameLabel.textColor = V2EXColor.colors.v2_LeftNodeTintColor
+//        }
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

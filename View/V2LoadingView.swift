@@ -57,14 +57,7 @@ class V2LoadingView: UIView {
         self.snp.makeConstraints{ (make) -> Void in
             make.top.right.bottom.left.equalTo(view)
         }
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-                self?.activityIndicatorView.activityIndicatorViewStyle = .gray
-            }
-            else{
-                self?.activityIndicatorView.activityIndicatorViewStyle = .white
-            }
-        }
+        self.activityIndicatorView.activityIndicatorViewStyle = .gray
     }
     func hideLoadingView() {
         self.removeFromSuperview()

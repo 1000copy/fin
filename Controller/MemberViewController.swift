@@ -5,13 +5,10 @@
 //  Created by huangfeng on 2/1/16.
 //  Copyright © 2016 Fin. All rights reserved.
 //
-
 import UIKit
 import FXBlurView
-
-class MemberViewController: UIViewController{
+class MemberViewController: TJPage,UIScrollViewDelegate{
     var color:CGFloat = 0
-    
     var username:String?
     var blockButton:UIButton?
     var followButton:UIButton?
@@ -26,71 +23,50 @@ class MemberViewController: UIViewController{
             _tableView.estimatedRowHeight=200;
             _tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
             return _tableView!;
-            
         }
     }
-    
     fileprivate weak var _loadView:UIActivityIndicatorView?
-    var titleView:UIView?
-    var titleLabel:UILabel?
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    class BlurView : TJBlur{
+        override func onLoad() {
+            let backgroundImageView = UIImageView(image: UIImage(named: "12.jpg"))
+            backgroundImageView.frame = self.owner!.frame
+            backgroundImageView.contentMode = .scaleToFill
+            owner!.addSubview(backgroundImageView)
+            let frostedView = FXBlurView()
+            frostedView.underlyingView = backgroundImageView
+            frostedView.isDynamic = false
+            frostedView.frame = self.owner!.frame
+            frostedView.tintColor = UIColor.black
+            self.owner!.addSubview(frostedView)
+        }
+    }
+    override func onLoad() {
+        
         self.view.backgroundColor = V2EXColor.colors.v2_backgroundColor
-        
-        let backgroundImageView = UIImageView(image: UIImage(named: "12.jpg"))
-        backgroundImageView.frame = self.view.frame
-        backgroundImageView.contentMode = .scaleToFill
-        view.addSubview(backgroundImageView)
-        
-        let frostedView = FXBlurView()
-        frostedView.underlyingView = backgroundImageView
-        frostedView.isDynamic = false
-        frostedView.frame = self.view.frame
-        frostedView.tintColor = UIColor.black
-        self.view.addSubview(frostedView)
-        
-
+        let _ = BlurView(self.view)
         self.view.addSubview(self.tableView);
         self.tableView.snp.makeConstraints{ (make) -> Void in
             make.top.right.bottom.left.equalTo(self.view);
         }
-        let aloadView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-        self.view.addSubview(aloadView)
-        aloadView.startAnimating()
-        aloadView.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(self.view.snp.top).offset(20+44/2)
-            make.right.equalTo(self.view).offset(-15)
-        }
-        self._loadView = aloadView
         self.refreshData()
-        
-        if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDark {
-            self.color = 100
-        }
     }
     func refreshData(){
         MemberModel.getMemberInfo(self.username!, completionHandler: { (response) -> Void in
             if response.success {
-                if let aModel = response.value{
-                    self.getDataSuccessfully(aModel)
+                if let model = response.value{
+                    self.getSuccess(model)
                 }
-                else{
-                    self.tableView.fin_reloadData()
-                }
-            }
-            if let view = self._loadView{
-                view.removeFromSuperview()
             }
         })
     }
-    func getDataSuccessfully(_ aModel:MemberModel){
-        
+    var titleLabel:UILabel?
+    func getSuccess(_ aModel:MemberModel){
         self.tableView.model = aModel
         self.titleLabel?.text = self.tableView.model?.userName
         if self.tableView.model?.userToken != nil {
             setupBlockAndFollowButtons()
         }
-        self.tableView.fin_reloadData()
+        self.tableView.reloadData()
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
@@ -110,7 +86,6 @@ fileprivate class Table : TJTable{
         }
         let view = UIView()
         view.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-        
         let label = UILabel()
         label.text = [NSLocalizedString("posts"),NSLocalizedString("comments")][section - 1]
         view.addSubview(label)
@@ -123,8 +98,6 @@ fileprivate class Table : TJTable{
         tableViewHeader.append(view)
         return view
     }
-    
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let id = indexPath.section == 1 ?
             self.model?.topics[indexPath.row].topicId:
@@ -134,7 +107,6 @@ fileprivate class Table : TJTable{
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
-
     // table begin
     override func sectionCount() -> Int {
         return 3
@@ -190,33 +162,26 @@ extension MemberViewController{
         if !self.isMember(of: MemberViewController.self){
             return ;
         }
-        
         let blockButton = UIButton(frame:CGRect(x: 0, y: 0, width: 26, height: 26))
         blockButton.addTarget(self, action: #selector(toggleBlockState), for: .touchUpInside)
         let followButton = UIButton(frame:CGRect(x: 0, y: 0, width: 26, height: 26))
         followButton.addTarget(self, action: #selector(toggleFollowState), for: .touchUpInside)
-        
         let blockItem = UIBarButtonItem(customView: blockButton)
         let followItem = UIBarButtonItem(customView: followButton)
-        
         //处理间距
         let fixedSpaceItem = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         fixedSpaceItem.width = -5
         self.navigationItem.rightBarButtonItems = [fixedSpaceItem,followItem,blockItem]
-        
         self.blockButton = blockButton;
         self.followButton = followButton;
-        
         refreshButtonImage()
     }
-    
     func refreshButtonImage() {
         let blockImage = self.tableView.model?.blockState == .blocked ? UIImage(named: "ic_visibility_off")! : UIImage(named: "ic_visibility")!
         let followImage = self.tableView.model?.followState == .followed ? UIImage(named: "ic_favorite")! : UIImage(named: "ic_favorite_border")!
         self.blockButton?.setImage(blockImage.withRenderingMode(.alwaysTemplate), for: UIControlState())
         self.followButton?.setImage(followImage.withRenderingMode(.alwaysTemplate), for: UIControlState())
     }
-    
     func toggleFollowState(){
         if(self.tableView.model?.followState == .followed){
             UnFollow()
@@ -240,7 +205,6 @@ extension MemberViewController{
             V2Success("取消关注了~")
         }
     }
-    
     func toggleBlockState(){
         if(self.tableView.model?.blockState == .blocked){
             UnBlock()
@@ -252,9 +216,9 @@ extension MemberViewController{
     }
     func Block() {
         if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
-        MemberModel.block(userId, userToken: userToken, type: .blocked, completionHandler: nil)
-        self.tableView.model?.blockState = .blocked
-        V2Success("屏蔽成功")
+            MemberModel.block(userId, userToken: userToken, type: .blocked, completionHandler: nil)
+            self.tableView.model?.blockState = .blocked
+            V2Success("屏蔽成功")
         }
     }
     func UnBlock() {
@@ -265,7 +229,6 @@ extension MemberViewController{
         }
     }
 }
-
 fileprivate class MemberHeaderCell: UITableViewCell {
     /// 头像
     var avatarImageView: UIImageView = {
@@ -304,14 +267,11 @@ fileprivate class MemberHeaderCell: UITableViewCell {
     func setup()->Void{
         self.backgroundColor = UIColor.clear
         self.selectionStyle = .none
-        
         self.contentView.addSubview(self.avatarImageView)
         self.contentView.addSubview(self.userNameLabel)
         self.contentView.addSubview(self.introduceLabel)
-        
         self.setupLayout()
     }
-    
     func setupLayout(){
         self.avatarImageView.snp.makeConstraints{ (make) -> Void in
             make.centerX.equalTo(self.contentView)
@@ -329,7 +289,6 @@ fileprivate class MemberHeaderCell: UITableViewCell {
             make.right.equalTo(self.contentView).offset(-15)
         }
     }
-    
     func bind(_ model:MemberModel?){
         if let model = model {
             if let avata = model.avata {
@@ -382,7 +341,6 @@ fileprivate class MemberTopicCell: UITableViewCell {
         replyCountIconImageView.contentMode = .scaleAspectFit
         return replyCountIconImageView
     }()
-    
     /// 节点
     var nodeNameLabel = TopicTitleLabel()    /// 帖子标题
     var topicTitleLabel: UILabel = {
@@ -393,7 +351,6 @@ fileprivate class MemberTopicCell: UITableViewCell {
         topicTitleLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24;
         return topicTitleLabel
     }()
-    
     /// 装上面定义的那些元素的容器
     var contentPanel:UIView = {
         let contentPanel = UIView();
@@ -404,29 +361,24 @@ fileprivate class MemberTopicCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
         self.setup();
     }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     func setup()->Void{
         self.selectionStyle = .none
         self.backgroundColor = V2EXColor.colors.v2_backgroundColor
-        
         self.contentView .addSubview(self.contentPanel);
         self.contentPanel.addSubview(self.dateAndLastPostUserLabel);
         self.contentPanel.addSubview(self.replyCountLabel);
         self.contentPanel.addSubview(self.replyCountIconImageView);
         self.contentPanel.addSubview(self.nodeNameLabel)
         self.contentPanel.addSubview(self.topicTitleLabel);
-        
         self.setupLayout()
-        
         self.dateAndLastPostUserLabel.backgroundColor = self.contentPanel.backgroundColor
         self.replyCountLabel.backgroundColor = self.contentPanel.backgroundColor
         self.replyCountIconImageView.backgroundColor = self.contentPanel.backgroundColor
         self.topicTitleLabel.backgroundColor = self.contentPanel.backgroundColor
     }
-    
     func setupLayout(){
         self.contentPanel.snp.makeConstraints{ (make) -> Void in
             make.top.left.right.equalTo(self.contentView);
@@ -460,21 +412,16 @@ fileprivate class MemberTopicCell: UITableViewCell {
             make.bottom.equalTo(self.contentView).offset(SEPARATOR_HEIGHT * -1);
         }
     }
-    
     func bind(_ model:MemberTopicsModel){
         self.dateAndLastPostUserLabel.text = model.date
         self.topicTitleLabel.text = model.topicTitle;
-        
         self.replyCountLabel.text = model.replies;
         if let node = model.nodeName{
             self.nodeNameLabel.text = "  " + node + "  "
         }
-        
     }
-    
 }
 fileprivate class MemberReplyCell: UITableViewCell {
-    
     /// 操作描述
     var detailLabel: UILabel = {
         let detailLabel=V2SpacingLabel();
@@ -484,7 +431,6 @@ fileprivate class MemberReplyCell: UITableViewCell {
         detailLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24;
         return detailLabel
     }()
-    
     /// 回复正文
     var commentLabel: UILabel = {
         let commentLabel=V2SpacingLabel();
@@ -494,7 +440,6 @@ fileprivate class MemberReplyCell: UITableViewCell {
         commentLabel.preferredMaxLayoutWidth=SCREEN_WIDTH-24;
         return commentLabel
     }()
-    
     /// 回复正文的背景容器
     var commentPanel: UIView = {
         let commentPanel = UIView()
@@ -503,34 +448,27 @@ fileprivate class MemberReplyCell: UITableViewCell {
         commentPanel.backgroundColor = V2EXColor.colors.v2_backgroundColor
         return commentPanel
     }()
-    
     /// 整个cell元素的容器
     var contentPanel:UIView = {
         let contentPanel = UIView()
         contentPanel.backgroundColor =  V2EXColor.colors.v2_CellWhiteBackgroundColor
         return contentPanel
     }()
-    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
         self.setup();
     }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     func setup()->Void{
         self.selectionStyle = .none
         self.backgroundColor = V2EXColor.colors.v2_backgroundColor
-        
         self.contentView.addSubview(self.contentPanel)
         self.contentPanel.addSubview(self.detailLabel);
         self.contentPanel.addSubview(self.commentPanel);
         self.contentPanel.addSubview(self.commentLabel);
-        
         self.setupLayout()
-        
         let dropUpImageView = UIImageView()
         dropUpImageView.image = UIImage.imageUsedTemplateMode("ic_arrow_drop_up")
         dropUpImageView.contentMode = .scaleAspectFit
@@ -572,5 +510,4 @@ fileprivate class MemberReplyCell: UITableViewCell {
         }
         self.commentLabel.text = model.reply
     }
-    
 }

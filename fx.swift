@@ -5,13 +5,6 @@ typealias TJTableDataSource = TableDataSource
 typealias TJTableDataSourceItem = TableDataSourceItem
 typealias TJButton = ButtonBase
 // Button,TableView,CollectView
-import UIKit
-import SnapKit
-import Alamofire
-import AlamofireObjectMapper
-import Ji
-import MJRefresh
-import Foundation
 class DataTableBase : TableBase{
     var tableData_ : PCTableDataSource! = TableDataSource()
     var tableData : PCTableDataSource!{
@@ -235,6 +228,9 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
     func resetNoMoreData(){
         self.mj_footer.resetNoMoreData()
     }
+    func onLoad(){
+        
+    }
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
         self.dataSource = self
@@ -265,6 +261,7 @@ class  TableBase : UITableView, UITableViewDataSource,UITableViewDelegate {
         })
         footer?.centerOffset = -4
         mj_footer = footer
+        onLoad()
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
@@ -404,16 +401,16 @@ fileprivate  class V2RefreshHeader: MJRefreshHeader {
         self.arrowImage = UIImageView(image: UIImage.imageUsedTemplateMode("ic_arrow_downward"))
         self.addSubview(self.arrowImage!)
         
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
             if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-                self?.loadingView?.activityIndicatorViewStyle = .gray
-                self?.arrowImage?.tintColor = UIColor.gray
+                self.loadingView?.activityIndicatorViewStyle = .gray
+                self.arrowImage?.tintColor = UIColor.gray
             }
             else{
-                self?.loadingView?.activityIndicatorViewStyle = .white
-                self?.arrowImage?.tintColor = UIColor.gray
+                self.loadingView?.activityIndicatorViewStyle = .white
+                self.arrowImage?.tintColor = UIColor.gray
             }
-        }
+//        }
     }
     
     /**
@@ -493,17 +490,19 @@ fileprivate class V2RefreshFooter: MJRefreshAutoFooter {
         self.addSubview(self.stateLabel!)
         
         self.noMoreDataStateString = "没有更多数据了"
+        self.loadingView?.activityIndicatorViewStyle = .gray
+        self.stateLabel!.textColor = UIColor(white: 0, alpha: 0.3)
         
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-                self?.loadingView?.activityIndicatorViewStyle = .gray
-                self?.stateLabel!.textColor = UIColor(white: 0, alpha: 0.3)
-            }
-            else{
-                self?.loadingView?.activityIndicatorViewStyle = .white
-                self?.stateLabel!.textColor = UIColor(white: 1, alpha: 0.3)
-            }
-        }
+//        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//            if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
+//                self?.loadingView?.activityIndicatorViewStyle = .gray
+//                self?.stateLabel!.textColor = UIColor(white: 0, alpha: 0.3)
+//            }
+//            else{
+//                self?.loadingView?.activityIndicatorViewStyle = .white
+//                self?.stateLabel!.textColor = UIColor(white: 1, alpha: 0.3)
+//            }
+//        }
     }
     
     /**
@@ -535,6 +534,9 @@ class Msg {
     }
     class func observe(_ owner : NSObject , _ responser : Selector , _ msg : String){
         observe(owner, responser, msg,nil)
+    }
+    class func observe(_ owner : NSObject , _ responser : Selector , _ msg : Notification.Name){
+        NotificationCenter.default.addObserver(owner, selector: responser, name: msg, object: nil)
     }
 }
 enum CenterOption {
@@ -624,35 +626,7 @@ class TJLabel : UILabel{
         }
     }
 }
-class TJImage : UIImageView{
-    convenience init(){
-        self.init("")
-    }
-    init(_ name : String) {
-        super.init(image: UIImage(named: name))
-        isUserInteractionEnabled = true
-        addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    func tap(_ sender:UITapGestureRecognizer) {
-        tapped?()
-    }
-    var tapped_ : Callback?
-    var tapped : Callback?{
-        get {
-            return tapped_
-        }
-        set{
-            tapped_ = newValue
-            if tapped_ != nil {
-                isUserInteractionEnabled = true
-                addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
-            }
-        }
-    }
-}
+
 class SizeLabel : TJLabel{
     init(_ fontSize : CGFloat){
         super.init(frame: CGRect.zero)
@@ -690,3 +664,145 @@ func TJRect (_ x : CGFloat,_ y : CGFloat,_ width : CGFloat,_ height : CGFloat)->
 func TJSquare (_ x : CGFloat,_ y : CGFloat,_ size : CGFloat)-> CGRect{
     return CGRect(x: x, y: y, width: size, height: size)
 }
+class TJPage : UIViewController{
+    // interface
+    func onLoad (){
+        
+    }
+    func onShow (){
+        
+    }
+    func onHide (){
+        
+    }
+    func onAppRise (){
+        
+    }
+    func onAppFall (){
+        
+    }
+    func onLayout(){
+        
+    }
+    func getNavItems ()->[UIButton]{
+        return []
+    }
+    func getSubviews()->[UIView]?{
+        return []
+    }
+    // imple
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        Msg.observe(self, #selector(applicationWillEnterForeground), NSNotification.Name.UIApplicationWillEnterForeground)
+        Msg.observe(self, #selector(applicationDidEnterBackground), NSNotification.Name.UIApplicationDidEnterBackground)
+        setupNavigationItem()
+        if let views = getSubviews() , views.count > 0 {
+            for view in views{
+                self.view.addSubview(view)
+            }
+        }
+        onLoad()
+        onLayout()
+    }
+    
+    func applicationWillEnterForeground(){
+        onAppRise()
+    }
+    func applicationDidEnterBackground(){
+        onAppFall()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        onShow()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        onHide()
+    }
+    
+    func setupNavigationItem(){
+        let buttons = getNavItems()
+        if buttons.count  >=  1   {
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: buttons[0])
+        }
+        if buttons.count  >=  2   {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: buttons[1])
+        }
+    }
+}
+class SecondTimer {
+    var second : Double?
+    init(_ second : Double){
+        self.second = second
+    }
+    var lastLeaveTime = Date()
+    func begin(){
+        lastLeaveTime = Date()
+    }
+    var  isArrived : Bool{
+        get {
+            return (-1 * lastLeaveTime.timeIntervalSinceNow) > second!
+        }
+    }
+}
+class TJImage :UIImageView{
+    func onLoad(){
+        
+    }
+    var owner : UIView!
+    convenience init() {
+        self.init(nil)
+    }
+    init(_ owner : UIView?) {
+        super.init(frame: CGRect.zero)
+        self.owner = owner
+        onLoad()
+    }
+    var icon : String?{
+        didSet{
+            if let icon = icon {
+                image = UIImage(named: icon)
+            }
+        }
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func tap(_ sender:UITapGestureRecognizer) {
+        tapped?()
+    }
+    var tapped_ : Callback?
+    var tapped : Callback?{
+        get {
+            return tapped_
+        }
+        set{
+            tapped_ = newValue
+            if tapped_ != nil {
+                isUserInteractionEnabled = true
+                addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
+            }
+        }
+    }
+}
+
+class TJBlur : FXBlurView{
+    var owner : UIView?
+    func onLoad(){
+        
+    }
+    init(_ owner : UIView) {
+        self.owner = owner
+        super.init(frame: CGRect.zero)
+        onLoad()
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+import FXBlurView
+import UIKit
+import SnapKit
+import Alamofire
+import AlamofireObjectMapper
+import Ji
+import MJRefresh
+import Foundation

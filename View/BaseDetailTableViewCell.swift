@@ -60,7 +60,7 @@ class BaseDetailTableViewCell: TJCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
-//        self.setup();
+        //        self.setup();
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -69,7 +69,7 @@ class BaseDetailTableViewCell: TJCell {
     override func setup()->Void{
         let selectedBackgroundView = UIView()
         self.selectedBackgroundView = selectedBackgroundView
-
+        
         self.contentView.addSubview(self.titleLabel)
         self.contentView.addSubview(self.detailMarkImageView);
         self.contentView.addSubview(self.detailLabel)
@@ -94,16 +94,20 @@ class BaseDetailTableViewCell: TJCell {
             make.left.right.bottom.equalTo(self.contentView)
             make.height.equalTo(SEPARATOR_HEIGHT)
         }
-        
-        
-        self.thmemChangedHandler = {[weak self] (style) -> Void in
-            self?.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-            self?.selectedBackgroundView!.backgroundColor = V2EXColor.colors.v2_backgroundColor
-            self?.titleLabel.textColor = V2EXColor.colors.v2_TopicListTitleColor
-            self?.detailMarkImageView.tintColor = self?.titleLabel.textColor
-            self?.detailLabel.textColor = V2EXColor.colors.v2_TopicListUserNameColor
-            self?.separator.image = createImageWithColor( V2EXColor.colors.v2_SeparatorColor )
-        }
+        self.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        self.selectedBackgroundView!.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        self.titleLabel.textColor = V2EXColor.colors.v2_TopicListTitleColor
+        self.detailMarkImageView.tintColor = self.titleLabel.textColor
+        self.detailLabel.textColor = V2EXColor.colors.v2_TopicListUserNameColor
+        self.separator.image = createImageWithColor( V2EXColor.colors.v2_SeparatorColor )
+        //        self.thmemChangedHandler = {[weak self] (style) -> Void in
+        //            self?.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
+        //            self?.selectedBackgroundView!.backgroundColor = V2EXColor.colors.v2_backgroundColor
+        //            self?.titleLabel.textColor = V2EXColor.colors.v2_TopicListTitleColor
+        //            self?.detailMarkImageView.tintColor = self?.titleLabel.textColor
+        //            self?.detailLabel.textColor = V2EXColor.colors.v2_TopicListUserNameColor
+        //            self?.separator.image = createImageWithColor( V2EXColor.colors.v2_SeparatorColor )
+        //        }
     }
     
 }

@@ -183,14 +183,15 @@ class TopicListModel:NSObject {
                     NSForegroundColorAttributeName:V2EXColor.colors.v2_TopicListTitleColor,
                 ])
             self.topicTitleAttributedString?.yy_lineSpacing = 3
-
-            //监听颜色配置文件变化，当有变化时，改变自身颜色
-            self.thmemChangedHandler = {[weak self] (style) -> Void in
-                if let str = self?.topicTitleAttributedString {
-                    str.yy_color = V2EXColor.colors.v2_TopicListTitleColor
-                    self?.topicTitleLayout = YYTextLayout(containerSize: CGSize(width: SCREEN_WIDTH-24, height: 9999), text: str)
-                }
+            if let str = self.topicTitleAttributedString {
+                str.yy_color = V2EXColor.colors.v2_TopicListTitleColor
+                self.topicTitleLayout = YYTextLayout(containerSize: CGSize(width: SCREEN_WIDTH-24, height: 9999), text: str)
             }
+            //监听颜色配置文件变化，当有变化时，改变自身颜色
+//            self.thmemChangedHandler = {[weak self] (style) -> Void in
+//                
+//                }
+//            }
         }
     }
 }

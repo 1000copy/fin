@@ -7,43 +7,7 @@ import AlamofireObjectMapper
 import Ji
 import MJRefresh
 import Cartography
-let kHomeTab = "me.fin.homeTab"
-class TJPage : UIViewController{
-    // interface
-    func onLoad (){
-        
-    }
-    func onLayout(){
-        
-    }
-    func getNavItems ()->[UIButton]{
-        return []
-    }
-    func getSubviews()->[UIView]?{
-        return []
-    }
-    // imple
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupNavigationItem()
-        if let views = getSubviews() , views.count > 0 {
-            for view in views{
-                self.view.addSubview(view)
-            }
-        }
-        onLayout()
-        onLoad()
-    }
-    func setupNavigationItem(){
-        let buttons = getNavItems()
-        if buttons.count  >=  1   {
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: buttons[0])
-        }
-        if buttons.count  >=  2   {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: buttons[1])
-        }
-    }
-}
+
 class HomeViewController: TJPage {
     var tab:String? = nil
     var currentPage = 0
@@ -52,27 +16,36 @@ class HomeViewController: TJPage {
             return TableHome.shared
         }
     }
-    override func viewWillAppear(_ animated: Bool) {
+    override func onShow(){
         Msg.send("PanningGestureEnable")
     }
-    override func viewWillDisappear(_ animated: Bool) {
+    override func onHide(){
         Msg.send("PanningGestureDisable")
     }
     override func onLoad() {
         self.navigationItem.title="V2EX";
         self.tab = Setting.shared.kHomeTab
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         refreshPage()
-        
+    }
+    var timer = SecondTimer(120)
+    override func onAppRise() {
+        if timer.isArrived {
+            self.tableView.beginScrollUp()
+        }
+    }
+    override func onAppFall(){
+        timer.begin()
     }
     func refreshPage(){
         Setting.shared.kHomeTab = tab
         self.tableView.beginScrollUp()
     }
     override func onLayout() {
-        self.tableView.snp.makeConstraints{ (make) -> Void in
-            make.top.right.bottom.left.equalTo(self.view);
+        constrain(view, tableView){
+            $1.left   == $0.left
+            $1.right  == $0.right
+            $1.bottom == $0.bottom
+            $1.top    == $0.top
         }
     }
     override func getSubviews()->[UIView]?{
@@ -109,18 +82,6 @@ class HomeViewController: TJPage {
                 self.currentPage -= 1
             }
         }
-    }
-    static var lastLeaveTime = Date()
-    func applicationWillEnterForeground(){
-        //计算上次离开的时间与当前时间差
-        //如果超过2分钟，则自动刷新本页面。
-        let interval = -1 * HomeViewController.lastLeaveTime.timeIntervalSinceNow
-        if interval > 120 {
-            self.tableView.mj_header.beginRefreshing()
-        }
-    }
-    func applicationDidEnterBackground(){
-        HomeViewController.lastLeaveTime = Date()
     }
 }
 class HomeData : TJTableDataSource{

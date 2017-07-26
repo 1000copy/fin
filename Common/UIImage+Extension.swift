@@ -42,4 +42,11 @@ extension UIImage {
         }
         return image!.withRenderingMode(.alwaysTemplate)
     }
+    class func templatedIcon(_ named:String) -> UIImage? {
+        let image = UIImage(named: named)
+        if image == nil {
+            return nil
+        }
+        return image!.withRenderingMode(.alwaysTemplate)
+    }
 }
