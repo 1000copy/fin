@@ -18,7 +18,6 @@
 		061876891C7C15BC002E9C33 /* PodsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061876881C7C15BC002E9C33 /* PodsTableViewController.swift */; };
 		0618768B1C7C19F0002E9C33 /* PodCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */; };
 		0618768D1C7C5F8C002E9C33 /* 12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0618768C1C7C5F8C002E9C33 /* 12.jpg */; };
-		0618768F1C7C6A50002E9C33 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0618768E1C7C6A50002E9C33 /* SettingsTableViewController.swift */; };
 		0623EB231C5F04630016E816 /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0623EB221C5F04630016E816 /* MemberViewController.swift */; };
 		0648F4AC1C54FC3F00475567 /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0648F4AB1C54FC3F00475567 /* Setting.swift */; };
 		064BD2651C880ADB00B55558 /* RelevantCommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064BD2641C880ADB00B55558 /* RelevantCommentsViewController.swift */; };
@@ -95,7 +94,6 @@
 		061876881C7C15BC002E9C33 /* PodsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PodsTableViewController.swift; sourceTree = "<group>"; };
 		0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PodCellTableViewCell.swift; sourceTree = "<group>"; };
 		0618768C1C7C5F8C002E9C33 /* 12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 12.jpg; sourceTree = "<group>"; };
-		0618768E1C7C6A50002E9C33 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		0623EB221C5F04630016E816 /* MemberViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberViewController.swift; sourceTree = "<group>"; };
 		0648F4AB1C54FC3F00475567 /* Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		064BD2641C880ADB00B55558 /* RelevantCommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelevantCommentsViewController.swift; sourceTree = "<group>"; };
@@ -284,7 +282,6 @@
 				068910D01C61A44D00D22B4F /* NodeTopicListViewController.swift */,
 				06E1BA321C7023D900867454 /* V2WebViewViewController.swift */,
 				061876881C7C15BC002E9C33 /* PodsTableViewController.swift */,
-				0618768E1C7C6A50002E9C33 /* SettingsTableViewController.swift */,
 				06744A521E49D4C0001E3D1B /* TwoFAViewController.swift */,
 			);
 			path = Controller;
@@ -599,7 +596,6 @@
 				06098B3F1C52171D00848159 /* LoginViewController.swift in Sources */,
 				06BA47CB1C59C95500CE2A0D /* V2LoadingView.swift in Sources */,
 				06C49B6D1C43BFAB00684CA6 /* V2ex+Define.swift in Sources */,
-				0618768F1C7C6A50002E9C33 /* SettingsTableViewController.swift in Sources */,
 				06D3002A1C6D801100547CE6 /* LogoutTableViewCell.swift in Sources */,
 				069806931CA3AA7700388DB6 /* TopicCommentModel.swift in Sources */,
 				06662CA81C4A8A370024452C /* TopicDetailModel.swift in Sources */,

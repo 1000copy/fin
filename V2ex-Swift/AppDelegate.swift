@@ -94,7 +94,7 @@ class BigBrotherWatchingYou : UIResponder{
             "pushNodesViewController":#selector(pushNodesViewController),
             "pushMoreViewController":#selector(pushMoreViewController),
             "pushMyCenterViewController":#selector(pushMyCenterViewController),
-            "pushSettingsTableViewController":#selector(pushSettingsTableViewController),
+//            "pushSettingsTableViewController":#selectopushSettingsTableViewControllerer),
             "pushPodsTableViewController":#selector(pushPodsTableViewController),
 //            "presentV2PhotoBrowser":#selector(presentV2PhotoBrowser),
             "pushV2WebViewViewController":#selector(pushV2WebViewViewController),
@@ -135,9 +135,9 @@ class BigBrotherWatchingYou : UIResponder{
     func pushPodsTableViewController(_ obj : NSNotification){
         centerNavigation?.pushViewController(PodsTableViewController(), animated: true)
     }
-    func pushSettingsTableViewController(_ obj : NSNotification){
-        centerNavigation?.pushViewController(SettingsTableViewController(), animated: true)
-    }
+//    func pushSettingsTableViewController(_ obj : NSNotification){
+//        centerNavigation?.pushViewController(SettingsTableViewController(), animated: true)
+//    }
     func pushNotificationsViewController(_ obj : NSNotification){
         let notificationsViewController = NotificationsViewController()
         centerNavigation?.pushViewController(notificationsViewController, animated: true)

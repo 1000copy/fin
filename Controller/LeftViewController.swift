@@ -40,12 +40,9 @@ class LeftTableData : TJTableDataSource{
         [
             [ MeCell.self, "me","ic_face"],
             [ NotifyCell.self, "notifications","ic_notifications_none"],
-            [ FavoriteCell.self, "favorites","ic_turned_in_not"]
-        ],
-        [
+            [ FavoriteCell.self, "favorites","ic_turned_in_not"],
             [ NodeCell.self, "nodes","ic_navigation"],
-            [ MoreCell.self, "more","ic_settings_input_svideo"],
-            ]
+        ],
     ]
     override func sectionCount() -> Int {
         return data.count
