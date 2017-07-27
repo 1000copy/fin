@@ -19,7 +19,7 @@ class TopicDetailViewController: UIViewController{
                 return _tableView!;
             }
             _tableView = TableTopicDetail();
-//            _tableView.viewControler = self
+            //            _tableView.viewControler = self
             return _tableView!;
             
         }
@@ -150,8 +150,8 @@ fileprivate class TableTopicDetail:  TJTable{
     }
     fileprivate override func cellTypes() -> [UITableViewCell.Type] {
         return [TopicDetailHeaderCell.self,TopicDetailWebViewContentCell.self,
-        TopicDetailCommentCell.self,
-        BaseDetailTableViewCell.self]
+                TopicDetailCommentCell.self,
+                BaseDetailTableViewCell.self]
     }
     override func getDataItem(_ indexPath : IndexPath) -> TableDataSourceItem{
         var item = TableDataSourceItem()
@@ -247,8 +247,8 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         guard User.shared.isLogin
             // 用safari打开是不用登录的
             || action == V2ActivityViewTopicDetailAction.explore else {
-            V2Inform("请先登录")
-            return;
+                V2Inform("请先登录")
+                return;
         }
         let topicDetailViewController = self
         switch action {
@@ -264,7 +264,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
                     else{
                         V2Error("忽略失败")
                     }
-                    })
+                })
             }
         case .favorite:
             V2BeginLoading()
@@ -379,46 +379,46 @@ extension TJCell {
 }
 fileprivate class TopicDetailHeaderCell: TJCell {
     var model : TopicDetailModel!
-//    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier);
-//        //        self.setup();
-//    }
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
+    //    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    //        super.init(style: style, reuseIdentifier: reuseIdentifier);
+    //        //        self.setup();
+    //    }
+    //    required init?(coder aDecoder: NSCoder) {
+    //        super.init(coder: aDecoder)
+    //    }
     fileprivate override func load(_ data: PCTableDataSource, _ item: TableDataSourceItem, _ indexPath: IndexPath) {
         model = TopicDetailModel()
         model.fromDict(item)
-        self.userNameLabel.text = model.userName;
-        self.dateAndLastPostUserLabel.text = model.date
+        self._user.text = model.userName;
+        self._date.text = model.date
         self.topicTitleLabel.text = model.topicTitle;
         
         if let avata = model.avata {
-            self.avatarImageView.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
+            self._avatar.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
         }
         
         if let node = model.nodeName{
-            self.nodeNameLabel.text = "  " + node + "  "
+            self._node.text = "  " + node + "  "
         }
     }
     //fileprivate class TopicDetailHeaderCell: UITableViewCell {
     /// 头像
-    var avatarImageView: UIImageView = {
-        let imageview = UIImageView();
+    var _avatar: TJImage = {
+        let imageview = TJImage();
         imageview.contentMode=UIViewContentMode.scaleAspectFit;
         imageview.layer.cornerRadius = 3;
         imageview.layer.masksToBounds = true;
         return imageview
     }()
     /// 用户名
-    var userNameLabel: UILabel = {
-        let label = UILabel();
+    var _user: TJLabel = {
+        let label = TJLabel();
         label.textColor = V2EXColor.colors.v2_TopicListUserNameColor;
         label.font=v2Font(14);
         return label
     }()
     /// 日期 和 最后发送人
-    var dateAndLastPostUserLabel: UILabel = {
+    var _date: UILabel = {
         let label = UILabel();
         label.textColor=V2EXColor.colors.v2_TopicListDateColor;
         label.font=v2Font(12);
@@ -426,7 +426,7 @@ fileprivate class TopicDetailHeaderCell: TJCell {
     }()
     
     /// 节点
-    var nodeNameLabel: UILabel = {
+    var _node: UILabel = {
         let label = UILabel();
         label.textColor = V2EXColor.colors.v2_TopicListDateColor
         label.font = v2Font(11)
@@ -450,63 +450,55 @@ fileprivate class TopicDetailHeaderCell: TJCell {
     
     
     /// 装上面定义的那些元素的容器
-    var contentPanel:UIView = {
-        let view = UIView()
+    var _panel:TJView = {
+        let view = TJView()
         view.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
         return view
     }()
     
-    weak var itemModel:TopicDetailModel?
     var nodeClickHandler:(() -> Void)?
-    override func setup()->Void{
+    override func onLoad()->Void{
         self.selectionStyle = .none
         self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
         
-        self.contentView.addSubview(self.contentPanel);
-        self.contentPanel.addSubview(self.avatarImageView);
-        self.contentPanel.addSubview(self.userNameLabel);
-        self.contentPanel.addSubview(self.dateAndLastPostUserLabel);
-        self.contentPanel.addSubview(self.nodeNameLabel)
-        self.contentPanel.addSubview(self.topicTitleLabel);
-        
-        self.setupLayout()
-        
+        self.contentView.addSubview(self._panel);
+        self._panel.addSubview(self._avatar);
+        self._panel.addSubview(self._user);
+        self._panel.addSubview(self._date);
+        self._panel.addSubview(self._node)
+        self._panel.addSubview(self.topicTitleLabel);
         //点击用户头像，跳转到用户主页
-        self.avatarImageView.isUserInteractionEnabled = true
-        self.userNameLabel.isUserInteractionEnabled = true
-        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailHeaderCell.userNameTap(_:)))
-        self.avatarImageView.addGestureRecognizer(userNameTap)
-        userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailHeaderCell.userNameTap(_:)))
-        self.userNameLabel.addGestureRecognizer(userNameTap)
-        self.nodeNameLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(nodeClick)))
+        self._avatar.tap = self.userNameTap
+        self._user.tap = self.userNameTap
+        self._node.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(nodeClick)))
         
     }
     
-    fileprivate func setupLayout(){
-        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
-            make.left.top.equalTo(self.contentPanel).offset(12);
+    override func onLayout() {
+        self._avatar.snp.makeConstraints{ (make) -> Void in
+            make.left.top.equalTo(self._panel).offset(12);
             make.width.height.equalTo(35);
         }
-        self.userNameLabel.snp.makeConstraints{ (make) -> Void in
-            make.left.equalTo(self.avatarImageView.snp.right).offset(10);
-            make.top.equalTo(self.avatarImageView);
+        self._user.snp.makeConstraints{ (make) -> Void in
+            make.left.equalTo(self._avatar.snp.right).offset(10);
+            make.top.equalTo(self._avatar);
         }
-        self.dateAndLastPostUserLabel.snp.makeConstraints{ (make) -> Void in
-            make.bottom.equalTo(self.avatarImageView);
-            make.left.equalTo(self.userNameLabel);
+        self._date.snp.makeConstraints{ (make) -> Void in
+            make.bottom.equalTo(self._avatar);
+            make.left.equalTo(self._user);
         }
-        self.nodeNameLabel.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(self.userNameLabel);
-            make.right.equalTo(self.contentPanel.snp.right).offset(-10)
-            make.bottom.equalTo(self.userNameLabel).offset(1);
-            make.top.equalTo(self.userNameLabel).offset(-1);
+        self._node.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(self._user);
+            make.right.equalTo(self._panel.snp.right).offset(-10)
+            make.bottom.equalTo(self._user).offset(1);
+            make.top.equalTo(self._user).offset(-1);
         }
         self.topicTitleLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(self.avatarImageView.snp.bottom).offset(12);
-            make.left.equalTo(self.avatarImageView);
-            make.right.equalTo(self.contentPanel).offset(-12);
+            make.top.equalTo(self._avatar.snp.bottom).offset(12);
+            make.left.equalTo(self._avatar);
+            make.right.equalTo(self._panel).offset(-12);
         }
-        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+        self._panel.snp.makeConstraints{ (make) -> Void in
             make.top.left.right.equalTo(self.contentView);
             make.bottom.equalTo(self.topicTitleLabel.snp.bottom).offset(12);
             make.bottom.equalTo(self.contentView).offset(SEPARATOR_HEIGHT * -1);
@@ -515,26 +507,9 @@ fileprivate class TopicDetailHeaderCell: TJCell {
     func nodeClick() {
         Msg.send("openNodeTopicList",[self.model?.node,self.model?.nodeName])
     }
-    func userNameTap(_ sender:UITapGestureRecognizer) {
-        if let _ = self.itemModel , let username = itemModel?.userName {
+    func userNameTap() {
+        if let _ = self.model , let username = model?.userName {
             Msg.send("pushMemberViewController", [username])
-        }
-    }
-    
-    func bind(_ model:TopicDetailModel){
-        
-        self.itemModel = model
-        
-        self.userNameLabel.text = model.userName;
-        self.dateAndLastPostUserLabel.text = model.date
-        self.topicTitleLabel.text = model.topicTitle;
-        
-        if let avata = model.avata {
-            self.avatarImageView.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
-        }
-        
-        if let node = model.nodeName{
-            self.nodeNameLabel.text = "  " + node + "  "
         }
     }
 }
@@ -553,14 +528,14 @@ class TopicDetailCommentCell: TJCell{
     func bind(_ model:TopicCommentModel){
         
         if let avata = model.avata {
-            self.avatarImageView.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
+            self._avatar.fin_setImageWithUrl(URL(string: "https:" + avata)!, placeholderImage: nil, imageModificationClosure: fin_defaultImageModification())
         }
         
         if self.itemModel?.number == model.number && self.itemModel?.userName == model.userName {
             return;
         }
         
-        self.userNameLabel.text = model.userName;
+        self._user.text = model.userName;
         self.dateLabel.text = String(format: "%i楼  %@", model.number, model.date ?? "")
         
         if let layout = model.getTextLayout() {
@@ -571,19 +546,19 @@ class TopicDetailCommentCell: TJCell{
         self.itemModel = model
     }
     /// 头像
-    var avatarImageView: UIImageView = {
-        let avatarImageView = UIImageView()
-        avatarImageView.contentMode=UIViewContentMode.scaleAspectFit
-        avatarImageView.layer.cornerRadius = 3
-        avatarImageView.layer.masksToBounds = true
-        return avatarImageView
+    var _avatar: TJImage = {
+        let _avatar = TJImage()
+        _avatar.contentMode=UIViewContentMode.scaleAspectFit
+        _avatar.layer.cornerRadius = 3
+        _avatar.layer.masksToBounds = true
+        return _avatar
     }()
     /// 用户名
-    var userNameLabel: UILabel = {
-        let userNameLabel = UILabel()
-        userNameLabel.textColor = V2EXColor.colors.v2_TopicListUserNameColor
-        userNameLabel.font=v2Font(14)
-        return userNameLabel
+    var _user: TJLabel = {
+        let _user = TJLabel()
+        _user.textColor = V2EXColor.colors.v2_TopicListUserNameColor
+        _user.font=v2Font(14)
+        return _user
     }()
     /// 日期 和 最后发送人
     var dateLabel: UILabel = {
@@ -604,8 +579,8 @@ class TopicDetailCommentCell: TJCell{
     }()
     
     /// 装上面定义的那些元素的容器
-    var contentPanel: UIView = {
-        let view = UIView()
+    var _panel: TJView = {
+        let view = TJView()
         view.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
         return view
     }()
@@ -634,61 +609,59 @@ class TopicDetailCommentCell: TJCell{
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
-    override func setup()->Void{
+    func userNameTap() {
+        if let _ = self.itemModel , let username = itemModel?.userName {
+            Msg.send("pushMemberViewController",[username])
+        }
+    }
+    override func onLoad()->Void{
         self.backgroundColor=V2EXColor.colors.v2_backgroundColor;
         
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = V2EXColor.colors.v2_backgroundColor
         self.selectedBackgroundView = selectedBackgroundView
         
-        self.contentView.addSubview(self.contentPanel);
-        self.contentPanel.addSubview(self.avatarImageView);
-        self.contentPanel .addSubview(self.userNameLabel);
-        self.contentPanel.addSubview(self.favoriteIconView)
-        self.contentPanel.addSubview(self.favoriteLabel)
-        self.contentPanel.addSubview(self.dateLabel);
-        self.contentPanel.addSubview(self.commentLabel);
+        self.contentView.addSubview(self._panel);
+        self._panel.addSubview(self._avatar);
+        self._panel .addSubview(self._user);
+        self._panel.addSubview(self.favoriteIconView)
+        self._panel.addSubview(self.favoriteLabel)
+        self._panel.addSubview(self.dateLabel);
+        self._panel.addSubview(self.commentLabel);
         
-        self.setupLayout()
-        
-        self.avatarImageView.backgroundColor = self.contentPanel.backgroundColor
-        self.userNameLabel.backgroundColor = self.contentPanel.backgroundColor
-        self.dateLabel.backgroundColor = self.contentPanel.backgroundColor
-        self.commentLabel.backgroundColor = self.contentPanel.backgroundColor
-        self.favoriteIconView.backgroundColor = self.contentPanel.backgroundColor
-        self.favoriteLabel.backgroundColor = self.contentPanel.backgroundColor
+        self._avatar.backgroundColor = self._panel.backgroundColor
+        self._user.backgroundColor = self._panel.backgroundColor
+        self.dateLabel.backgroundColor = self._panel.backgroundColor
+        self.commentLabel.backgroundColor = self._panel.backgroundColor
+        self.favoriteIconView.backgroundColor = self._panel.backgroundColor
+        self.favoriteLabel.backgroundColor = self._panel.backgroundColor
         
         //点击用户头像，跳转到用户主页
-        self.avatarImageView.isUserInteractionEnabled = true
-        self.userNameLabel.isUserInteractionEnabled = true
-        var userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailCommentCell.userNameTap(_:)))
-        self.avatarImageView.addGestureRecognizer(userNameTap)
-        userNameTap = UITapGestureRecognizer(target: self, action: #selector(TopicDetailCommentCell.userNameTap(_:)))
-        self.userNameLabel.addGestureRecognizer(userNameTap)
-        
+        _avatar.tap = self.userNameTap
+        _user.tap = self.userNameTap
         //长按手势
-        self.contentView .addGestureRecognizer(
-            UILongPressGestureRecognizer(target: self,
-                                         action: #selector(TopicDetailCommentCell.longPressHandle(_:))
-            )
-        )
+        self._panel.longPress = self.longPressHandle
+        //        self._panel .addGestureRecognizer(
+        //            UILongPressGestureRecognizer(target: self,
+        //                                         action: #selector(TopicDetailCommentCell.longPressHandle(_:))
+        //            )
+        //        )
     }
-    func setupLayout(){
-        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+    override func onLayout(){
+        self._panel.snp.makeConstraints{ (make) -> Void in
             make.top.left.right.equalTo(self.contentView);
         }
-        self.avatarImageView.snp.makeConstraints{ (make) -> Void in
+        self._avatar.snp.makeConstraints{ (make) -> Void in
             make.left.top.equalTo(self.contentView).offset(12);
             make.width.height.equalTo(35);
         }
-        self.userNameLabel.snp.makeConstraints{ (make) -> Void in
-            make.left.equalTo(self.avatarImageView.snp.right).offset(10);
-            make.top.equalTo(self.avatarImageView);
+        self._user.snp.makeConstraints{ (make) -> Void in
+            make.left.equalTo(self._avatar.snp.right).offset(10);
+            make.top.equalTo(self._avatar);
         }
         self.favoriteIconView.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(self.userNameLabel);
-            make.left.equalTo(self.userNameLabel.snp.right).offset(10)
+            make.centerY.equalTo(self._user);
+            make.left.equalTo(self._user.snp.right).offset(10)
             make.width.height.equalTo(10)
         }
         self.favoriteLabel.snp.makeConstraints{ (make) -> Void in
@@ -696,64 +669,22 @@ class TopicDetailCommentCell: TJCell{
             make.centerY.equalTo(self.favoriteIconView)
         }
         self.dateLabel.snp.makeConstraints{ (make) -> Void in
-            make.bottom.equalTo(self.avatarImageView);
-            make.left.equalTo(self.userNameLabel);
+            make.bottom.equalTo(self._avatar);
+            make.left.equalTo(self._user);
         }
         self.commentLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(self.avatarImageView.snp.bottom).offset(12);
-            make.left.equalTo(self.avatarImageView);
-            make.right.equalTo(self.contentPanel).offset(-12);
-            make.bottom.equalTo(self.contentPanel.snp.bottom).offset(-12)
+            make.top.equalTo(self._avatar.snp.bottom).offset(12);
+            make.left.equalTo(self._avatar);
+            make.right.equalTo(self._panel).offset(-12);
+            make.bottom.equalTo(self._panel.snp.bottom).offset(-12)
         }
         
-        self.contentPanel.snp.makeConstraints{ (make) -> Void in
+        self._panel.snp.makeConstraints{ (make) -> Void in
             make.bottom.equalTo(self.contentView.snp.bottom).offset(-SEPARATOR_HEIGHT);
         }
     }
-    func userNameTap(_ sender:UITapGestureRecognizer) {
-        if let _ = self.itemModel , let username = itemModel?.userName {
-            Msg.send("pushMemberViewController",[username])
-        }
-    }
+    
 }
-
-//MARK: - 点击图片
-//extension TopicDetailCommentCell : V2CommentAttachmentImageTapDelegate ,V2PhotoBrowserDelegate {
-//    func V2CommentAttachmentImageSingleTap(_ imageView: V2CommentAttachmentImage) {
-//        Msg.send("presentV2PhotoBrowser",[self,imageView.index])
-////        let photoBrowser = V2PhotoBrowser(delegate: self)
-////        photoBrowser.currentPageIndex = imageView.index
-////        V2Client.sharedInstance.topNavigationController.present(photoBrowser, animated: true, completion: nil)
-//    }
-//
-//    //V2PhotoBrowser Delegate
-//    func numberOfPhotosInPhotoBrowser(_ photoBrowser: V2PhotoBrowser) -> Int {
-//        return self.itemModel!.images.count
-//    }
-//    func photoAtIndexInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> V2Photo {
-//        let photo = V2Photo(url: URL(string: self.itemModel!.images[index] as! String)!)
-//        return photo
-//    }
-//    func guideContentModeInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIViewContentMode {
-//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
-//            return image.contentMode
-//        }
-//        return .center
-//    }
-//    func guideFrameInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> CGRect {
-//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
-//            return image .convert(image.bounds, to: UIApplication.shared.keyWindow!)
-//        }
-//        return CGRect.zero
-//    }
-//    func guideImageInPhotoBrowser(_ photoBrowser: V2PhotoBrowser, index: Int) -> UIImage? {
-//        if let attachment = self.itemModel!.textLayout!.attachments?[index] , let image = attachment.content  as? V2CommentAttachmentImage{
-//            return image.image
-//        }
-//        return nil
-//    }
-//}
-
 //MARK: - 长按复制功能
 extension TopicDetailCommentCell {
     func longPressHandle(_ longPress:UILongPressGestureRecognizer) -> Void {
@@ -768,7 +699,6 @@ extension TopicDetailCommentCell {
             menuController.setTargetRect(self.frame, in: self.superview!)
             menuController.setMenuVisible(true, animated: true);
         }
-        
     }
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         if (action == #selector(TopicDetailCommentCell.copyText)){
@@ -781,7 +711,7 @@ extension TopicDetailCommentCell {
     }
     
     func copyText() -> Void {
-//        UIPasteboard.general.string = self.itemModel?.textLayout?.text.string
+        //        UIPasteboard.general.string = self.itemModel?.textLayout?.text.string
         UIPasteboard.general.string = self.itemModel?.getText()
     }
 }

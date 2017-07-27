@@ -113,6 +113,12 @@ class CellBase : UITableViewCell {
     
     func action(_ indexPath : IndexPath){
     }
+    func onLoad(){
+        
+    }
+    func onLayout(){
+        
+    }
     // imple
     func deselect(){
         ownerTableView?.deselectRow(at:(ownerTableView?.indexPath(for: self))!,animated: true)
@@ -120,6 +126,8 @@ class CellBase : UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier);
         self.setup();
+        self.onLoad()
+        self.onLayout()
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -610,10 +618,10 @@ class TJLabel : UILabel{
         fatalError("init(coder:) has not been implemented")
     }
     func tap(_ sender:UITapGestureRecognizer) {
-        tapped?()
+        tap?()
     }
     var tapped_ : Callback?
-    var tapped : Callback?{
+    var tap : Callback?{
         get {
             return tapped_
         }
@@ -767,10 +775,10 @@ class TJImage :UIImageView{
         fatalError("init(coder:) has not been implemented")
     }
     func tap(_ sender:UITapGestureRecognizer) {
-        tapped?()
+        tap?()
     }
     var tapped_ : Callback?
-    var tapped : Callback?{
+    var tap : Callback?{
         get {
             return tapped_
         }
@@ -796,6 +804,53 @@ class TJBlur : FXBlurView{
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+class TJView :UIView{
+    func onLoad(){
+        
+    }
+    var owner : UIView!
+    convenience init() {
+        self.init(nil)
+    }
+    init(_ owner : UIView?) {
+        super.init(frame: CGRect.zero)
+        self.owner = owner
+        onLoad()
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    func tap(_ sender:UITapGestureRecognizer) {
+        tap?()
+    }
+    var tapped_ : Callback?
+    var tap : Callback?{
+        get {
+            return tapped_
+        }
+        set{
+            tapped_ = newValue
+            if tapped_ != nil {
+                isUserInteractionEnabled = true
+                addGestureRecognizer( UITapGestureRecognizer(target: self, action: #selector(tap(_:))))
+            }
+        }
+    }
+    var longPress :((_ sender:UILongPressGestureRecognizer) -> Void)?{
+        didSet{
+            if longPress != nil {
+                isUserInteractionEnabled = true
+                let e = UILongPressGestureRecognizer(target: self,
+                                             action: #selector(longPressHandle(_:))
+                )
+                addGestureRecognizer(e)
+            }
+        }
+    }
+    func longPressHandle(_ sender:UILongPressGestureRecognizer){
+      longPress?(sender)
     }
 }
 import FXBlurView

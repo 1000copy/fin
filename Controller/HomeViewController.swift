@@ -259,8 +259,8 @@ class HomeTopicListTableViewCell: TJCell {
         self.setupLayout()
         self.backgroundColor = V2EXColor.colors.v2_backgroundColor
         self._panel.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
-        self._avatar.tapped = userNameTap
-        self._user.tapped = userNameTap
+        self._avatar.tap = userNameTap
+        self._user.tap = userNameTap
     }
     func userNameTap() {
         if let _ = self.itemModel , let username = itemModel?.userName {
