@@ -41,7 +41,7 @@ extension DataRequest {
     }
     
     @discardableResult
-    public func responseJiHtml(queue: DispatchQueue? = nil,  completionHandler: @escaping (DataResponse<Ji>) -> Void) -> Self {
+    public func responseJiHtml(completionHandler: @escaping (DataResponse<Ji>) -> Void) -> Self {
         return response(responseSerializer: Alamofire.DataRequest.JIHTMLResponseSerializer(), completionHandler: completionHandler);
     }
 }

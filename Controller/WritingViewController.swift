@@ -119,7 +119,7 @@ class ReplyingViewController:WritingViewController {
         }
 
         V2ProgressHUD.showWithClearMask()
-        TopicCommentModel.replyWithTopicId(self.topicModel!, content: self.textView!.text ) {
+        TopicCommentModelHTTP.replyWithTopicId(self.topicModel!, content: self.textView!.text ) {
             (response) in
             if response.success {
                 V2Success("回复成功!")

@@ -45,7 +45,7 @@ class TwoFAViewController: UIViewController ,UITextFieldDelegate{
     func next(){
         if let code = self.codeTextField.text , code.Lenght == 6 {
             V2BeginLoading()
-            UserModel.twoFALogin(code: code , completionHandler: { (success) in
+            UserModelHTTP.twoFALogin(code: code , completionHandler: { (success) in
                 if success {
                     V2EndLoading()
                     self.dismiss(animated: true, completion: nil)

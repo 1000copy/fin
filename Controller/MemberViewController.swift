@@ -51,7 +51,7 @@ class MemberViewController: TJPage,UIScrollViewDelegate{
         self.refreshData()
     }
     func refreshData(){
-        MemberModel.getMemberInfo(self.username!, completionHandler: { (response) -> Void in
+        MemberModelHTTP.getMemberInfo(self.username!, completionHandler: { (response) -> Void in
             if response.success {
                 if let model = response.value{
                     self.getSuccess(model)
@@ -193,14 +193,14 @@ extension MemberViewController{
     }
     func Follow() {
         if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
-            MemberModel.follow(userId, userToken: userToken, type: .followed, completionHandler: nil)
+            MemberModelHTTP.follow(userId, userToken: userToken, type: .followed, completionHandler: nil)
             self.tableView.model?.followState = .followed
             V2Success("关注成功")
         }
     }
     func UnFollow() {
         if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
-            MemberModel.follow(userId, userToken: userToken, type: .unFollowed, completionHandler: nil)
+            MemberModelHTTP.follow(userId, userToken: userToken, type: .unFollowed, completionHandler: nil)
             self.tableView.model?.followState = .unFollowed
             V2Success("取消关注了~")
         }
@@ -216,14 +216,14 @@ extension MemberViewController{
     }
     func Block() {
         if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
-            MemberModel.block(userId, userToken: userToken, type: .blocked, completionHandler: nil)
+            MemberModelHTTP.block(userId, userToken: userToken, type: .blocked, completionHandler: nil)
             self.tableView.model?.blockState = .blocked
             V2Success("屏蔽成功")
         }
     }
     func UnBlock() {
         if let userId = self.tableView.model!.userId, let userToken = self.tableView.model!.userToken {
-            MemberModel.block(userId, userToken: userToken, type: .unBlocked, completionHandler: nil)
+            MemberModelHTTP.block(userId, userToken: userToken, type: .unBlocked, completionHandler: nil)
             self.tableView.model?.blockState = .unBlocked
             V2Success("取消屏蔽了~")
         }

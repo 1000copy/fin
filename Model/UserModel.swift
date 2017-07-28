@@ -27,7 +27,7 @@ class UserModel: BaseJsonModel {
     var avatar_normal:String?
     var avatar_large:String?
     var created:String?
-
+    // used by UserModel.getUserInfoByUsername
     override func mapping(map: Map) {
         status <- map["status"]
         id <- map["id"]
@@ -48,7 +48,7 @@ class UserModel: BaseJsonModel {
 }
 
 //MARK: - Request
-extension UserModel{
+class UserModelHTTP{
     /**
      登录
 
@@ -73,7 +73,7 @@ extension UserModel{
                 let passwordStr:String? = jiHtml.xPath("//*[@id='Wrapper']/div/div[1]/div[2]/form/table/tr[2]/td[2]/input[@class='sl']")?.first?["name"]
 
                 if let onceStr = onceStr , let usernameStr = usernameStr, let passwordStr = passwordStr {
-                    UserModel.Login(username, password: password, once: onceStr, usernameFieldName: usernameStr, passwordFieldName: passwordStr , completionHandler: completionHandler)
+                    UserModelHTTP.Login(username, password: password, once: onceStr, usernameFieldName: usernameStr, passwordFieldName: passwordStr , completionHandler: completionHandler)
                     return;
                 }
             }

@@ -59,10 +59,12 @@ class HomeViewController: TJPage {
     }
     
     func refresh(_ cb : @escaping  Callback){
-        TopicListModel.get(tab){
-            self.tableView.topicList = $0
-            self.tableView.reloadData()
-            self.currentPage = 0
+        TopicListModelHTTP.getTopicList(tab){response in
+            if response.success {
+                self.tableView.topicList = response.value
+                self.tableView.reloadData()
+                self.currentPage = 0
+            }
             cb()
         }
     }
@@ -72,13 +74,14 @@ class HomeViewController: TJPage {
             return;
         }
         self.currentPage += 1
-        
-        TopicListModel.get(tab,self.currentPage){
-            self.tableView.topicList = $0
-            self.tableView.reloadData()
-            self.currentPage = 0
+        print(currentPage)
+        TopicListModelHTTP.getTopicList(tab,page:currentPage){response in
+            if response.success {
+                self.tableView.topicList! += response.value!
+                self.tableView.reloadData()
+            }
             cb(true)
-            if $0?.count == 0 {
+            if response.value?.count == 0 {
                 self.currentPage -= 1
             }
         }
@@ -219,6 +222,7 @@ fileprivate class NotificationMenuButton: TJButton {
     }
 }
 class HomeTopicListTableViewCell: TJCell {
+    var model : TopicListModel?
     override func load(_ data : PCTableDataSource,_ item : TableDataSourceItem,_ indexPath : IndexPath){
         let model = TopicListModel()
         model.fromDict(item)

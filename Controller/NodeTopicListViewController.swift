@@ -72,7 +72,7 @@ class NodeTopicListViewController: UIViewController   {
     }
     var currentPage = 1
     func refresh(_ cb : @escaping Callback){
-        TopicListModel.getTopicList(self.node!.nodeId!, page: 1){
+        TopicListModelHTTP.getTopicList(self.node!.nodeId!, page: 1){
             [weak self](response:V2ValueResponse<([TopicListModel],String?)>) -> Void in
             if response.success {
                 self?._tableView.topicList = response.value?.0
@@ -89,7 +89,7 @@ class NodeTopicListViewController: UIViewController   {
             return;
         }
         self.currentPage += 1
-        TopicListModel.getTopicList(self.node!.nodeId!, page: self.currentPage){
+        TopicListModelHTTP.getTopicList(self.node!.nodeId!, page: self.currentPage){
             [weak self](response:V2ValueResponse<([TopicListModel],String?)>) -> Void in
             if response.success {
                 if let weakSelf = self , let value = response.value  {
@@ -159,12 +159,12 @@ class FollowButton : ButtonBase{
     }
     func toggleFavoriteState(){
         if(self.favorited){
-            TopicListModel.favorite(self.nodeId!, type: 0)
+            TopicListModelHTTP.favorite(self.nodeId!, type: 0)
             self.favorited = false
             V2Success("取消收藏了~")
         }
         else{
-            TopicListModel.favorite(self.nodeId!, type: 1)
+            TopicListModelHTTP.favorite(self.nodeId!, type: 1)
             self.favorited = true
             V2Success("收藏成功")
         }

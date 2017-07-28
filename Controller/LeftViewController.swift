@@ -11,7 +11,7 @@ class LeftViewController: TJPage{
             make.top.right.bottom.left.equalTo(self.view);
         }
         if User.shared.isLogin {
-            UserModel.refresh(User.shared.username!)
+            UserModelHTTP.refresh(User.shared.username!)
         }
     }
 }

@@ -39,7 +39,7 @@ class NotificationsViewController: UIViewController{
         self.tableView.beginScrollUp()
     }
     func refresh(_ cb : @escaping Callback){
-        NotificationsModel.getNotifications {[weak self] (response) -> Void in
+        NotificationsModelHTTP.getNotifications {[weak self] (response) -> Void in
             if response.success && response.value != nil {
                 if let weakSelf = self{
                     weakSelf.tableView.notificationsArray = response.value!

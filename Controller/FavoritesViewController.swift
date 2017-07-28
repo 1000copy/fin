@@ -54,7 +54,7 @@ fileprivate class FavTable : TJTable{
     var currentPage = 1
     func refresh(_ cb : @escaping Callback){
         self.currentPage = 1
-        TopicListModel.getFavoriteList{
+        TopicListModelHTTP.getFavoriteList{
             [weak self](response) -> Void in
             if response.success {
                 if let weakSelf = self , let list = response.value?.0 , let maxPage = response.value?.1{
@@ -77,7 +77,7 @@ fileprivate class FavTable : TJTable{
             return;
         }
         self.currentPage += 1
-        TopicListModel.getFavoriteList(self.currentPage) {[weak self] (response) -> Void in
+        TopicListModelHTTP.getFavoriteList(self.currentPage) {[weak self] (response) -> Void in
             if response.success {
                 if let weakSelf = self ,let list = response.value?.0 {
                     weakSelf.topicList! += list

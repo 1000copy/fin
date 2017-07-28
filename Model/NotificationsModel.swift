@@ -67,7 +67,7 @@ class NotificationsModel: NSObject,BaseHtmlModelProtocol {
 
 
 //MARK: - Request
-extension NotificationsModel {
+class NotificationsModelHTTP {
     class func getNotifications(_ completionHandler: ((V2ValueResponse<[NotificationsModel]>) -> Void)? = nil){
         
         Alamofire.request(V2EXURL+"notifications", headers: MOBILE_CLIENT_HEADERS).responseJiHtml { (response) in

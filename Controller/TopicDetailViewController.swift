@@ -54,7 +54,7 @@ class TopicDetailViewController: UIViewController{
     
     func getData(_ cb : @escaping Callback){
         //根据 topicId 获取 帖子信息 、回复。
-        TopicDetailModel.getTopicDetailById(self.topicId){
+        TopicDetailModelHTTP.getTopicDetailById(self.topicId){
             (response:V2ValueResponse<(TopicDetailModel?,[TopicCommentModel])>) -> Void in
             if response.success {
                 if let aModel = response.value!.0{
@@ -92,7 +92,7 @@ class TopicDetailViewController: UIViewController{
             cb(false)
             return;
         }
-        TopicDetailModel.getTopicCommentsById(self.topicId, page: self.currentPage) { (response) -> Void in
+        TopicDetailModelHTTP.getTopicCommentsById(self.topicId, page: self.currentPage) { (response) -> Void in
             if response.success {
                 self._tableView.commentsArray += response.value!
                 self.tableView.reloadData()
@@ -255,7 +255,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         case .block:
             V2BeginLoading()
             if let topicId = topicDetailViewController._tableView.model?.topicId  {
-                TopicDetailModel.ignoreTopicWithTopicId(topicId, completionHandler: {(response) -> Void in
+                TopicDetailModelHTTP.ignoreTopicWithTopicId(topicId, completionHandler: {(response) -> Void in
                     if response.success {
                         V2Success("忽略成功")
                         let _ = topicDetailViewController.navigationController?.popViewController(animated: true)
@@ -269,7 +269,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         case .favorite:
             V2BeginLoading()
             if let topicId = topicDetailViewController._tableView.model?.topicId ,let token = topicDetailViewController._tableView.model?.token {
-                TopicDetailModel.favoriteTopicWithTopicId(topicId, token: token, completionHandler: { (response) -> Void in
+                TopicDetailModelHTTP.favoriteTopicWithTopicId(topicId, token: token, completionHandler: { (response) -> Void in
                     if response.success {
                         V2Success("收藏成功")
                     }
@@ -281,7 +281,7 @@ extension TopicDetailViewController: V2ActivityViewDataSource {
         case .grade:
             V2BeginLoading()
             if let topicId = topicDetailViewController._tableView.model?.topicId ,let token = topicDetailViewController._tableView.model?.token {
-                TopicDetailModel.topicThankWithTopicId(topicId, token: token, completionHandler: { (response) -> Void in
+                TopicDetailModelHTTP.topicThankWithTopicId(topicId, token: token, completionHandler: { (response) -> Void in
                     if response.success {
                         V2Success("成功送了一波铜币")
                     }
@@ -347,7 +347,7 @@ fileprivate class Sheet : UIView,UIActionSheetDelegate {
         item.favorites += 1
         table.reloadRows(at: [IndexPath(row: row as Int, section: 1)], with: .none)
         
-        TopicCommentModel.replyThankWithReplyId(item.replyId!, token: table.model!.token!) {
+        TopicCommentModelHTTP.replyThankWithReplyId(item.replyId!, token: table.model!.token!) {
             [weak item, weak self](response) in
             if response.success {
             }

@@ -80,7 +80,7 @@ fileprivate class Table1 : TableBase{
         let user = self.users[alertView.row]
         if let username = user.username,let password = user.password {
             V2BeginLoadingWithStatus("正在登录")
-            UserModel.Login(username, password: password){
+            UserModelHTTP.Login(username, password: password){
                 (response:V2ValueResponse<String> , is2FALoggedIn:Bool) -> Void in
                 if response.success {
                     V2Success("登录成功")
@@ -89,7 +89,7 @@ fileprivate class Table1 : TableBase{
                     //保存下用户名
                     Setting.shared.kUserName = username
                     //获取用户信息
-                    UserModel.getUserInfoByUsername(username, completionHandler: { (response) -> Void in
+                    UserModelHTTP.getUserInfoByUsername(username, completionHandler: { (response) -> Void in
                         self.reloadData()
                     })
                     if is2FALoggedIn {

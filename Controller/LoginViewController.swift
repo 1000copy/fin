@@ -88,7 +88,7 @@ class LoginViewController: UIViewController {
             return;
         }
         V2BeginLoadingWithStatus("正在登录")
-        UserModel.Login(userName, password: password){
+        UserModelHTTP.Login(userName, password: password){
             (response:V2ValueResponse<String> , is2FALoggedIn:Bool) -> Void in
             if response.success {
                 V2Success("登录成功")
@@ -105,7 +105,7 @@ class LoginViewController: UIViewController {
                 }
 
                 //获取用户信息
-                UserModel.getUserInfoByUsername(username,completionHandler: nil)
+                UserModelHTTP.getUserInfoByUsername(username,completionHandler: nil)
                 self.dismiss(animated: true){
                     if is2FALoggedIn {
                         Msg.send("presentTwoFAViewController")

@@ -112,7 +112,7 @@ class TopicDetailModel:NSObject,BaseHtmlModelProtocol {
 
 
 //MARK: -  Request
-extension TopicDetailModel {
+class TopicDetailModelHTTP {
     class func getTopicDetailById(
         _ topicId: String,
         completionHandler: @escaping (V2ValueResponse<(TopicDetailModel?,[TopicCommentModel])>) -> Void
