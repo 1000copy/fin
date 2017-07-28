@@ -157,6 +157,16 @@ class TJHttp{
     let USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4";
     var MOBILE_CLIENT_HEADERS : [String:String] = [:]
     @discardableResult
+    public func responseNode(_ url: String,_ parameters: Parameters? = nil,_ xpath:String,
+                             completionHandler:@escaping (Ji,JiNode?,[JiNode]?,Bool) -> Void){
+        responseJi(url,parameters){response in
+            if  let jiHtml = response.result.value{
+                if let aRootNode = jiHtml.xPath(xpath){
+                    completionHandler(jiHtml,jiHtml.rootNode, aRootNode,response.result.isSuccess)
+                }
+            }
+        }
+    }
     public func responseJi(_ url: String,_ parameters: Parameters? = nil,completionHandler:@escaping (DataResponse<Ji>) -> Void){
         var href = url
         if !url.hasPrefix("https://"){
@@ -213,65 +223,49 @@ class TopicListModelHTTP {
             params["p"] = "\(page)"
             url = "recent"
         }
-        TJHttp().responseJi(url,params) { (response) -> Void in
-            var resultArray:[TopicListModel] = []
-            if  let jiHtml = response.result.value{
-                if let aRootNode = jiHtml.xPath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='cell item']"){
-                    for aNode in aRootNode {
-                        let topic = TopicListModel(rootNode:aNode)
-                        resultArray.append(topic);
-                    }
-                    //更新通知数量
-                    User.shared.getNotificationsCount(jiHtml.rootNode!)
+        let xpath = "//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='cell item']"
+        TJHttp().responseNode(url,params,xpath) {JiHtml,jiRootNode, aRootNode ,isSuccess -> Void in
+            var resultArray : [TopicListModel] = []
+            if aRootNode != nil {
+                for aNode in aRootNode! {
+                    let topic = TopicListModel(rootNode:aNode)
+                    resultArray.append(topic);
                 }
-                DispatchQueue.global().async {
-                    //领取奖励
-                    if let aRootNode = jiHtml.xPath("//body/div[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='inner']/a[@href='/mission/daily']")?.first {
-                        if aRootNode.content == "领取今日的登录奖励" {
-                            print("有登录奖励可领取")
-                            UserModelHTTP.dailyRedeem()
-                        }
-                    }
-                }
+                User.shared.getNotificationsCount(jiRootNode!)
             }
-            let t = V2ValueResponse<[TopicListModel]>(value:resultArray, success: response.result.isSuccess)
-            done(t);
+            let t = V2ValueResponse<[TopicListModel]>(value:resultArray, success: isSuccess)
+            done(t)
         }
     }
     typealias ResponseTopicList =  (V2ValueResponse<([TopicListModel] ,String?)>) -> Void
     class func getTopicList(_ nodeName: String,page:Int,done: @escaping ResponseTopicList){
         let url =  "go/\(nodeName)?p=\(page)"
-        TJHttp().responseJi(url){ (response) -> Void in
+        let xpath = "//*[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='cell']"
+        TJHttp().responseNode(url,nil,xpath) {jiHtml,jiRootNode, aRootNode ,isSuccess -> Void in
             var resultArray:[TopicListModel] = []
             var favoriteUrl :String?
-            if  let jiHtml = response.result.value{
-                if let aRootNode = jiHtml.xPath("//*[@id='Wrapper']/div[@class='content']/div[@class='box']/div[@class='cell']"){
-                    for aNode in aRootNode {
-                        let topic = TopicListModel(nodeRootNode: aNode)
-                        resultArray.append(topic);
-                    }
-                    //更新通知数量
-                    User.shared.getNotificationsCount(jiHtml.rootNode!)
-                }
-                if let node = jiHtml.xPath("//*[@id='Wrapper']/div/div[1]/div[1]/div[1]/a")?.first{
-                    favoriteUrl = node["href"]
-                }
+            for aNode in aRootNode! {
+                let topic = TopicListModel(nodeRootNode: aNode)
+                resultArray.append(topic);
             }
-            let t = V2ValueResponse<([TopicListModel], String?)>(value:(resultArray,favoriteUrl), success: response.result.isSuccess)
+            User.shared.getNotificationsCount(jiRootNode!)
+            if let node = jiHtml.xPath("//*[@id='Wrapper']/div/div[1]/div[1]/div[1]/a")?.first{
+                favoriteUrl = node["href"]
+            }
+            let t = V2ValueResponse<([TopicListModel], String?)>(value:(resultArray,favoriteUrl), success: isSuccess)
             done(t);
         }
     }
     typealias V2ValueResponseTopicListModelInt = (V2ValueResponse<([TopicListModel],Int)>) -> Void
     class func getFavoriteList(_ page:Int = 1, done: @escaping V2ValueResponseTopicListModelInt){
-        TJHttp().responseJi("my/topics?p=\(page)"){ (response) -> Void in
+        let xpath = "//*[@class='cell item']"
+        TJHttp().responseNode("my/topics?p=\(page)",nil,xpath){jiHtml,jiRootNode, aRootNode ,isSuccess -> Void in
+//        TJHttp().responseJi("my/topics?p=\(page)"){ (response) -> Void in
             var resultArray:[TopicListModel] = []
             var maxPage = 1
-            if let jiHtml = response.result.value {
-                if let aRootNode = jiHtml.xPath("//*[@class='cell item']"){
-                    for aNode in aRootNode {
-                        let topic = TopicListModel(favoritesRootNode:aNode)
-                        resultArray.append(topic);
-                    }
+                for aNode in aRootNode! {
+                    let topic = TopicListModel(favoritesRootNode:aNode)
+                    resultArray.append(topic);
                 }
                 //更新通知数量
                 User.shared.getNotificationsCount(jiHtml.rootNode!)
@@ -283,9 +277,8 @@ class TopicListModelHTTP {
                 {
                     maxPage = pageInt
                 }
-            }
-            let t = V2ValueResponse<([TopicListModel],Int)>(value:(resultArray,maxPage), success: response.result.isSuccess)
-            done(t);
+                let t = V2ValueResponse<([TopicListModel],Int)>(value:(resultArray,maxPage), success: isSuccess)
+                done(t);
         }
     }
     class func favorite(_ nodeId:String,type:NSInteger){
