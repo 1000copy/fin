@@ -37,6 +37,11 @@ open class V2ProgressHUD: NSObject {
     open class func inform(_ status:String!) {
         SVProgressHUD.showInfo(withStatus: status)
     }
+    open class func setup(){
+        SVProgressHUD.setForegroundColor(UIColor(white: 1, alpha: 1))
+        SVProgressHUD.setBackgroundColor(UIColor(white: 0.15, alpha: 0.85))
+        SVProgressHUD.setDefaultMaskType(.none)
+    }
 }
 
 public func V2Success(_ status:String!) {
@@ -61,4 +66,7 @@ public func V2BeginLoadingWithStatus(_ status:String!) {
 
 public func V2EndLoading() {
     V2ProgressHUD.dismiss()
+}
+public func HUDsetup() {
+    V2ProgressHUD.setup()
 }

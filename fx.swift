@@ -853,6 +853,39 @@ class TJView :UIView{
       longPress?(sender)
     }
 }
+class TJApp: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        onLoad()
+        return true
+    }
+    func onLoad(){
+        
+    }
+}
+class TJWin : UIWindow{
+    init(_ rootvc : UIViewController) {
+        super.init(frame:UIScreen.main.bounds)
+        makeKeyAndVisible()
+        rootViewController = rootvc
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+class TJDrawer : DrawerController{
+    init( _ centerViewController: UIViewController!, _ leftDrawerViewController: UIViewController, _ rightDrawerViewController: UIViewController) {
+        super.init(centerViewController: centerViewController, leftDrawerViewController: leftDrawerViewController, rightDrawerViewController: rightDrawerViewController)
+        maximumLeftDrawerWidth=230;
+        maximumRightDrawerWidth = (rightDrawerViewController as! RightViewController).maxWidth()
+        openDrawerGestureModeMask=OpenDrawerGestureMode.panningCenterView
+        closeDrawerGestureModeMask=CloseDrawerGestureMode.all
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 import FXBlurView
 import UIKit
 import SnapKit
@@ -861,3 +894,9 @@ import AlamofireObjectMapper
 import Ji
 import MJRefresh
 import Foundation
+import SKPhotoBrowser
+import UIKit
+import Fabric
+import Crashlytics
+import DrawerController
+import SVProgressHUD
