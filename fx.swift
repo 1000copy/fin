@@ -4,7 +4,6 @@ typealias TJTable = DataTableBase
 typealias TJTableDataSource = TableDataSource
 typealias TJTableDataSourceItem = TableDataSourceItem
 typealias TJButton = ButtonBase
-// Button,TableView,CollectView
 
 typealias Callback =  (()-> Void)
 typealias CallbackMore =  ((_ moreData : Bool)-> Void)
@@ -456,7 +455,6 @@ import SnapKit
 import Alamofire
 import AlamofireObjectMapper
 import Ji
-import MJRefresh
 import Foundation
 import SKPhotoBrowser
 import UIKit

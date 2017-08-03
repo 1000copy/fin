@@ -5,7 +5,7 @@ import SnapKit
 import Alamofire
 import AlamofireObjectMapper
 import Ji
-import MJRefresh
+
 import Cartography
 
 class HomeViewController: TJPage {
@@ -72,7 +72,6 @@ class HomeViewController: TJPage {
     }
     func getNextPage(_ cb : @escaping CallbackMore){
         if let count = self.tableView.topicList?.count , count <= 0{
-            self.tableView.mj_footer.endRefreshing()
             return;
         }
         self.currentPage += 1

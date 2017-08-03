@@ -1,144 +1,199 @@
-fileprivate  class V2RefreshHeader: MJRefreshHeader {
-    var loadingView:UIActivityIndicatorView?
-    var arrowImage:UIImageView?
-    
-    override var state:MJRefreshState{
-        didSet{
-            switch state {
-            case .idle:
-                self.loadingView?.isHidden = true
-                self.arrowImage?.isHidden = false
-                self.loadingView?.stopAnimating()
-            case .pulling:
-                self.loadingView?.isHidden = false
-                self.arrowImage?.isHidden = true
-                self.loadingView?.startAnimating()
-                
-            case .refreshing:
-                self.loadingView?.isHidden = false
-                self.arrowImage?.isHidden = true
-                self.loadingView?.startAnimating()
-            default:
-                NSLog("")
-            }
-        }
-    }
-    
-    /**
-     初始化工作
-     */
-    override func prepare() {
-        super.prepare()
-        self.mj_h = 50
-        
-        self.loadingView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-        self.addSubview(self.loadingView!)
-        
-        self.arrowImage = UIImageView(image: UIImage.imageUsedTemplateMode("ic_arrow_downward"))
-        self.addSubview(self.arrowImage!)
-        
-        //        self.thmemChangedHandler = {[weak self] (style) -> Void in
-        if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
-            self.loadingView?.activityIndicatorViewStyle = .gray
-            self.arrowImage?.tintColor = UIColor.gray
-        }
-        else{
-            self.loadingView?.activityIndicatorViewStyle = .white
-            self.arrowImage?.tintColor = UIColor.gray
-        }
-        //        }
-    }
-    
-    /**
-     在这里设置子控件的位置和尺寸
-     */
-    override func placeSubviews(){
-        super.placeSubviews()
-        self.loadingView!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2);
-        self.arrowImage!.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        self.arrowImage!.center = self.loadingView!.center
-    }
-    
-    override func scrollViewContentOffsetDidChange(_ change: [AnyHashable: Any]!) {
-        super.scrollViewContentOffsetDidChange(change)
-    }
-    
-    override func scrollViewContentSizeDidChange(_ change: [AnyHashable: Any]!) {
-        super.scrollViewContentOffsetDidChange(change)
-    }
-    
-    override func scrollViewPanStateDidChange(_ change: [AnyHashable: Any]!) {
-        super.scrollViewPanStateDidChange(change)
-    }
-    
-}
-fileprivate class V2RefreshFooter: MJRefreshAutoFooter {
-    
-    var loadingView:UIActivityIndicatorView?
-    var stateLabel:UILabel?
-    
-    var centerOffset:CGFloat = 0
-    
-    fileprivate var _noMoreDataStateString:String?
-    var noMoreDataStateString:String? {
-        get{
-            return self._noMoreDataStateString
-        }
-        set{
-            self._noMoreDataStateString = newValue
-            self.stateLabel?.text = newValue
-        }
-    }
-    
-    override var state:MJRefreshState{
-        didSet{
-            switch state {
-            case .idle:
-                self.stateLabel?.text = nil
-                self.loadingView?.isHidden = true
-                self.loadingView?.stopAnimating()
-            case .refreshing:
-                self.stateLabel?.text = nil
-                self.loadingView?.isHidden = false
-                self.loadingView?.startAnimating()
-            case .noMoreData:
-                self.stateLabel?.text = self.noMoreDataStateString
-                self.loadingView?.isHidden = true
-                self.loadingView?.stopAnimating()
-            default:break
-            }
-        }
-    }
-    
-    /**
-     初始化工作
-     */
-    override func prepare() {
-        super.prepare()
-        self.mj_h = 50
-        
-        self.loadingView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-        self.addSubview(self.loadingView!)
-        
-        self.stateLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 40))
-        self.stateLabel?.textAlignment = .center
-        self.stateLabel!.font = v2Font(12)
-        self.addSubview(self.stateLabel!)
-        
-        self.noMoreDataStateString = "没有更多数据了"
-        self.loadingView?.activityIndicatorViewStyle = .gray
-        self.stateLabel!.textColor = UIColor(white: 0, alpha: 0.3)
-    }
-    
-    /**
-     在这里设置子控件的位置和尺寸
-     */
-    override func placeSubviews(){
-        super.placeSubviews()
-        self.loadingView!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2 + self.centerOffset);
-        self.stateLabel!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2  + self.centerOffset);
-    }
-}
+//class  RefreshableTableBase1 : UITableView {
+//    override init(frame: CGRect, style: UITableViewStyle) {
+//        super.init(frame:frame,style:style)
+//        mj_header = V2RefreshHeader(refreshingBlock: {[weak self] () -> Void in
+//            if let s = self?.scrollUp{
+//                //如果有上拉加载更多 正在执行，则取消它
+//                if (self?.mj_footer.isRefreshing())! {
+//                    self?.mj_footer.endRefreshing()
+//                }
+//                s(){
+//                    self?.mj_header.endRefreshing()
+//                }
+//            }
+//        })
+//        let footer = V2RefreshFooter(refreshingBlock: {[weak self] () -> Void in
+//            if let s = self?.scrollDown{
+//                s(){moreData in
+//                    self?.mj_header.endRefreshing()
+//                    if moreData {
+//                        self?.mj_footer.endRefreshing()
+//                    }else{
+//                        self?.mj_footer.endRefreshingWithNoMoreData()
+//                    }
+//                }
+//
+//            }
+//        })
+//        footer?.centerOffset = -4
+//        mj_footer = footer
+//    }
+//    required init?(coder aDecoder: NSCoder) {
+//        super.init(coder:aDecoder)
+//    }
+//    var scrollUp : ((_ cb : @escaping Callback)-> Void)?
+//    var scrollDown : ((_ cb : @escaping CallbackMore)-> Void)?
+//    func beginScrollUp(){
+//        if mj_footer.isRefreshing() {
+//            mj_footer.endRefreshing()
+//        }
+//        mj_header.beginRefreshing()
+//    }
+//    func endScrollUp(){
+//        mj_header.endRefreshing()
+//    }
+//    func endScrollDown(_ hasMoreData : Bool = true){
+//        if hasMoreData{
+//            self.mj_footer.endRefreshing()
+//        }else{
+//            self.mj_footer.endRefreshingWithNoMoreData()
+//        }
+//    }
+//    func beginRefresh(){
+//        mj_header.beginRefreshing();
+//    }
+//}
+//fileprivate  class V2RefreshHeader: MJRefreshHeader {
+//    var loadingView:UIActivityIndicatorView?
+//    var arrowImage:UIImageView?
+//    
+//    override var state:MJRefreshState{
+//        didSet{
+//            switch state {
+//            case .idle:
+//                self.loadingView?.isHidden = true
+//                self.arrowImage?.isHidden = false
+//                self.loadingView?.stopAnimating()
+//            case .pulling:
+//                self.loadingView?.isHidden = false
+//                self.arrowImage?.isHidden = true
+//                self.loadingView?.startAnimating()
+//                
+//            case .refreshing:
+//                self.loadingView?.isHidden = false
+//                self.arrowImage?.isHidden = true
+//                self.loadingView?.startAnimating()
+//            default:
+//                NSLog("")
+//            }
+//        }
+//    }
+//    
+//    /**
+//     初始化工作
+//     */
+//    override func prepare() {
+//        super.prepare()
+//        self.mj_h = 50
+//        
+//        self.loadingView = UIActivityIndicatorView(activityIndicatorStyle: .white)
+//        self.addSubview(self.loadingView!)
+//        
+//        self.arrowImage = UIImageView(image: UIImage.imageUsedTemplateMode("ic_arrow_downward"))
+//        self.addSubview(self.arrowImage!)
+//        
+//        //        self.thmemChangedHandler = {[weak self] (style) -> Void in
+//        if V2EXColor.sharedInstance.style == V2EXColor.V2EXColorStyleDefault {
+//            self.loadingView?.activityIndicatorViewStyle = .gray
+//            self.arrowImage?.tintColor = UIColor.gray
+//        }
+//        else{
+//            self.loadingView?.activityIndicatorViewStyle = .white
+//            self.arrowImage?.tintColor = UIColor.gray
+//        }
+//        //        }
+//    }
+//    
+//    /**
+//     在这里设置子控件的位置和尺寸
+//     */
+//    override func placeSubviews(){
+//        super.placeSubviews()
+//        self.loadingView!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2);
+//        self.arrowImage!.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+//        self.arrowImage!.center = self.loadingView!.center
+//    }
+//    
+//    override func scrollViewContentOffsetDidChange(_ change: [AnyHashable: Any]!) {
+//        super.scrollViewContentOffsetDidChange(change)
+//    }
+//    
+//    override func scrollViewContentSizeDidChange(_ change: [AnyHashable: Any]!) {
+//        super.scrollViewContentOffsetDidChange(change)
+//    }
+//    
+//    override func scrollViewPanStateDidChange(_ change: [AnyHashable: Any]!) {
+//        super.scrollViewPanStateDidChange(change)
+//    }
+//    
+//}
+//fileprivate class V2RefreshFooter: MJRefreshAutoFooter {
+//    
+//    var loadingView:UIActivityIndicatorView?
+//    var stateLabel:UILabel?
+//    
+//    var centerOffset:CGFloat = 0
+//    
+//    fileprivate var _noMoreDataStateString:String?
+//    var noMoreDataStateString:String? {
+//        get{
+//            return self._noMoreDataStateString
+//        }
+//        set{
+//            self._noMoreDataStateString = newValue
+//            self.stateLabel?.text = newValue
+//        }
+//    }
+//    
+//    override var state:MJRefreshState{
+//        didSet{
+//            switch state {
+//            case .idle:
+//                self.stateLabel?.text = nil
+//                self.loadingView?.isHidden = true
+//                self.loadingView?.stopAnimating()
+//            case .refreshing:
+//                self.stateLabel?.text = nil
+//                self.loadingView?.isHidden = false
+//                self.loadingView?.startAnimating()
+//            case .noMoreData:
+//                self.stateLabel?.text = self.noMoreDataStateString
+//                self.loadingView?.isHidden = true
+//                self.loadingView?.stopAnimating()
+//            default:break
+//            }
+//        }
+//    }
+//    
+//    /**
+//     初始化工作
+//     */
+//    override func prepare() {
+//        super.prepare()
+//        self.mj_h = 50
+//        
+//        self.loadingView = UIActivityIndicatorView(activityIndicatorStyle: .white)
+//        self.addSubview(self.loadingView!)
+//        
+//        self.stateLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 300, height: 40))
+//        self.stateLabel?.textAlignment = .center
+//        self.stateLabel!.font = v2Font(12)
+//        self.addSubview(self.stateLabel!)
+//        
+//        self.noMoreDataStateString = "没有更多数据了"
+//        self.loadingView?.activityIndicatorViewStyle = .gray
+//        self.stateLabel!.textColor = UIColor(white: 0, alpha: 0.3)
+//    }
+//    
+//    /**
+//     在这里设置子控件的位置和尺寸
+//     */
+//    override func placeSubviews(){
+//        super.placeSubviews()
+//        self.loadingView!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2 + self.centerOffset);
+//        self.stateLabel!.center = CGPoint(x: self.mj_w/2, y: self.mj_h/2  + self.centerOffset);
+//    }
+//}
 class DataTableBase : TableBase{
     var tableData_ : PCTableDataSource! = TableDataSource()
     var tableData : PCTableDataSource!{
@@ -363,61 +418,6 @@ class  TableBase : RefreshableTableBase , UITableViewDataSource,UITableViewDeleg
         didSelectRowAt(indexPath)
     }
 }
-class  RefreshableTableBase1 : UITableView {
-    override init(frame: CGRect, style: UITableViewStyle) {
-        super.init(frame:frame,style:style)
-        mj_header = V2RefreshHeader(refreshingBlock: {[weak self] () -> Void in
-            if let s = self?.scrollUp{
-                //如果有上拉加载更多 正在执行，则取消它
-                if (self?.mj_footer.isRefreshing())! {
-                    self?.mj_footer.endRefreshing()
-                }
-                s(){
-                    self?.mj_header.endRefreshing()
-                }
-            }
-        })
-        let footer = V2RefreshFooter(refreshingBlock: {[weak self] () -> Void in
-            if let s = self?.scrollDown{
-                s(){moreData in
-                    self?.mj_header.endRefreshing()
-                    if moreData {
-                        self?.mj_footer.endRefreshing()
-                    }else{
-                        self?.mj_footer.endRefreshingWithNoMoreData()
-                    }
-                }
-                
-            }
-        })
-        footer?.centerOffset = -4
-        mj_footer = footer
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-    }
-    var scrollUp : ((_ cb : @escaping Callback)-> Void)?
-    var scrollDown : ((_ cb : @escaping CallbackMore)-> Void)?
-    func beginScrollUp(){
-        if mj_footer.isRefreshing() {
-            mj_footer.endRefreshing()
-        }
-        mj_header.beginRefreshing()
-    }
-    func endScrollUp(){
-        mj_header.endRefreshing()
-    }
-    func endScrollDown(_ hasMoreData : Bool = true){
-        if hasMoreData{
-            self.mj_footer.endRefreshing()
-        }else{
-            self.mj_footer.endRefreshingWithNoMoreData()
-        }
-    }
-    func beginRefresh(){
-        mj_header.beginRefreshing();
-    }
-}
 class  RefreshableTableBase : UITableView {
     override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame:frame,style:style)
@@ -462,6 +462,6 @@ extension RefreshableTableBase: GTMLoadMoreFooterDelegate {
     }
 }
 
-import MJRefresh
+//import MJRefresh
 import UIKit
 import GTMRefresh

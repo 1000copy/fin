@@ -1,12 +1,6 @@
-//
-//  MemberViewController.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 2/1/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
+
 import UIKit
-import FXBlurView
+
 class MemberViewController: TJPage,UIScrollViewDelegate{
     var color:CGFloat = 0
     var username:String?
@@ -32,7 +26,7 @@ class MemberViewController: TJPage,UIScrollViewDelegate{
             backgroundImageView.frame = self.owner!.frame
             backgroundImageView.contentMode = .scaleToFill
             owner!.addSubview(backgroundImageView)
-            let frostedView = FXBlurView()
+            let frostedView = TJBlur(owner!)
             frostedView.underlyingView = backgroundImageView
             frostedView.isDynamic = false
             frostedView.frame = self.owner!.frame

@@ -15,7 +15,7 @@ def pods
     pod 'YYText', '~> 1.0.7'
     pod 'FXBlurView', '~> 1.6.4'
     pod 'SVProgressHUD', '~> 1.1.3'
-    pod 'MJRefresh', '~> 3.1.12'
+#    pod 'MJRefresh', '~> 3.1.12'
     pod 'CXSwipeGestureRecognizer', '~> 1.0.2'
     pod '1PasswordExtension', '~> 1.8.4'
     pod 'Shimmer', '~> 1.0.2'

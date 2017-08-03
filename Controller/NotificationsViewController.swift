@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import MJRefresh
+
 class NotificationsViewController: UIViewController{
     fileprivate weak var _loadView:V2LoadingView?
     func showLoadingView (){
@@ -46,7 +46,6 @@ class NotificationsViewController: UIViewController{
                     weakSelf.tableView.reloadData()
                 }
             }
-            self?.tableView.mj_header.endRefreshing()
             self?.hideLoadingView()
             cb()
         }

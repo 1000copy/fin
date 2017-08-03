@@ -1,5 +1,5 @@
 import UIKit
-import FXBlurView
+
 import KVOController
 import Kingfisher
 class LeftViewController: TJPage{

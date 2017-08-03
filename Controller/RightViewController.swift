@@ -1,13 +1,4 @@
-//
-//  RightViewController.swift
-//  V2ex-Swift
-//
-//  Created by huangfeng on 1/14/16.
-//  Copyright © 2016 Fin. All rights reserved.
-//
-
 import UIKit
-import FXBlurView
 
 class RightViewController: TJPage{
     fileprivate var _tableView :RightTable!

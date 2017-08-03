@@ -1,6 +1,4 @@
 import UIKit
-import FXBlurView
-import Shimmer
 class RelevantCommentsViewController: UIViewController{
     var commentsArray:[TopicCommentModel] = []
     fileprivate var _tableView :Table!

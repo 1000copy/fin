@@ -85,7 +85,6 @@ class NodeTopicListViewController: UIViewController   {
     }
     func getNextPage(_ cb : @escaping CallbackMore){
         if let count = self.tableView.topicList?.count, count <= 0{
-            self.tableView.mj_footer.endRefreshing()
             return;
         }
         self.currentPage += 1
