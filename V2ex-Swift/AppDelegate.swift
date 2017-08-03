@@ -130,9 +130,8 @@ fileprivate extension Data {
         }
     }
 }
-import SKPhotoBrowser
 import UIKit
 import Fabric
-import Crashlytics
+//import Crashlytics
 import DrawerController
 import SVProgressHUD

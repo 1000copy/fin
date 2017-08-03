@@ -56,8 +56,6 @@
 		06D0EE2B1C9165C3003095FF /* font.css in Resources */ = {isa = PBXBuildFile; fileRef = 06D0EE271C9165C3003095FF /* font.css */; };
 		06D0EE2C1C9165C3003095FF /* lightStyle.css in Resources */ = {isa = PBXBuildFile; fileRef = 06D0EE281C9165C3003095FF /* lightStyle.css */; };
 		06D0EE2E1C917696003095FF /* V2Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D0EE2D1C917696003095FF /* V2Slider.swift */; };
-		06D0EE311C91787F003095FF /* FontSizeSliderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D0EE301C91787F003095FF /* FontSizeSliderTableViewCell.swift */; };
-		06D0EE331C917E4C003095FF /* FontDisplayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D0EE321C917E4C003095FF /* FontDisplayTableViewCell.swift */; };
 		06D300241C6C21B600547CE6 /* AccountsManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300231C6C21B600547CE6 /* AccountsManagerViewController.swift */; };
 		06D300261C6C222F00547CE6 /* AccountListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300251C6C222F00547CE6 /* AccountListTableViewCell.swift */; };
 		06D300281C6C720800547CE6 /* UserListKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D300271C6C720800547CE6 /* UserListKeychain.swift */; };
@@ -137,8 +135,6 @@
 		06D0EE271C9165C3003095FF /* font.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = font.css; sourceTree = "<group>"; };
 		06D0EE281C9165C3003095FF /* lightStyle.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = lightStyle.css; sourceTree = "<group>"; };
 		06D0EE2D1C917696003095FF /* V2Slider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V2Slider.swift; sourceTree = "<group>"; };
-		06D0EE301C91787F003095FF /* FontSizeSliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontSizeSliderTableViewCell.swift; sourceTree = "<group>"; };
-		06D0EE321C917E4C003095FF /* FontDisplayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontDisplayTableViewCell.swift; sourceTree = "<group>"; };
 		06D300231C6C21B600547CE6 /* AccountsManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsManagerViewController.swift; sourceTree = "<group>"; };
 		06D300251C6C222F00547CE6 /* AccountListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountListTableViewCell.swift; sourceTree = "<group>"; };
 		06D300271C6C720800547CE6 /* UserListKeychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListKeychain.swift; sourceTree = "<group>"; };
@@ -314,7 +310,6 @@
 				06C582AA1C50C86E00F24DBC /* Topic */,
 				0611DE571C5F383700933964 /* Member */,
 				06E145A01C60A5D300BDD63D /* Node */,
-				06D0EE2F1C917869003095FF /* More */,
 				06C582AB1C50C8DC00F24DBC /* BaseDetailTableViewCell.swift */,
 				0618768A1C7C19F0002E9C33 /* PodCellTableViewCell.swift */,
 			);
@@ -364,15 +359,6 @@
 				06D0EE281C9165C3003095FF /* lightStyle.css */,
 			);
 			path = CSS;
-			sourceTree = "<group>";
-		};
-		06D0EE2F1C917869003095FF /* More */ = {
-			isa = PBXGroup;
-			children = (
-				06D0EE301C91787F003095FF /* FontSizeSliderTableViewCell.swift */,
-				06D0EE321C917E4C003095FF /* FontDisplayTableViewCell.swift */,
-			);
-			name = More;
 			sourceTree = "<group>";
 		};
 		06E145A01C60A5D300BDD63D /* Node */ = {
@@ -569,8 +555,6 @@
 			files = (
 				06CE3D8F1DA8ACB000E16F23 /* INSImageView.swift in Sources */,
 				6FE111B91F134F3100A43027 /* V2User.swift in Sources */,
-				06D0EE311C91787F003095FF /* FontSizeSliderTableViewCell.swift in Sources */,
-				06D0EE331C917E4C003095FF /* FontDisplayTableViewCell.swift in Sources */,
 				0678D20C1C61EAA8007FFCFD /* UIImageView+Extension.swift in Sources */,
 				6F01A9AB1F31E43A0085F50F /* BigBro.swift in Sources */,
 				060C4E401C4897BB004FBECC /* V2FPSLabel.swift in Sources */,

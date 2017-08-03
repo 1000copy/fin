@@ -456,9 +456,8 @@ import Alamofire
 import AlamofireObjectMapper
 import Ji
 import Foundation
-import SKPhotoBrowser
 import UIKit
 import Fabric
-import Crashlytics
+
 import DrawerController
 import SVProgressHUD

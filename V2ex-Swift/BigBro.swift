@@ -185,6 +185,6 @@ class BigBrotherWatchingYou : UIResponder{
 import SKPhotoBrowser
 import UIKit
 import Fabric
-import Crashlytics
+
 import DrawerController
 import SVProgressHUD
