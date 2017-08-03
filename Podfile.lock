@@ -17,6 +17,7 @@ PODS:
   - Fabric (1.6.11)
   - FDFullscreenPopGesture (1.1)
   - FXBlurView (1.6.4)
+  - GTMRefresh (1.1.2)
   - Ji (2.0.1):
     - Ji/Ji (= 2.0.1)
   - Ji/Ji (2.0.1):
@@ -43,6 +44,7 @@ DEPENDENCIES:
   - Fabric
   - FDFullscreenPopGesture
   - FXBlurView (~> 1.6.4)
+  - GTMRefresh
   - Ji (~> 2.0.1)
   - Kingfisher (~> 3.2.4)
   - KVOController (~> 1.2.0)
@@ -65,6 +67,7 @@ SPEC CHECKSUMS:
   Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
   FDFullscreenPopGesture: a8a620179e3d9c40e8e00256dcee1c1a27c6d0f0
   FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
+  GTMRefresh: 9c3bad3dab260dee3e28a92304ee0bfaf33419c1
   Ji: 6bb602a28dd08b804158f64990e6051ed5de0110
   Kingfisher: 8d80f39da403cd9c9ee11984e1655f4d6a566cdb
   KVOController: d72ace34afea42468329623b3379ab3cd1d286b6
@@ -76,6 +79,6 @@ SPEC CHECKSUMS:
   SVProgressHUD: 748080e4f36e603f6c02aec292664239df5279c1
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: cfde21d06b691008fcef2e8508616a3a4070aac6
+PODFILE CHECKSUM: fd94ec076c0bc330885dac4be1264831ea3cbcd8
 
 COCOAPODS: 1.2.1

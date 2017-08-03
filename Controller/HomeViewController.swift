@@ -38,7 +38,10 @@ class HomeViewController: TJPage {
     }
     func refreshPage(){
         Setting.shared.kHomeTab = tab
-        self.tableView.beginScrollUp()
+//        self.tableView.beginScrollUp()
+        refresh(){
+            
+        }
     }
     override func onLayout() {
         constrain(view, tableView){
@@ -57,7 +60,6 @@ class HomeViewController: TJPage {
     override func getNavItems ()->[UIButton]{
         return [NotificationMenuButton(), RightButton()]
     }
-    
     func refresh(_ cb : @escaping  Callback){
         TopicListModelHTTP.getTopicList(tab){response in
             if response.success {

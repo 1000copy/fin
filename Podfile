@@ -24,6 +24,7 @@ def pods
     pod 'Crashlytics'
     pod 'SKPhotoBrowser'
     pod 'Cartography'
+    pod 'GTMRefresh'
 end
 
 target 'V2ex-Swift' do
