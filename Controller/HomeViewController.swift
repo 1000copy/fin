@@ -190,7 +190,7 @@ fileprivate class RightButton : TJButton{
     }
 }
 //fileprivate class NotificationMenuButton: UIButton {
-fileprivate class NotificationMenuButton: TJButton {
+class NotificationMenuButton: TJButton {
     var aPointImageView:UIImageView?
      override func onLoad() {
         let rect = TJSquare(0,0,40)
@@ -209,14 +209,13 @@ fileprivate class NotificationMenuButton: TJButton {
             make.right.equalTo(self).offset(-6)
         }
         tap = leftClick
+//        Msg.observe(User.shared, #selector(onNotificationCount), "notificationCount")
         self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
-            if User.shared.notificationCount > 0 {
-                self?.aPointImageView!.isHidden = false
-            }
-            else{
-                self?.aPointImageView!.isHidden = true
-            }
+           self?.onNotificationCount()
         }
+    }
+    func onNotificationCount(){
+        aPointImageView!.isHidden = User.shared.notificationCount <= 0
     }
     func leftClick(){
         Msg.send("openLeftDrawer")
