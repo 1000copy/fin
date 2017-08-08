@@ -14,7 +14,7 @@ def pods
     pod 'YYText', '~> 1.0.7'
     pod 'FXBlurView', '~> 1.6.4'
 #   HUD is Heads-up Display
-    pod 'SVProgressHUD', '~> 1.1.3'
+#    pod 'SVProgressHUD', '~> 1.1.3'
     pod '1PasswordExtension', '~> 1.8.4'
     pod 'Shimmer', '~> 1.0.2'
 #    pod 'FDFullscreenPopGesture'
@@ -23,6 +23,7 @@ def pods
     pod 'SKPhotoBrowser'
     pod 'Cartography'
     pod 'GTMRefresh'
+    pod 'PKHUD'
 end
 
 target 'V2ex-Swift' do
