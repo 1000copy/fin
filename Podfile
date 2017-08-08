@@ -10,7 +10,7 @@ def pods
     pod 'Ji', '~> 2.0.1'
     pod 'DrawerController', '~> 3.1.0'
     pod 'Kingfisher', '~> 3.2.4'
-    pod 'KVOController', '~> 1.2.0'
+#    pod 'KVOController', '~> 1.2.0'
     pod 'YYText', '~> 1.0.7'
     pod 'FXBlurView', '~> 1.6.4'
 #   HUD is Heads-up Display

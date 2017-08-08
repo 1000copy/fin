@@ -80,10 +80,15 @@ class V2WebViewViewController: UIViewController ,V2WebViewProgressDelegate ,V2Ac
         if let URL = URL(string: self.url) {
             _ = self.webView?.load(URLRequest(url: URL))
         }
-        
-        self.webView?.kvoController.observe(self.webView, keyPaths: ["title","estimatedProgress"], options: [.new,.initial], block: {[weak self] (_,_,_) in
+        self.webView?.observe(retainedObservable: self.webView!, keyPath: "title", options: [.new , .initial]){[weak self](observable:WKWebView, change:ChangeData<String>)-> () in
+                        self?.refreshState()
+        }
+        self.webView?.observe(retainedObservable: self.webView!, keyPath: "estimatedProgress", options: [.new , .initial]){[weak self](observable:WKWebView, change:ChangeData<Double>)-> () in
             self?.refreshState()
-        })
+        }
+//        self.webView?.kvoController.observe(self.webView, keyPaths: ["title","estimatedProgress"], options: [.new,.initial], block: {[weak self] (_,_,_) in
+//            self?.refreshState()
+//        })
     }
     
     private func refreshState(){

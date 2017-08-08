@@ -1,6 +1,6 @@
 import UIKit
 
-import KVOController
+//import KVOController
 import Kingfisher
 class LeftViewController: TJPage{
     override func onLoad() {

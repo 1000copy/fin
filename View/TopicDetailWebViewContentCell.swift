@@ -6,7 +6,7 @@
 //  Copyright © 2016 Fin. All rights reserved.
 //
 import UIKit
-import KVOController
+//import KVOController
 import JavaScriptCore
 import Kingfisher
 
@@ -111,11 +111,13 @@ class TopicDetailWebViewContentCell: TJCell ,UIWebViewDelegate {
         for view in self.contentWebView.scrollView.subviews {
             view.backgroundColor = V2EXColor.colors.v2_CellWhiteBackgroundColor
         }
-        
-        self.kvoController.observe(self.contentWebView.scrollView, keyPath: "contentSize", options: [.new]) {
-            [weak self] (observe, observer, change) -> Void in
+        self.observe(retainedObservable: self.contentWebView.scrollView, keyPath: "contentSize", options: [.new , .initial]){
+            [weak self](observable:UIScrollView, change:ChangeData<NSValue>)-> () in
+            
+//        self.kvoController.observe(self.contentWebView.scrollView, keyPath: "contentSize", options: [.new]) {[weak self] (observe, observer, change) -> Void in
             if let weakSelf = self {
-                let size = change["new"] as! NSValue
+//                let size = change["new"] as! NSValue
+                 let size = change.newValue! as NSValue
                 weakSelf.contentHeight = size.cgSizeValue.height;
                 weakSelf.contentHeightChanged?(weakSelf.contentHeight)
             }

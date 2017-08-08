@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import KVOController
+//import KVOController
 
 
 func colorWith255RGB(_ r:CGFloat , g:CGFloat, b:CGFloat) ->UIColor {

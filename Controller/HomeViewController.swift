@@ -209,13 +209,17 @@ class NotificationMenuButton: TJButton {
             make.right.equalTo(self).offset(-6)
         }
         tap = leftClick
-//        Msg.observe(User.shared, #selector(onNotificationCount), "notificationCount")
-        self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
+        aPointImageView!.isHidden = true
+        //        self.kvoController.observe(User.shared, keyPath: "notificationCount", options: [.initial,.new]) {  [weak self](cell, clien, change) -> Void in
+        self.observe(retainedObservable: User.shared, keyPath: "notificationCount", options: [.new , .initial]){
+            [weak self](observable:User, change:ChangeData<Int>)-> () in
            self?.onNotificationCount()
         }
+//        User.shared.notificationCount = 5
     }
     func onNotificationCount(){
         aPointImageView!.isHidden = User.shared.notificationCount <= 0
+        aPointImageView!.isHidden = false
     }
     func leftClick(){
         Msg.send("openLeftDrawer")
